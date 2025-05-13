@@ -1,0 +1,10 @@
+{
+  "type": "progression_respun:crucible",
+  "ingredient": {
+    "item": "minecraft:raw_copper"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:copper_ingot"
+  }
+}

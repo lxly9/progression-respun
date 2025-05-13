@@ -1,15 +1,12 @@
 package com.progression_respun.block.entity;
 
-import com.progression_respun.block.ModBlocks;
-import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.CrucibleRecipe;
 import com.progression_respun.recipe.CrucibleRecipeInput;
 import com.progression_respun.recipe.ModRecipes;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Waterloggable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -17,24 +14,25 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class CrucibleBlockEntity extends BlockEntity implements ImplementedInventory{
+public class CrucibleBlockEntity extends BlockEntity implements ImplementedInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(2, ItemStack.EMPTY);
-    private DefaultedList<ItemStack> itemsBeingCooked;
 
     private static final int INPUT_SLOT = 0;
     private static final int OUTPUT_SLOT = 1;
 
     protected final PropertyDelegate propertyDelegate;
     private int progress= 0;
-    private int maxProgress= 72;
+    private int maxProgress= 600;
 
     public CrucibleBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CRUCIBLE_BLOCK_ENTITY, pos, state);
@@ -101,10 +99,9 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
-        if (hasCrucibleRecipe()) {
+        if (isOnCampfire() && hasCrucibleRecipe()){
             increaseSmeltingProgress();
             markDirty(world, pos, state);
-
             if (hasSmeltingFinished()) {
                 smeltItem();
                 resetProgress();
@@ -112,6 +109,12 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
         } else {
             resetProgress();
         }
+    }
+
+    private boolean isOnCampfire() {
+        BlockState state = world.getBlockState(pos.offset(Direction.Axis.Y,-1));
+        state.isIn(BlockTags.CAMPFIRES);
+        return true;
     }
 
     private void smeltItem() {
@@ -124,7 +127,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
 
     private void resetProgress() {
         this.progress = 0;
-        this.maxProgress = 200;
+        this.maxProgress = 600;
     }
 
     private boolean hasSmeltingFinished() {
@@ -160,7 +163,5 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
         return maxCount >= currentCount + count;
     }
 
-    private boolean isOnCampfire(World world) {
-        return world.getBlockState(pos).getBlock() == ModBlocks.CRUCIBLE_BLOCK;
-    }
+
 }
