@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "progression_respun:item/raw_iron_bar"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 2.1,
+  "group": "iron_bar",
+  "ingredient": {
+    "item": "progression_respun:raw_iron_bar"
+  },
+  "result": {
+    "id": "progression_respun:iron_bar"
+  }
+}
