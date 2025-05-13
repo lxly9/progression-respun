@@ -102,7 +102,7 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        if (!world.isClient) {
+        if (world.isClient) {
             return null;
         }
         return validateTicker(type, ModBlockEntities.CRUCIBLE_BLOCK_ENTITY, ((world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1)));

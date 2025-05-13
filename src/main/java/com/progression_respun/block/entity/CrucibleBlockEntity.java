@@ -1,21 +1,28 @@
 package com.progression_respun.block.entity;
 
 import com.progression_respun.item.ModItems;
+import com.progression_respun.recipe.CrucibleRecipe;
+import com.progression_respun.recipe.CrucibleRecipeInput;
+import com.progression_respun.recipe.ModRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class CrucibleBlockEntity extends BlockEntity implements ImplementedInventory{
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(2, ItemStack.EMPTY);
@@ -107,7 +114,9 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
     }
 
     private void smeltItem() {
-        ItemStack output = new ItemStack(ModItems.GOLD_BAR,1);
+        Optional<RecipeEntry<CrucibleRecipe>> recipe = getCurrentRecipe();
+
+        ItemStack output = recipe.get().value().output();
         this.removeStack(INPUT_SLOT, 1);
         this.setStack(OUTPUT_SLOT, new ItemStack(output.getItem(), output.getCount() + this.getStack(OUTPUT_SLOT).getCount()));
     }
@@ -126,9 +135,17 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
     }
 
     private boolean hasCrucibleRecipe() {
-        Item input = ModItems.RAW_GOLD_BAR;
-        ItemStack output = new ItemStack(ModItems.GOLD_BAR,1);
-        return this.getStack(INPUT_SLOT).isOf(input) && canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
+        Optional<RecipeEntry<CrucibleRecipe>> recipe = getCurrentRecipe();
+        if (recipe.isEmpty()) {
+            return false;
+        }
+
+        ItemStack output = recipe.get().value().output();
+        return canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
+    }
+
+    private Optional<RecipeEntry<CrucibleRecipe>> getCurrentRecipe() {
+        return this.getWorld().getRecipeManager().getFirstMatch(ModRecipes.CRUCIBLE_RECIPE_RECIPE_TYPE, new CrucibleRecipeInput(inventory.get(INPUT_SLOT)), this.getWorld());
     }
 
     private boolean canInsertItemIntoOutputSlot(ItemStack output) {

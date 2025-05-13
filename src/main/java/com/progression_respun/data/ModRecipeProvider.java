@@ -1,6 +1,7 @@
 package com.progression_respun.data;
 
 import com.progression_respun.item.ModItems;
+import com.progression_respun.recipe.CrucibleRecipeBuilder;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.server.recipe.RecipeExporter;
@@ -23,8 +24,12 @@ public class ModRecipeProvider extends FabricRecipeProvider {
     @Override
     public void generate(RecipeExporter exporter) {
 
-        // Bars
+        //Crucible
+        offerCrucibleRecipe(exporter, Items.RAW_COPPER, Items.COPPER_INGOT, 1);
+        offerCrucibleRecipe(exporter, Items.RAW_GOLD, Items.GOLD_INGOT, 1);
+        offerCrucibleRecipe(exporter, Items.RAW_IRON, Items.IRON_INGOT, 1);
 
+        // Bars
         offerBarRecipe(exporter, Items.FLINT, ModItems.FLINT_BAR);
         offerBarRecipe(exporter, Items.COPPER_INGOT, ModItems.COPPER_BAR);
         offerBarRecipe(exporter, Items.IRON_INGOT, ModItems.IRON_BAR);
@@ -252,6 +257,12 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern("XXX")
                 .pattern("XXX")
                 .criterion(hasItem(material), conditionsFromItem(material))
+                .offerTo(exporter);
+    }
+
+    private void offerCrucibleRecipe(RecipeExporter exporter, Item input, Item output, int count) {
+        CrucibleRecipeBuilder.create(input.asItem(), output, count)
+                .criterion(hasItem(input), conditionsFromItem(input))
                 .offerTo(exporter);
     }
 }
