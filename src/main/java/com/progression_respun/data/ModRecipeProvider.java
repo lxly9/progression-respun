@@ -1,5 +1,7 @@
 package com.progression_respun.data;
 
+import com.progression_respun.compat.EnderscapeItems;
+import com.progression_respun.compat.GalosphereItems;
 import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.CrucibleRecipeBuilder;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -16,6 +18,9 @@ import net.minecraft.registry.RegistryWrapper;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static com.progression_respun.compat.CompatMods.ENDERSCAPE;
+import static com.progression_respun.compat.CompatMods.GALOSPHERE;
+
 public class ModRecipeProvider extends FabricRecipeProvider {
     public ModRecipeProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
         super(output, registriesFuture);
@@ -28,7 +33,16 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         offerCrucibleRecipe(exporter, Items.RAW_COPPER, Items.COPPER_INGOT, 1);
         offerCrucibleRecipe(exporter, Items.RAW_GOLD, Items.GOLD_INGOT, 1);
         offerCrucibleRecipe(exporter, Items.RAW_IRON, Items.IRON_INGOT, 1);
+        offerCrucibleRecipe(exporter, ModItems.RAW_COPPER_BAR, ModItems.COPPER_BAR, 1);
+        offerCrucibleRecipe(exporter, ModItems.RAW_GOLD_BAR, ModItems.GOLD_BAR, 1);
+        offerCrucibleRecipe(exporter, ModItems.RAW_IRON_BAR, ModItems.IRON_BAR, 1);
 
+        if (GALOSPHERE) {
+            offerCrucibleRecipe(exporter, GalosphereItems.RAW_SILVER_BAR, GalosphereItems.SILVER_BAR, 1);
+        }
+        if (ENDERSCAPE) {
+            offerCrucibleRecipe(exporter, EnderscapeItems.RAW_SHADOLINE_BAR, EnderscapeItems.SHADOLINE_BAR, 1);
+        }
         // Bars
         offerBarRecipe(exporter, Items.FLINT, ModItems.FLINT_BAR);
         offerBarRecipe(exporter, Items.COPPER_INGOT, ModItems.COPPER_BAR);

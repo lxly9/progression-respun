@@ -1,5 +1,6 @@
 package com.progression_respun.block.entity;
 
+import com.progression_respun.block.ModBlocks;
 import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.CrucibleRecipe;
 import com.progression_respun.recipe.CrucibleRecipeInput;
@@ -123,7 +124,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
 
     private void resetProgress() {
         this.progress = 0;
-        this.maxProgress = 72;
+        this.maxProgress = 200;
     }
 
     private boolean hasSmeltingFinished() {
@@ -157,5 +158,9 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
         int currentCount = this.getStack(OUTPUT_SLOT).getCount();
 
         return maxCount >= currentCount + count;
+    }
+
+    private boolean isOnCampfire(World world) {
+        return world.getBlockState(pos).getBlock() == ModBlocks.CRUCIBLE_BLOCK;
     }
 }

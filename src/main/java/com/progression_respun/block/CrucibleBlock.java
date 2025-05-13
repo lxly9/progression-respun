@@ -15,7 +15,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -71,28 +70,34 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (world.getBlockEntity(pos) instanceof CrucibleBlockEntity crucibleBlockEntity) {
-            if (!stack.isEmpty()) {
-                ItemStack existingStack = crucibleBlockEntity.getStack(0);
-                if (existingStack.isEmpty() && stack.isIn(ConventionalItemTags.RAW_MATERIALS)) {
+            ItemStack inputStack = crucibleBlockEntity.getStack(0);
+            ItemStack outputStack = crucibleBlockEntity.getStack(1);
+            if (!outputStack.isEmpty()) {
+                player.getInventory().insertStack(outputStack.copy());
+                crucibleBlockEntity.setStack(1, ItemStack.EMPTY);
+                crucibleBlockEntity.markDirty();
+                world.updateListeners(pos, state, state, 0);
+                world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                return ItemActionResult.success(true);
+            } else if (!stack.isEmpty()) {
+                if (inputStack.isEmpty() && stack.isIn(ConventionalItemTags.RAW_MATERIALS)) {
                     crucibleBlockEntity.setStack(0, stack.copy().split(1));
-                    stack.decrement(1);
+                    if (!player.isCreative()) {
+                        stack.decrement(1);
+                    }
                     world.playSound(player, pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1.0F, 1.0F);
                     crucibleBlockEntity.markDirty();
                     world.updateListeners(pos, state, state, 0);
                     return ItemActionResult.success(stack.isIn(ConventionalItemTags.RAW_MATERIALS));
-                } else if (existingStack.itemMatches(stack.getRegistryEntry()) && existingStack.getCount() < 16) {
-                    existingStack.increment(1);
-                    stack.decrement(1);
+                } else if (inputStack.itemMatches(stack.getRegistryEntry()) && inputStack.getCount() < 16) {
+                    inputStack.increment(1);
+                    if (!player.isCreative()) {
+                        stack.decrement(1);
+                    }
                     world.playSound(player, pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1.0F, 1.0F);
                     crucibleBlockEntity.markDirty();
                     world.updateListeners(pos, state, state, 0);
-                    return ItemActionResult.success(existingStack.getCount() <= 16);
-                } else if (stack.isEmpty() && player.isSneaking()) {
-                    ItemStack itemInCrucible = crucibleBlockEntity.getStack(0);
-                    player.setStackInHand(hand, itemInCrucible);
-                    crucibleBlockEntity.clear();
-                    crucibleBlockEntity.markDirty();
-                    world.updateListeners(pos, state, state, 0);
+                    return ItemActionResult.success(true);
                 }
             }
         }
