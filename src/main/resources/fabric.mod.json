@@ -1,10 +1,11 @@
 {
 	"schemaVersion": 1,
-	"id": "divergeprog",
+	"id": "progression_respun",
 	"version": "${version}",
-	"name": "Divergent Progression",
+	"name": "Progression Respun",
 	"description": "Brings Diverge style progression to Modern Minecraft",
 	"authors": [
+		"gayasslily",
 		"BlueStaggo"
 	],
 	"contact": {
@@ -12,21 +13,21 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "MIT",
-	"icon": "assets/divergeprog/icon.png",
+	"icon": "assets/progression_respun/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"io.bluestaggo.divergeprog.DivergentProgression"
+			"com.progression_respun.ProgressionRespun"
 		],
 		"fabric-datagen": [
-			"io.bluestaggo.divergeprog.DivergentProgressionDataGenerator"
+			"com.progression_respun.ProgressionRespunDataGenerator"
 		]
 	},
 	"mixins": [
-		"divergeprog.mixins.json"
+      "pregression_respun.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.15.11",
+		"fabricloader": ">=0.16.14",
 		"minecraft": "~1.21",
 		"java": ">=21",
 		"fabric-api": "*"

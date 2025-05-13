@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "divergeprog:item/betternether/raw_cincinnasite_bar"
-  }
-}

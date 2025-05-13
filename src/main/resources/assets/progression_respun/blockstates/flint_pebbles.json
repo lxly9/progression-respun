@@ -1,0 +1,24 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "progression_respun:block/flint_pebbles"
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles",
+        "uvlock": true,
+        "y": 90
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles",
+        "uvlock":  true,
+        "y": 180
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles",
+        "uvlock":  true,
+        "y": 270
+      }
+    ]
+  }
+}

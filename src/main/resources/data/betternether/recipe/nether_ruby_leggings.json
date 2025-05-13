@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smithing_transform",
   "addition": {
-    "item": "divergeprog:betternether/nether_ruby_bar"
+    "item": "progression_respun:betternether/nether_ruby_bar"
   },
   "base": {
     "item": "minecraft:chainmail_leggings"

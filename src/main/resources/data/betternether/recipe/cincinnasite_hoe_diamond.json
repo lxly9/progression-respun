@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smithing_transform",
   "addition": {
-    "item": "divergeprog:diamond_bar"
+    "item": "progression_respun:diamond_bar"
   },
   "base": {
     "item": "betternether:cincinnasite_hoe"

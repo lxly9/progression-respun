@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smithing_transform",
   "addition": {
-    "item": "divergeprog:bronze/bronze_bar"
+    "item": "progression_respun:bronze/bronze_bar"
   },
   "base": {
     "item": "minecraft:chainmail_leggings"

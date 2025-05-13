@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "com.progression_respun.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AnvilScreenHandlerMixin",
+    "ComponentHolderMixin",
+    "ItemStackMixin",
+    "PlayerEntityMixin",
+    "ToolMaterialsMixin",
+    "compat.BNToolMaterialMixin",
+    "compat.BronzeToolMaterialMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}

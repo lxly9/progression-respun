@@ -1,0 +1,35 @@
+{
+  "block.progression_respun.flint_pebbles": "Flint Pebbles",
+
+  "tag.item.progression_respun.incorrect_for_flint_tool": "Incorrect for Flint Tool",
+
+  "item.progression_respun.tooltip.broken": "Broken!",
+
+  "item.progression_respun.flint_bar": "Flint Bar",
+  "item.progression_respun.copper_bar": "Copper Bar",
+  "item.progression_respun.iron_bar": "Iron Bar",
+  "item.progression_respun.gold_bar": "Gold Bar",
+  "item.progression_respun.diamond_bar": "Diamond Bar",
+  "item.progression_respun.raw_copper_bar": "Raw Copper Bar",
+  "item.progression_respun.raw_iron_bar": "Raw Iron Bar",
+  "item.progression_respun.raw_gold_bar": "Raw Gold Bar",
+
+  "item.progression_respun.flint_sword": "Flint Sword",
+  "item.progression_respun.flint_axe": "Flint Axe",
+  "item.progression_respun.flint_pickaxe": "Flint Pickaxe",
+  "item.progression_respun.flint_shovel": "Flint Shovel",
+  "item.progression_respun.flint_hoe": "Flint Hoe",
+
+  "item.progression_respun.copper_sword": "Copper Sword",
+  "item.progression_respun.copper_axe": "Copper Axe",
+  "item.progression_respun.copper_pickaxe": "Copper Pickaxe",
+  "item.progression_respun.copper_shovel": "Copper Shovel",
+  "item.progression_respun.copper_hoe": "Copper Hoe",
+
+  "item.progression_respun.bronze.bronze_bar": "Bronze Bar",
+  "item.progression_respun.bronze.bronze_blend_bar": "Bronze Blend Bar",
+
+  "item.progression_respun.betternether.cincinnasite_bar": "Cincinnasite Bar",
+  "item.progression_respun.betternether.raw_cincinnasite_bar": "Raw Cincinnasite Bar",
+  "item.progression_respun.betternether.nether_ruby_bar": "Nether Ruby Bar"
+}

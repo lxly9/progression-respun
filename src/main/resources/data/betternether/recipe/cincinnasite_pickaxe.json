@@ -4,7 +4,7 @@
   "group": "cincinnasite_pickaxe",
   "key": {
     "#": {
-      "item": "divergeprog:betternether/cincinnasite_bar"
+      "item": "progression_respun:betternether/cincinnasite_bar"
     },
     "I": {
       "item": "betternether:nether_reed_stem"

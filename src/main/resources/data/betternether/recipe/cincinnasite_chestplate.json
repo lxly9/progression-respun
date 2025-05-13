@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smithing_transform",
   "addition": {
-    "item": "divergeprog:betternether/cincinnasite_bar"
+    "item": "progression_respun:betternether/cincinnasite_bar"
   },
   "base": {
     "item": "minecraft:chainmail_chestplate"

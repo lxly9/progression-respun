@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "divergeprog:copper_pickaxe"
+            "items": "progression_respun:copper_pickaxe"
           }
         ]
       },
@@ -18,7 +18,7 @@
     },
     "icon": {
       "count": 1,
-      "id": "divergeprog:copper_pickaxe"
+      "id": "progression_respun:copper_pickaxe"
     },
     "title": {
       "translate": "advancements.story.upgrade_tools.title"
