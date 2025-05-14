@@ -5,7 +5,6 @@ import com.progression_respun.recipe.CrucibleRecipe;
 import com.progression_respun.recipe.CrucibleRecipeInput;
 import com.progression_respun.recipe.ModRecipes;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Waterloggable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
@@ -15,12 +14,9 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,14 +38,11 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
-                switch (index) {
-                    case 0:
-                        return CrucibleBlockEntity.this.progress;
-                    case 1:
-                        return CrucibleBlockEntity.this.maxProgress;
-                    default:
-                        return 0;
-                }
+                return switch (index) {
+                    case 0 -> CrucibleBlockEntity.this.progress;
+                    case 1 -> CrucibleBlockEntity.this.maxProgress;
+                    default -> 0;
+                };
             }
 
             @Override
@@ -145,7 +138,8 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
     }
 
     private Optional<RecipeEntry<CrucibleRecipe>> getCurrentRecipe() {
-        return this.getWorld().getRecipeManager().getFirstMatch(ModRecipes.CRUCIBLE_RECIPE_RECIPE_TYPE, new CrucibleRecipeInput(inventory.get(INPUT_SLOT)), this.getWorld());
+        assert this.getWorld() != null;
+        return this.getWorld().getRecipeManager().getFirstMatch(ModRecipes.CRUCIBLE_RECIPE_RECIPE_TYPE, new CrucibleRecipeInput(inventory.getFirst()), this.getWorld());
     }
 
     private boolean canInsertItemIntoOutputSlot(ItemStack output) {

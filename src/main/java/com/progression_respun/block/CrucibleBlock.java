@@ -8,7 +8,6 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
@@ -67,7 +66,6 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
     @Override
     protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        BlockState blockBelow = world.getBlockState(pos.offset(Direction.Axis.Y,-1));
         if (state.getBlock() != newState.getBlock()) {
             if (blockEntity instanceof CrucibleBlockEntity) {
                 ItemScatterer.spawn(world, pos,((CrucibleBlockEntity) blockEntity));
