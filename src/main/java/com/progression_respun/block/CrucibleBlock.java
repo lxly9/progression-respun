@@ -19,10 +19,9 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -37,6 +36,7 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
     private static final VoxelShape SHAPE = Block.createCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 11.0D, 14.0D);
     public static final BooleanProperty ONCAMPFIRE = BooleanProperty.of("on_campfire");
     public static final BooleanProperty HEATED = BooleanProperty.of("heated");
+    public static final DirectionProperty FACING;
 
     @Override
     protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -77,15 +77,7 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
         }
     }
 
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        BlockState blockBelow = world.getBlockState(pos.offset(Direction.Axis.Y,-1));
-        Boolean lit = blockBelow.get(Properties.LIT);
-        if (blockBelow.isIn(BlockTags.CAMPFIRES) && lit) {
-            world.setBlockState(pos, state.with(HEATED, true));
-        } else if (blockBelow.isIn(BlockTags.CAMPFIRES) && !lit) {
-            world.setBlockState(pos, state.with(ONCAMPFIRE, true));
-        }
-    }
+
 
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
@@ -140,11 +132,20 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
         builder.add(WATERLOGGED);
         builder.add(ONCAMPFIRE);
         builder.add(HEATED);
+        builder.add(FACING);
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
+        if (ctx.getWorld().getBlockState(ctx.getBlockPos().offset(Direction.Axis.Y,-1)).isIn(BlockTags.CAMPFIRES)) {
+            return this.getDefaultState()
+                    .with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).isOf(Fluids.WATER))
+                    .with(FACING, ctx.getHorizontalPlayerFacing())
+                    .with(HEATED, ctx.getWorld().getBlockState(ctx.getBlockPos().offset(Direction.Axis.Y,-1)).get(Properties.LIT))
+                    .with(ONCAMPFIRE, true);
+        }
         return this.getDefaultState()
-                .with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).isOf(Fluids.WATER));
+                .with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).isOf(Fluids.WATER))
+                .with(FACING, ctx.getHorizontalPlayerFacing());
     }
 
     @Override
@@ -158,4 +159,33 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
         return activated ? 7 : 0;
     }
 
+    protected BlockState rotate(BlockState state, BlockRotation rotation) {
+        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
+
+    protected BlockState mirror(BlockState state, BlockMirror mirror) {
+        return state.rotate(mirror.getRotation(state.get(FACING)));
+    }
+
+    static {
+        FACING = Properties.HORIZONTAL_FACING;
+    }
+
+    @Override
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (!world.isClient) {
+            BlockState blockBelow = world.getBlockState(pos.offset(Direction.Axis.Y, -1));
+            boolean isOnCampfire = blockBelow.isIn(BlockTags.CAMPFIRES);
+            boolean isHeated = isOnCampfire && blockBelow.get(Properties.LIT);
+
+            BlockState newState = state
+                    .with(ONCAMPFIRE, isOnCampfire)
+                    .with(HEATED, isHeated);
+
+            if (!state.equals(newState)) {
+                world.setBlockState(pos, newState, Block.NOTIFY_ALL);
+            }
+        }
+        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
+    }
 }

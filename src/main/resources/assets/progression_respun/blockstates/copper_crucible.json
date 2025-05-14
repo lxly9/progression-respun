@@ -1,16 +1,65 @@
+
 {
   "variants": {
-    "on_campfire=false,heated=false": {
+    "on_campfire=false,heated=false,facing=north": {
       "model": "progression_respun:block/copper_crucible"
     },
-    "on_campfire=true,heated=false": {
+    "on_campfire=false,heated=false,facing=east": {
+      "model": "progression_respun:block/copper_crucible",
+      "y": 90
+    },
+    "on_campfire=false,heated=false,facing=south": {
+      "model": "progression_respun:block/copper_crucible",
+      "y": 180
+    },
+    "on_campfire=false,heated=false,facing=west": {
+      "model": "progression_respun:block/copper_crucible",
+      "y": 270
+    },
+    "on_campfire=true,heated=false,facing=north": {
       "model": "progression_respun:block/copper_crucible_on_campfire"
     },
-    "on_campfire=false,heated=true": {
+    "on_campfire=true,heated=false,facing=east": {
+      "model": "progression_respun:block/copper_crucible_on_campfire",
+      "y": 90
+    },
+    "on_campfire=true,heated=false,facing=south": {
+      "model": "progression_respun:block/copper_crucible_on_campfire",
+      "y": 180
+    },
+    "on_campfire=true,heated=false,facing=west": {
+      "model": "progression_respun:block/copper_crucible_on_campfire",
+      "y": 270
+    },
+    "on_campfire=false,heated=true,facing=north": {
       "model": "progression_respun:block/copper_crucible_heated"
     },
-    "on_campfire=true,heated=true": {
+    "on_campfire=false,heated=true,facing=east": {
+      "model": "progression_respun:block/copper_crucible_heated",
+      "y": 90
+    },
+    "on_campfire=false,heated=true,facing=south": {
+      "model": "progression_respun:block/copper_crucible_heated",
+      "y": 180
+    },
+    "on_campfire=false,heated=true,facing=west": {
+      "model": "progression_respun:block/copper_crucible_heated",
+      "y": 270
+    },
+    "on_campfire=true,heated=true,facing=north": {
       "model": "progression_respun:block/copper_crucible_heated"
+    },
+    "on_campfire=true,heated=true,facing=east": {
+      "model": "progression_respun:block/copper_crucible_heated",
+      "y": 90
+    },
+    "on_campfire=true,heated=true,facing=south": {
+      "model": "progression_respun:block/copper_crucible_heated",
+      "y": 180
+    },
+    "on_campfire=true,heated=true,facing=west": {
+      "model": "progression_respun:block/copper_crucible_heated",
+      "y": 270
     }
   }
 }

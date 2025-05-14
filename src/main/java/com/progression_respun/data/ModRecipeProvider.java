@@ -1,5 +1,6 @@
 package com.progression_respun.data;
 
+import com.progression_respun.block.ModBlocks;
 import com.progression_respun.compat.EnderscapeItems;
 import com.progression_respun.compat.GalosphereItems;
 import com.progression_respun.item.ModItems;
@@ -59,6 +60,15 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         offerBlasting(exporter, List.of(ModItems.RAW_COPPER_BAR), RecipeCategory.MISC, ModItems.COPPER_BAR, 2.1f, 100, "copper_bar");
         offerBlasting(exporter, List.of(ModItems.RAW_IRON_BAR), RecipeCategory.MISC, ModItems.IRON_BAR, 2.1f, 100, "iron_bar");
         offerBlasting(exporter, List.of(ModItems.RAW_GOLD_BAR), RecipeCategory.MISC, ModItems.GOLD_BAR, 3.0f, 100, "gold_bar");
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, ModBlocks.CRUCIBLE_BLOCK)
+                        .input('S', Items.STICK)
+                        .input('X', Items.RAW_COPPER)
+                        .pattern("X X")
+                        .pattern("X X")
+                        .pattern("SXS")
+                        .criterion(hasItem(Items.RAW_COPPER), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
+                        .offerTo(exporter);
 
         // Flint Tools
 

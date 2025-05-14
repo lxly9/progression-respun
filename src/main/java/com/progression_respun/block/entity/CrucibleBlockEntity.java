@@ -1,5 +1,6 @@
 package com.progression_respun.block.entity;
 
+import com.progression_respun.block.CrucibleBlock;
 import com.progression_respun.recipe.CrucibleRecipe;
 import com.progression_respun.recipe.CrucibleRecipeInput;
 import com.progression_respun.recipe.ModRecipes;
@@ -16,6 +17,7 @@ import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -99,7 +101,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
-        if (isOnCampfire() && hasCrucibleRecipe()){
+        if (hasCrucibleRecipe() && state.get(CrucibleBlock.HEATED)) {
             increaseSmeltingProgress();
             markDirty(world, pos, state);
             if (hasSmeltingFinished()) {
@@ -109,11 +111,6 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
         } else {
             resetProgress();
         }
-    }
-
-    private boolean isOnCampfire() {
-        BlockState state = world.getBlockState(pos.offset(Direction.Axis.Y,-1));
-        return state.isIn(BlockTags.CAMPFIRES);
     }
 
     private void smeltItem() {
