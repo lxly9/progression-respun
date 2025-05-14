@@ -1,6 +1,7 @@
 package com.progression_respun.data;
 
 import com.progression_respun.block.ModBlockTags;
+import com.progression_respun.block.ModBlocks;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.block.Blocks;
@@ -27,5 +28,8 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                         Blocks.LAPIS_ORE,
                         Blocks.DEEPSLATE_LAPIS_ORE
                 );
+
+        getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
+                .add(ModBlocks.CRUCIBLE_BLOCK);
     }
 }

@@ -1,5 +1,6 @@
 {
   "block.progression_respun.flint_pebbles": "Flint Pebbles",
+  "block.progression_respun.copper_crucible": "Copper Crucible",
 
   "tag.item.progression_respun.incorrect_for_flint_tool": "Incorrect for Flint Tool",
 
@@ -24,12 +25,5 @@
   "item.progression_respun.copper_axe": "Copper Axe",
   "item.progression_respun.copper_pickaxe": "Copper Pickaxe",
   "item.progression_respun.copper_shovel": "Copper Shovel",
-  "item.progression_respun.copper_hoe": "Copper Hoe",
-
-  "item.progression_respun.bronze.bronze_bar": "Bronze Bar",
-  "item.progression_respun.bronze.bronze_blend_bar": "Bronze Blend Bar",
-
-  "item.progression_respun.betternether.cincinnasite_bar": "Cincinnasite Bar",
-  "item.progression_respun.betternether.raw_cincinnasite_bar": "Raw Cincinnasite Bar",
-  "item.progression_respun.betternether.nether_ruby_bar": "Nether Ruby Bar"
+  "item.progression_respun.copper_hoe": "Copper Hoe"
 }

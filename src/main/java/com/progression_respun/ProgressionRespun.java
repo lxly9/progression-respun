@@ -21,6 +21,7 @@ public class ProgressionRespun implements ModInitializer {
 		ModFeatures.initialize();
 		CompatMods.initialize();
 		ModRecipes.register();
+		ModBlocks.registerModBlocks();
 	}
 
 	public static Identifier id(String name) {
