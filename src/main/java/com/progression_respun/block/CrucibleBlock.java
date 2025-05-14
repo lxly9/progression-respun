@@ -8,12 +8,13 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -24,6 +25,7 @@ import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -32,8 +34,9 @@ import org.jetbrains.annotations.Nullable;
 public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvider, Waterloggable {
 
     public static final MapCodec<CrucibleBlock> CODEC = CrucibleBlock.createCodec(CrucibleBlock::new);
-
     private static final VoxelShape SHAPE = Block.createCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 11.0D, 14.0D);
+    public static final BooleanProperty ONCAMPFIRE = BooleanProperty.of("on_campfire");
+    public static final BooleanProperty HEATED = BooleanProperty.of("heated");
 
     @Override
     protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -42,6 +45,8 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
 
     public CrucibleBlock(Settings settings) {
         super(settings);
+        setDefaultState(getDefaultState().with(ONCAMPFIRE, false));
+        setDefaultState(getDefaultState().with(HEATED, false));
     }
 
     @Override
@@ -62,12 +67,23 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
     @Override
     protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
+        BlockState blockBelow = world.getBlockState(pos.offset(Direction.Axis.Y,-1));
         if (state.getBlock() != newState.getBlock()) {
             if (blockEntity instanceof CrucibleBlockEntity) {
                 ItemScatterer.spawn(world, pos,((CrucibleBlockEntity) blockEntity));
                 world.updateComparators(pos, this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
+        }
+    }
+
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        BlockState blockBelow = world.getBlockState(pos.offset(Direction.Axis.Y,-1));
+        Boolean lit = blockBelow.get(Properties.LIT);
+        if (blockBelow.isIn(BlockTags.CAMPFIRES) && lit) {
+            world.setBlockState(pos, state.with(HEATED, true));
+        } else if (blockBelow.isIn(BlockTags.CAMPFIRES) && !lit) {
+            world.setBlockState(pos, state.with(ONCAMPFIRE, true));
         }
     }
 
@@ -122,6 +138,8 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(WATERLOGGED);
+        builder.add(ONCAMPFIRE);
+        builder.add(HEATED);
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
@@ -133,4 +151,11 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
     public FluidState getFluidState(BlockState state) {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
+
+    public static int getLuminance(BlockState currentBlockState) {
+        boolean activated = currentBlockState.get(CrucibleBlock.HEATED);
+
+        return activated ? 7 : 0;
+    }
+
 }

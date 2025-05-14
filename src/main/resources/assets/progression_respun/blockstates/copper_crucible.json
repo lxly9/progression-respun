@@ -1,7 +1,16 @@
 {
   "variants": {
-    "": {
+    "on_campfire=false,heated=false": {
       "model": "progression_respun:block/copper_crucible"
+    },
+    "on_campfire=true,heated=false": {
+      "model": "progression_respun:block/copper_crucible_on_campfire"
+    },
+    "on_campfire=false,heated=true": {
+      "model": "progression_respun:block/copper_crucible_heated"
+    },
+    "on_campfire=true,heated=true": {
+      "model": "progression_respun:block/copper_crucible_heated"
     }
   }
 }

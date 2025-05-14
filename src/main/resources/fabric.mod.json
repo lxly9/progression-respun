@@ -19,6 +19,10 @@
 		"main": [
 			"com.progression_respun.ProgressionRespun"
 		],
+		"client": [
+			"com.progression_respun.ProgressionRespunClient"
+		],
+
 		"fabric-datagen": [
 			"com.progression_respun.ProgressionRespunDataGenerator"
 		]

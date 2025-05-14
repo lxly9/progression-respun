@@ -27,4 +27,5 @@ public class ProgressionRespun implements ModInitializer {
 	public static Identifier id(String name) {
 		return Identifier.of(MOD_ID, name);
 	}
+
 }

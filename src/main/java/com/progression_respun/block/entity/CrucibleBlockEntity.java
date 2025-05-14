@@ -113,8 +113,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
 
     private boolean isOnCampfire() {
         BlockState state = world.getBlockState(pos.offset(Direction.Axis.Y,-1));
-        state.isIn(BlockTags.CAMPFIRES);
-        return true;
+        return state.isIn(BlockTags.CAMPFIRES);
     }
 
     private void smeltItem() {
@@ -162,6 +161,4 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
 
         return maxCount >= currentCount + count;
     }
-
-
 }

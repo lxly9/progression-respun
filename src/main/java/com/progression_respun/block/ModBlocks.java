@@ -17,7 +17,7 @@ public class ModBlocks {
     public static final Block FLINT_PEBBLES = register(new PebblesBlock(AbstractBlock.Settings.create()
             .sounds(BlockSoundGroup.STONE).hardness(0.0f).noCollision()), "flint_pebbles", false);
 
-    public static final Block CRUCIBLE_BLOCK = register(new CrucibleBlock(AbstractBlock.Settings.create().nonOpaque().hardness(3.0F).sounds(BlockSoundGroup.COPPER_BULB)), "copper_crucible", true);
+    public static final Block CRUCIBLE_BLOCK = register(new CrucibleBlock(AbstractBlock.Settings.create().nonOpaque().hardness(3.0F).sounds(BlockSoundGroup.COPPER_BULB).luminance(CrucibleBlock::getLuminance)), "copper_crucible", true);
 
     private static Block register(Block block, String name, boolean hasItem) {
         Identifier id = ProgressionRespun.id(name);

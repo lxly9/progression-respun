@@ -22,8 +22,9 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"divergent-progression" {
+		"divergent_progression" {
 			sourceSet sourceSets.main
+			sourceSet sourceSets.client
 		}
 	}
 
