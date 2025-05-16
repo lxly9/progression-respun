@@ -16,6 +16,7 @@ public class ModItems {
     public static final Item RAW_COPPER_BAR = register(new Item(new Item.Settings()), "raw_copper_bar");
     public static final Item RAW_IRON_BAR = register(new Item(new Item.Settings()), "raw_iron_bar");
     public static final Item RAW_GOLD_BAR = register(new Item(new Item.Settings()), "raw_gold_bar");
+    public static final FlintAndSteelItem FIRESTARTER = (FlintAndSteelItem) register(new FlintAndSteelItem(new FlintAndSteelItem.Settings().maxDamage(16)), "firestarter");
 
     // Flint Tools
     public static final Item FLINT_SWORD = register(new SwordItem(ModToolMaterials.FLINT, new Item.Settings()
@@ -36,6 +37,8 @@ public class ModItems {
     private static Item register(Item item, String name) {
         return Registry.register(Registries.ITEM, ProgressionRespun.id(name), item);
     }
+
+
 
     public static void initialize() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
@@ -64,6 +67,7 @@ public class ModItems {
                     group.addAfter(Items.STONE_HOE,
                             COPPER_PICKAXE,
                             COPPER_AXE);
+                    group.addBefore(Items.FLINT_AND_STEEL, FIRESTARTER);
                 });
     }
 }

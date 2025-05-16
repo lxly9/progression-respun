@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_copper_crucible": {
+    "has_firestarter": {
       "conditions": {
         "items": [
           {
-            "items": "progression_respun:copper_crucible"
+            "items": "progression_respun:firestarter"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "progression_respun:copper_crucible"
+        "recipe": "progression_respun:firestarter"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_copper_crucible"
+      "has_firestarter"
     ]
   ],
   "rewards": {
     "recipes": [
-      "progression_respun:copper_crucible"
+      "progression_respun:firestarter"
     ]
   }
 }

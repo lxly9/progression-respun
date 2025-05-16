@@ -7,8 +7,10 @@ import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.CrucibleRecipeBuilder;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.minecraft.block.Blocks;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.SmithingTransformRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -61,13 +63,28 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         offerBlasting(exporter, List.of(ModItems.RAW_IRON_BAR), RecipeCategory.MISC, ModItems.IRON_BAR, 2.1f, 100, "iron_bar");
         offerBlasting(exporter, List.of(ModItems.RAW_GOLD_BAR), RecipeCategory.MISC, ModItems.GOLD_BAR, 3.0f, 100, "gold_bar");
 
-        ShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, ModBlocks.CRUCIBLE_BLOCK)
+
+        //shapeless
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FIRESTARTER)
+                .input(Items.FLINT,2)
+                .criterion(FabricRecipeProvider.hasItem(ModItems.FIRESTARTER), FabricRecipeProvider.conditionsFromItem(ModItems.FIRESTARTER))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModBlocks.CRUCIBLE_BLOCK)
                         .input('S', Items.STICK)
                         .input('X', Items.RAW_COPPER)
                         .pattern("X X")
                         .pattern("X X")
-                        .pattern("SXS")
-                        .criterion(hasItem(Items.RAW_COPPER), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
+                        .pattern(" X ")
+                        .criterion(hasItem(ModBlocks.CRUCIBLE_BLOCK), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
+                        .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.CAMPFIRE)
+                        .input('S', Items.STICK)
+                        .input('X', Items.RAW_COPPER)
+                        .pattern(" X ")
+                        .pattern("XSX")
+                        .criterion(hasItem(ModBlocks.CRUCIBLE_BLOCK), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
                         .offerTo(exporter);
 
         // Flint Tools
