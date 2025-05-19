@@ -8,6 +8,11 @@ import com.progression_respun.recipe.ModRecipes;
 import com.progression_respun.worldgen.ModFeatures;
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public class ProgressionRespun implements ModInitializer {
@@ -28,4 +33,8 @@ public class ProgressionRespun implements ModInitializer {
 		return Identifier.of(MOD_ID, name);
 	}
 
+	public static TrackedData<ItemStack> HEAD_UNDER_ARMOR = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
+	public static TrackedData<ItemStack> CHEST_UNDER_ARMOR = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
+	public static TrackedData<ItemStack> LEG_UNDER_ARMOR = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
+	public static TrackedData<ItemStack> FEET_UNDER_ARMOR = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
 }

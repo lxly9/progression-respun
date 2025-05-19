@@ -4,13 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AnvilScreenHandlerMixin",
-    "ArmorItemMixin",
     "CampfireBlockMixin",
     "ComponentHolderMixin",
     "ItemStackMixin",
     "PlayerEntityMixin",
-    "PlayerScreenHandlerMixin",
-    "ScreenHandlerMixin",
+    "PlayerEntityUnderArmorDataMixin",
     "ToolMaterialsMixin",
     "compat.BNToolMaterialMixin",
     "compat.BronzeToolMaterialMixin"
