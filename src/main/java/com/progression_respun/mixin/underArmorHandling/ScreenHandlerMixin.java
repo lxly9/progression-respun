@@ -18,45 +18,43 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ScreenHandler.class)
-    public class ScreenHandlerMixin {
-        @Inject(method = "internalOnSlotClick", at = @At("HEAD"), cancellable = true)
-        private void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
-            ScreenHandler self = (ScreenHandler)(Object)this;
-            if (slotIndex < 0 || slotIndex >= self.slots.size()) return;
+public class ScreenHandlerMixin {
 
-            Slot slot = self.getSlot(slotIndex);
-            if (slot == null) return;
+    @Inject(method = "internalOnSlotClick", at = @At("HEAD"), cancellable = true)
+    private void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
+        ScreenHandler self = (ScreenHandler)(Object)this;
+        if (slotIndex < 0 || slotIndex >= self.slots.size()) return;
 
-            // Only block placing, not picking up
-            ItemStack cursorStack = self.getCursorStack();
-            if (cursorStack.getItem() instanceof ArmorItem armorItem) {
-                EquipmentSlot equipSlot = armorItem.getSlotType();
+        Slot slot = self.getSlot(slotIndex);
+        if (slot == null) return;
 
-                int armorSlot = switch (equipSlot) {
-                    case FEET -> 36;
-                    case LEGS -> 37;
-                    case CHEST -> 38;
-                    case HEAD -> 39;
-                    default -> -1;
+        ItemStack cursorStack = self.getCursorStack();
+        if (cursorStack.getItem() instanceof ArmorItem armorItem) {
+            EquipmentSlot equipSlot = armorItem.getSlotType();
+
+            int armorSlot = switch (equipSlot) {
+                case FEET -> 36;
+                case LEGS -> 37;
+                case CHEST -> 38;
+                case HEAD -> 39;
+                default -> -1;
+            };
+
+            if (slot.getIndex() == armorSlot && slot.inventory instanceof PlayerInventory) {
+                String group = switch (equipSlot) {
+                    case HEAD -> "head";
+                    case CHEST -> "chest";
+                    case LEGS -> "legs";
+                    case FEET -> "feet";
+                    default -> null;
                 };
 
-                if (slot.getIndex() == armorSlot && slot.inventory instanceof PlayerInventory) {
-                    String group = switch (equipSlot) {
-                        case HEAD -> "head";
-                        case CHEST -> "chest";
-                        case LEGS -> "legs";
-                        case FEET -> "feet";
-                        default -> null;
-                    };
+                if (group != null) {
+                    Identifier tagId = Identifier.of("trinkets", group + "/under_armor_" + group);
+                    boolean hasUnderArmor = TrinketsApi.getTrinketComponent(player).map(tc -> tc.isEquipped(itemStack -> itemStack.isIn(TagKey.of(RegistryKeys.ITEM, tagId)))).orElse(false);
 
-                    if (group != null) {
-                        Identifier tagId = Identifier.of("trinkets", group + "/under_armor_" + group);
-                        boolean hasUnderArmor = TrinketsApi.getTrinketComponent(player)
-                                .map(tc -> tc.isEquipped(itemStack -> itemStack.isIn(TagKey.of(RegistryKeys.ITEM, tagId))))
-                                .orElse(false);
-
-                        if (!hasUnderArmor) {
-                            ci.cancel(); // Block placing, item stays at cursor
+                    if (!hasUnderArmor) {
+                            ci.cancel();
                     }
                 }
             }

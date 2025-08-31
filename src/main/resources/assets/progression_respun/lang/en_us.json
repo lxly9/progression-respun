@@ -27,5 +27,10 @@
   "item.progression_respun.copper_axe": "Copper Axe",
   "item.progression_respun.copper_pickaxe": "Copper Pickaxe",
   "item.progression_respun.copper_shovel": "Copper Shovel",
-  "item.progression_respun.copper_hoe": "Copper Hoe"
+  "item.progression_respun.copper_hoe": "Copper Hoe",
+
+  "trinkets.slot.head.under_armor_head":  "Coif",
+  "trinkets.slot.chest.under_armor_chest":  "Gambeson",
+  "trinkets.slot.legs.under_armor_legs":  "Chausses",
+  "trinkets.slot.feet.under_armor_feet":  "Booties"
 }
