@@ -8,11 +8,11 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class ModRecipes {
-    public static RecipeSerializer<CrucibleRecipe> CRUCIBLE_RECIPE_RECIPE_SERIALIZER;
-    public static RecipeType<CrucibleRecipe> CRUCIBLE_RECIPE_RECIPE_TYPE;
+    public static RecipeSerializer<CrucibleRecipe> CRUCIBLE_RECIPE_SERIALIZER;
+    public static RecipeType<CrucibleRecipe> CRUCIBLE_RECIPE_TYPE;
 
     public static void register() {
-        CRUCIBLE_RECIPE_RECIPE_TYPE = Registry.register(
+        CRUCIBLE_RECIPE_TYPE = Registry.register(
                 Registries.RECIPE_TYPE,
                 Identifier.of(ProgressionRespun.MOD_ID, "crucible"),
                 new RecipeType<CrucibleRecipe>() {
@@ -23,7 +23,7 @@ public class ModRecipes {
                 }
         );
 
-        CRUCIBLE_RECIPE_RECIPE_SERIALIZER = Registry.register(
+        CRUCIBLE_RECIPE_SERIALIZER = Registry.register(
                 Registries.RECIPE_SERIALIZER,
                 Identifier.of(ProgressionRespun.MOD_ID, "crucible"),
                 new CrucibleRecipe.Serializer()

@@ -47,12 +47,12 @@ public record CrucibleRecipe(Ingredient inputItem, ItemStack output) implements 
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.CRUCIBLE_RECIPE_RECIPE_SERIALIZER;
+        return ModRecipes.CRUCIBLE_RECIPE_SERIALIZER;
     }
 
     @Override
     public RecipeType<?> getType() {
-        return ModRecipes.CRUCIBLE_RECIPE_RECIPE_TYPE;
+        return ModRecipes.CRUCIBLE_RECIPE_TYPE;
     }
 
     public static class Serializer implements RecipeSerializer<CrucibleRecipe> {

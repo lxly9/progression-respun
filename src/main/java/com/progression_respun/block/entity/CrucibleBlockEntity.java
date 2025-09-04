@@ -139,7 +139,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
 
     private Optional<RecipeEntry<CrucibleRecipe>> getCurrentRecipe() {
         assert this.getWorld() != null;
-        return this.getWorld().getRecipeManager().getFirstMatch(ModRecipes.CRUCIBLE_RECIPE_RECIPE_TYPE, new CrucibleRecipeInput(inventory.getFirst()), this.getWorld());
+        return this.getWorld().getRecipeManager().getFirstMatch(ModRecipes.CRUCIBLE_RECIPE_TYPE, new CrucibleRecipeInput(inventory.getFirst()), this.getWorld());
     }
 
     private boolean canInsertItemIntoOutputSlot(ItemStack output) {
