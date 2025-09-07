@@ -6,7 +6,9 @@ import com.progression_respun.compat.CompatMods;
 import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.ModRecipes;
 import com.progression_respun.worldgen.ModFeatures;
+import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.util.Identifier;
 
 public class ProgressionRespun implements ModInitializer {
@@ -21,6 +23,19 @@ public class ProgressionRespun implements ModInitializer {
 		CompatMods.initialize();
 		ModRecipes.register();
 		ModBlocks.registerModBlocks();
+		registerTrinketPredicates();
+	}
+
+	public static void registerTrinketPredicates() {
+		TrinketsApi.registerTrinketPredicate(
+				Identifier.of("progression_respun", "equippable_if_not_broken"), (stack, slot, entity) -> {
+					if (stack.getDamage() >= stack.getMaxDamage()) {
+						return TriState.FALSE;
+					} else {
+						return TriState.DEFAULT;
+					}
+				}
+		);
 	}
 
 	public static Identifier id(String name) {

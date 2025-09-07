@@ -1,7 +1,6 @@
-package com.progression_respun.mixin;
+package com.progression_respun.mixin.underArmorHandling;
 
 import dev.emi.trinkets.api.TrinketsApi;
-import dev.emi.trinkets.api.TrinketInventory;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -24,40 +23,55 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 
+import static com.progression_respun.data.ModItemTagProvider.BYPASSES_UNDER_ARMOR;
+
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
 
-    @Shadow public abstract void sendEquipmentBreakStatus(Item item, EquipmentSlot slot);
-
     @Shadow @Final private static Logger LOGGER;
 
-    @Inject(method = "damageArmor", at = @At("HEAD"))
-    private void damageUnderArmor(DamageSource source, float amount, CallbackInfo ci) {
-        if (((Object) this) instanceof PlayerEntity playerEntity) {
+    @Inject(method = "damageEquipment", at = @At("HEAD"))
+    private void damageUnderArmor(DamageSource source, float amount, EquipmentSlot[] slots, CallbackInfo ci) {
+        if (((Object) this) instanceof PlayerEntity player) {
             if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR)) {
-                int damage = Math.round(amount / 2.0f);
+                int damage = 0;
+                if (player.getRandom().nextFloat() < 0.5f) {
+                    damage = Math.round(amount);
+                }
                 if (damage <= 0) return;
 
-                TrinketsApi.getTrinketComponent(playerEntity).ifPresent(component -> {
-                    Map<String, Map<String, TrinketInventory>> inventory = component.getInventory();
+                TrinketsApi.getTrinketComponent(player).ifPresent(component -> {
+                    Map<EquipmentSlot, Identifier> slotTagMap = Map.of(
+                            EquipmentSlot.HEAD, Identifier.of("trinkets", "head/under_armor_head"),
+                            EquipmentSlot.CHEST, Identifier.of("trinkets", "chest/under_armor_chest"),
+                            EquipmentSlot.LEGS, Identifier.of("trinkets", "legs/under_armor_legs"),
+                            EquipmentSlot.FEET, Identifier.of("trinkets", "feet/under_armor_feet")
+                    );
 
-                    for (Map<String, TrinketInventory> group : inventory.values()) {
-                        for (TrinketInventory trinketInv : group.values()) {
-                            for (int i = 0; i < trinketInv.size(); i++) {
-                                ItemStack stack = trinketInv.getStack(i);
-                                Item item = stack.getItem();
-                                if (!stack.isEmpty() && stack.getItem() instanceof ArmorItem armorItem) {
-                                    EquipmentSlot slot = armorItem.getSlotType();
-                                    sendEquipmentBreakStatus(item, slot);
+                    for (Map.Entry<EquipmentSlot, Identifier> entry : slotTagMap.entrySet()) {
+                        EquipmentSlot armorSlot = entry.getKey();
+                        Identifier trinketTagId = entry.getValue();
+
+                        ItemStack stack = player.getEquippedStack(armorSlot);
+                        if (!stack.isEmpty() && stack.getItem() instanceof ArmorItem armorItem) {
+                            EquipmentSlot slot = armorItem.getSlotType();
+
+                            TagKey<Item> trinketTag = TagKey.of(RegistryKeys.ITEM, trinketTagId);
+
+                            component.getEquipped(underArmorItem -> underArmorItem.isIn(trinketTag)).forEach(pair -> {
+                                ItemStack trinketStack = pair.getRight();
+                                if (!trinketStack.isEmpty()) {
+                                    trinketStack.damage(1, player, slot);
                                 }
-                            }
+                            });
+
                         }
                     }
                 });
-
             }
         }
     }
+
     @Inject(method = "getPreferredEquipmentSlot", at = @At("HEAD"), cancellable = true)
     private void redirectArmorIfNoUnderArmor(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> ci) {
         if (stack.getItem() instanceof ArmorItem armorItem) {
@@ -78,7 +92,11 @@ public abstract class LivingEntityMixin {
 
                     boolean hasUnderArmor = TrinketsApi.getTrinketComponent(player).map(tc -> tc.isEquipped(stack2 -> stack2.isIn(TagKey.of(RegistryKeys.ITEM, tagId)))).orElse(false);
 
-                    if (!hasUnderArmor) {
+                    if (stack.getDamage() >= stack.getMaxDamage()) {
+                        ci.setReturnValue(EquipmentSlot.MAINHAND);
+                    }
+
+                    if (!hasUnderArmor && !stack.isIn(BYPASSES_UNDER_ARMOR)) {
                         ci.setReturnValue(EquipmentSlot.MAINHAND);
                     }
                 }

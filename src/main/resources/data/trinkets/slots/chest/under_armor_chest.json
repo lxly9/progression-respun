@@ -2,7 +2,7 @@
   "amount": 1,
   "order": 0,
   "icon": "trinkets:gui/slots/empty",
-  "validator_predicates": ["trinkets:tag"],
-  "quick_move_predicates": ["trinkets:all"],
-  "tooltip_predicates": ["trinkets:all"]
+  "validator_predicates": ["trinkets:tag","progression_respun:equippable_if_not_broken"],
+  "quick_move_predicates": ["trinkets:tag"],
+  "tooltip_predicates": ["trinkets:tag"]
 }

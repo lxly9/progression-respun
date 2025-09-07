@@ -8,7 +8,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -24,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
+
+import static com.progression_respun.data.ModItemTagProvider.BYPASSES_UNDER_ARMOR;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
@@ -52,7 +53,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     private void canEquipArmor(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if ((Object)this instanceof PlayerEntity player) {
             if (stack.getItem() instanceof ArmorItem armorItem) {
-                LOGGER.info("gay");
                 EquipmentSlot equipSlot = armorItem.getSlotType();
 
                 String group = switch (equipSlot) {
@@ -70,7 +70,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                             .map(tc -> tc.isEquipped(itemStack -> itemStack.isIn(TagKey.of(RegistryKeys.ITEM, tagId))))
                             .orElse(false);
 
-                    if (!hasUnderArmor) {
+                    if (!hasUnderArmor && !stack.isIn(BYPASSES_UNDER_ARMOR) && !(stack.getDamage() >= stack.getMaxDamage())) {
                         cir.setReturnValue(false);
                     }
                 }
@@ -100,7 +100,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
                 if (!hasTrinket) {
                     ItemStack armorStack = player.getEquippedStack(armorSlot);
-                    if (!armorStack.isEmpty()) {
+                    if (!armorStack.isEmpty() && (!armorStack.isIn(BYPASSES_UNDER_ARMOR) || armorStack.getDamage() >= armorStack.getMaxDamage())) {
                         boolean inserted = player.getInventory().insertStack(armorStack);
                         if (!inserted) {
                             player.dropItem(armorStack, true);

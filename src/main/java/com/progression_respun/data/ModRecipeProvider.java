@@ -70,20 +70,22 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(FabricRecipeProvider.hasItem(ModItems.FIRESTARTER), FabricRecipeProvider.conditionsFromItem(ModItems.FIRESTARTER))
                 .offerTo(exporter);
 
+        //shaped
+
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModBlocks.CRUCIBLE_BLOCK)
-                        .input('S', Items.STICK)
+                        .input('#', Items.STICK)
                         .input('X', Items.RAW_COPPER)
                         .pattern("X X")
                         .pattern("X X")
-                        .pattern(" X ")
+                        .pattern("#X#")
                         .criterion(hasItem(ModBlocks.CRUCIBLE_BLOCK), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
                         .offerTo(exporter);
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.CAMPFIRE)
-                        .input('S', Items.STICK)
+                        .input('#', Items.STICK)
                         .input('X', Items.RAW_COPPER)
                         .pattern(" X ")
-                        .pattern("XSX")
+                        .pattern("X#X")
                         .criterion(hasItem(ModBlocks.CRUCIBLE_BLOCK), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
                         .offerTo(exporter);
 

@@ -7,13 +7,12 @@
     "CampfireBlockMixin",
     "ComponentHolderMixin",
     "ItemStackMixin",
-    "LivingEntityMixin",
     "ToolMaterialsMixin",
     "compat.BNToolMaterialMixin",
     "compat.BronzeToolMaterialMixin",
+    "underArmorHandling.LivingEntityMixin",
     "underArmorHandling.ArmorItemMixin",
-    "underArmorHandling.PlayerEntityMixin",
-    "underArmorHandling.ScreenHandlerMixin"
+    "underArmorHandling.PlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
