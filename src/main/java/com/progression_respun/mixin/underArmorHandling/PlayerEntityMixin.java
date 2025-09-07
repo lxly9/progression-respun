@@ -94,11 +94,11 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                 EquipmentSlot armorSlot = entry.getKey();
                 Identifier trinketTagId = entry.getValue();
 
-                boolean hasTrinket = component.isEquipped(stack ->
-                        stack.isIn(TagKey.of(RegistryKeys.ITEM, trinketTagId))
+                boolean hasValidTrinket = component.isEquipped(stack ->
+                        stack.isIn(TagKey.of(RegistryKeys.ITEM, trinketTagId)) && stack.getDamage() < stack.getMaxDamage()
                 );
 
-                if (!hasTrinket) {
+                if (!hasValidTrinket) {
                     ItemStack armorStack = player.getEquippedStack(armorSlot);
                     if (!armorStack.isEmpty() && (!armorStack.isIn(BYPASSES_UNDER_ARMOR) || armorStack.getDamage() >= armorStack.getMaxDamage())) {
                         boolean inserted = player.getInventory().insertStack(armorStack);
@@ -111,4 +111,5 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             }
         });
     }
+
 }
