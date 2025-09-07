@@ -10,12 +10,11 @@
     }
   },
   "pattern": [
-    "X X",
-    "X X",
-    "#X#"
+    " X ",
+    "X#X"
   ],
   "result": {
     "count": 1,
-    "id": "progression_respun:copper_crucible"
+    "id": "minecraft:campfire"
   }
 }

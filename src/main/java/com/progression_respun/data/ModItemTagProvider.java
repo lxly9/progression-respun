@@ -51,7 +51,9 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                 );
         getOrCreateTagBuilder(BYPASSES_UNDER_ARMOR)
                 .add(
-                        Items.TURTLE_HELMET
+                        Items.TURTLE_HELMET,
+                        Items.CARVED_PUMPKIN,
+                        Items.ELYTRA
                 );
         if (GALOSPHERE) {
             getOrCreateTagBuilder(ConventionalItemTags.RAW_MATERIALS)

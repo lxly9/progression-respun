@@ -20,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 
@@ -47,35 +46,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             return null;
         }
         return itemStack.getItem();
-    }
-
-    @Inject(method = "canEquip", at = @At("HEAD"), cancellable = true)
-    private void canEquipArmor(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if ((Object)this instanceof PlayerEntity player) {
-            if (stack.getItem() instanceof ArmorItem armorItem) {
-                EquipmentSlot equipSlot = armorItem.getSlotType();
-
-                String group = switch (equipSlot) {
-                    case HEAD -> "head";
-                    case CHEST -> "chest";
-                    case LEGS -> "legs";
-                    case FEET -> "feet";
-                    default -> null;
-                };
-
-                if (group != null) {
-                    Identifier tagId = Identifier.of("trinkets", group + "/under_armor_" + group);
-
-                    boolean hasUnderArmor = TrinketsApi.getTrinketComponent(player)
-                            .map(tc -> tc.isEquipped(itemStack -> itemStack.isIn(TagKey.of(RegistryKeys.ITEM, tagId))))
-                            .orElse(false);
-
-                    if (!hasUnderArmor && !stack.isIn(BYPASSES_UNDER_ARMOR) && !(stack.getDamage() >= stack.getMaxDamage())) {
-                        cir.setReturnValue(false);
-                    }
-                }
-            }
-        }
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -111,5 +81,4 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             }
         });
     }
-
 }

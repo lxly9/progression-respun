@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.progression_respun.data.ModItemTagProvider.BYPASSES_UNDER_ARMOR;
 
@@ -61,8 +62,11 @@ public abstract class LivingEntityMixin {
 
                         component.getEquipped(trinketStack -> trinketStack.isIn(trinketTag)).forEach(pair -> {
                             ItemStack underArmorStack = pair.getRight();
-                            if (!underArmorStack.isEmpty()) {
-                                underArmorStack.damage(damageToApply, player, armorSlot);
+
+                            if (!underArmorStack.isEmpty() && underArmorStack.getItem() instanceof ArmorItem armor) {
+                                int armorPoints = armor.getProtection();
+                                int scaledDamage = Math.max(1, Math.round(damageToApply * (armorPoints / 5f)));
+                                underArmorStack.damage(scaledDamage, player, armorSlot);
                             }
                         });
                     }
@@ -91,7 +95,7 @@ public abstract class LivingEntityMixin {
                     Identifier tagId = Identifier.of("trinkets", group + "/under_armor_" + group);
 
                     boolean hasValidUnderArmor = TrinketsApi.getTrinketComponent(player)
-                            .map(tc -> tc.isEquipped(stack2 ->
+                            .map(component -> component.isEquipped(stack2 ->
                                     stack2.isIn(TagKey.of(RegistryKeys.ITEM, tagId)) && stack2.getDamage() < stack2.getMaxDamage()
                             ))
                             .orElse(false);
@@ -108,4 +112,20 @@ public abstract class LivingEntityMixin {
         }
     }
 
+    @Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
+    private void addUnderArmor(CallbackInfoReturnable<Integer> ci) {
+        if ((Object)this instanceof PlayerEntity player) {
+            TrinketsApi.getTrinketComponent(player).ifPresent(component -> {
+                AtomicInteger bonusArmor = new AtomicInteger();
+                component.getEquipped(stack -> stack.getItem() instanceof ArmorItem).forEach(pair -> {
+                    ItemStack stack = pair.getRight();
+
+                    if (stack.getDamage() >= stack.getMaxDamage()) return;
+                    ArmorItem armor = (ArmorItem) pair.getRight().getItem();
+                    bonusArmor.addAndGet(armor.getProtection());
+                });
+                ci.setReturnValue(ci.getReturnValue() + bonusArmor.get());
+            });
+        }
+    }
 }
