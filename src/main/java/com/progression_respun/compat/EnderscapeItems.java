@@ -9,19 +9,15 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class EnderscapeItems {
-    public static Identifier SHADOLINE_BAR_ID = ProgressionRespun.id("enderscape/silver_bar");
-    public static Item SHADOLINE_BAR;
 
     public static Identifier RAW_SHADOLINE_BAR_ID = ProgressionRespun.id("enderscape/raw_silver_bar");
     public static Item RAW_SHADOLINE_BAR;
 
     public static void initialize() {
-        SHADOLINE_BAR = register(new Item(new Item.Settings()), SHADOLINE_BAR_ID);
         RAW_SHADOLINE_BAR = register(new Item(new Item.Settings()), RAW_SHADOLINE_BAR_ID);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(group -> {
-                    group.add(SHADOLINE_BAR);
                     group.add(RAW_SHADOLINE_BAR);
                 });
     }

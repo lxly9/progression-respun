@@ -3,10 +3,12 @@
   "block.progression_respun.copper_crucible": "Copper Crucible",
 
   "tag.item.progression_respun.incorrect_for_flint_tool": "Incorrect for Flint Tool",
+  "tag.item.progression_respun.needs_under_armor": "Needs corresponding Under Armor to be equipped.",
 
-  "item.progression_respun.tooltip.broken": "Broken!",
+  "item.progression_respun.tooltip.broken": "Broken! Repair to use it again!",
 
   "item.progression_respun.flint_bar": "Flint Bar",
+  "item.progression_respun.minecraft.copper_nugget": "Copper Nugget",
   "item.progression_respun.copper_bar": "Copper Bar",
   "item.progression_respun.iron_bar": "Iron Bar",
   "item.progression_respun.gold_bar": "Gold Bar",

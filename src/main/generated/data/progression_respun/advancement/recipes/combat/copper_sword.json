@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_copper_bar": {
+    "has_copper_ingot": {
       "conditions": {
         "items": [
           {
-            "items": "progression_respun:copper_bar"
+            "items": "minecraft:copper_ingot"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_copper_bar"
+      "has_copper_ingot"
     ]
   ],
   "rewards": {

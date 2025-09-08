@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 2.1,
+  "group": "copper_ingot",
+  "ingredient": {
+    "item": "progression_respun:raw_copper_bar"
+  },
+  "result": {
+    "id": "minecraft:copper_ingot"
+  }
+}

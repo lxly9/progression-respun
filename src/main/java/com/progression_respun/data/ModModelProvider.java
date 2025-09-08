@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.progression_respun.item.ModItems.*;
+import static com.progression_respun.compat.VanillaItems.*;
 import static com.progression_respun.compat.GalosphereItems.*;
 import static com.progression_respun.compat.EnderscapeItems.*;
 
@@ -26,8 +27,9 @@ public class ModModelProvider extends FabricModelProvider {
     );
     public static final Map<Model, List<Identifier>> COMPAT_ITEM_MODEL_LISTS = Map.ofEntries(
             Map.entry(Models.GENERATED, List.of(
-                    SILVER_BAR_ID, RAW_SILVER_BAR_ID,
-                    SHADOLINE_BAR_ID, RAW_SHADOLINE_BAR_ID
+                    RAW_SILVER_BAR_ID,
+                    RAW_SHADOLINE_BAR_ID,
+                    COPPER_NUGGET_ID
             ))
     );
     public static final Map<Model, List<Block>> BLOCK_MODEL_LISTS = Map.ofEntries(

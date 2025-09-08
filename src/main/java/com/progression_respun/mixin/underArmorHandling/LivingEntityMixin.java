@@ -49,7 +49,7 @@ public abstract class LivingEntityMixin {
                         int damageToApply;
 
                         if (!armorStack.isEmpty() && armorStack.getItem() instanceof ArmorItem) {
-                            if (player.getRandom().nextFloat() < 0.5f) {
+                            if (player.getRandom().nextFloat() < 0.25f) {
                                 damageToApply = Math.round(amount);
                             } else {
                                 damageToApply = 0;
@@ -63,9 +63,10 @@ public abstract class LivingEntityMixin {
                         component.getEquipped(trinketStack -> trinketStack.isIn(trinketTag)).forEach(pair -> {
                             ItemStack underArmorStack = pair.getRight();
 
-                            if (!underArmorStack.isEmpty() && underArmorStack.getItem() instanceof ArmorItem armor) {
+                            if (!underArmorStack.isEmpty() && underArmorStack.getItem() instanceof ArmorItem armor && armorStack.getItem() instanceof ArmorItem armorItem) {
                                 int armorPoints = armor.getProtection();
-                                int scaledDamage = Math.max(1, Math.round(damageToApply * (armorPoints / 5f)));
+                                int armorPoints1 = armorItem.getProtection();
+                                int scaledDamage = Math.max(1, Math.round(damageToApply * (armorPoints / 5f) * (armorPoints1 / 5f)));
                                 underArmorStack.damage(scaledDamage, player, armorSlot);
                             }
                         });
@@ -74,7 +75,6 @@ public abstract class LivingEntityMixin {
             }
         }
     }
-
 
     @Inject(method = "getPreferredEquipmentSlot", at = @At("HEAD"), cancellable = true)
     private void redirectArmorIfNoUnderArmor(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> ci) {
