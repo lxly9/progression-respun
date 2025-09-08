@@ -1,6 +1,7 @@
 package com.progression_respun.data;
 
 import com.progression_respun.block.ModBlocks;
+import com.progression_respun.compat.VanillaItems;
 import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.CrucibleRecipeBuilder;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -26,12 +27,12 @@ public class ModRecipeProvider extends FabricRecipeProvider {
     public void generate(RecipeExporter exporter) {
 
         //Crucible
-        offerCrucibleRecipe(exporter, Items.RAW_COPPER, Items.COPPER_INGOT, 1);
-        offerCrucibleRecipe(exporter, Items.RAW_GOLD, Items.GOLD_INGOT, 1);
-        offerCrucibleRecipe(exporter, Items.RAW_IRON, Items.IRON_INGOT, 1);
-        offerCrucibleRecipe(exporter, ModItems.RAW_COPPER_BAR, Items.COPPER_INGOT, 1);
-        offerCrucibleRecipe(exporter, ModItems.RAW_GOLD_BAR, Items.GOLD_INGOT, 1);
-        offerCrucibleRecipe(exporter, ModItems.RAW_IRON_BAR, Items.IRON_INGOT, 1);
+        offerCrucibleRecipe(exporter, Items.RAW_COPPER, VanillaItems.COPPER_NUGGET);
+        offerCrucibleRecipe(exporter, Items.RAW_GOLD, Items.GOLD_NUGGET);
+        offerCrucibleRecipe(exporter, Items.RAW_IRON, Items.IRON_NUGGET);
+        offerCrucibleRecipe(exporter, ModItems.RAW_COPPER_BAR, Items.COPPER_INGOT);
+        offerCrucibleRecipe(exporter, ModItems.RAW_GOLD_BAR, Items.GOLD_INGOT);
+        offerCrucibleRecipe(exporter, ModItems.RAW_IRON_BAR, Items.IRON_INGOT);
 
         // Bars
 
@@ -41,9 +42,6 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
         //smelting
 
-        offerSmelting(exporter, List.of(ModItems.RAW_COPPER_BAR), RecipeCategory.MISC, Items.COPPER_INGOT, 2.1f, 200, "copper_ingot");
-        offerSmelting(exporter, List.of(ModItems.RAW_IRON_BAR), RecipeCategory.MISC, Items.IRON_INGOT, 2.1f, 200, "iron_ingot");
-        offerSmelting(exporter, List.of(ModItems.RAW_GOLD_BAR), RecipeCategory.MISC, Items.GOLD_INGOT, 3.0f, 200, "gold_ingot");
         offerBlasting(exporter, List.of(ModItems.RAW_COPPER_BAR), RecipeCategory.MISC, Items.COPPER_INGOT, 2.1f, 100, "copper_ingot");
         offerBlasting(exporter, List.of(ModItems.RAW_IRON_BAR), RecipeCategory.MISC, Items.IRON_INGOT, 2.1f, 100, "iron_ingot");
         offerBlasting(exporter, List.of(ModItems.RAW_GOLD_BAR), RecipeCategory.MISC, Items.GOLD_INGOT, 3.0f, 100, "gold_ingot");
@@ -53,6 +51,11 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         ShapelessRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FIRESTARTER)
                 .input(Items.FLINT,2)
                 .criterion(FabricRecipeProvider.hasItem(ModItems.FIRESTARTER), FabricRecipeProvider.conditionsFromItem(ModItems.FIRESTARTER))
+                .offerTo(exporter);
+
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, Items.COPPER_INGOT)
+                .input(VanillaItems.COPPER_NUGGET,9)
+                .criterion(FabricRecipeProvider.hasItem(VanillaItems.COPPER_NUGGET), FabricRecipeProvider.conditionsFromItem(VanillaItems.COPPER_NUGGET))
                 .offerTo(exporter);
 
         //shaped
@@ -71,14 +74,14 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .input('X', Items.RAW_COPPER)
                 .pattern(" X ")
                 .pattern("X#X")
-                .criterion(hasItem(ModBlocks.CRUCIBLE_BLOCK), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
+                .criterion(hasItem(Blocks.CAMPFIRE), conditionsFromItem(Blocks.CAMPFIRE))
                 .offerTo(exporter);
 
         // Flint Tools
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, ModItems.FLINT_SWORD)
                 .input('#', Items.STICK)
-                .input('X', ModItems.FLINT_BAR)
+                .input('X', Items.FLINT)
                 .pattern("X")
                 .pattern("X")
                 .pattern("#")
@@ -87,7 +90,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_PICKAXE)
                 .input('#', Items.STICK)
-                .input('X', ModItems.FLINT_BAR)
+                .input('X', Items.FLINT)
                 .pattern("XXX")
                 .pattern(" # ")
                 .pattern(" # ")
@@ -96,7 +99,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_AXE)
                 .input('#', Items.STICK)
-                .input('X', ModItems.FLINT_BAR)
+                .input('X', Items.FLINT)
                 .pattern("XX")
                 .pattern("X#")
                 .pattern(" #")
@@ -142,8 +145,8 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
 
-    private void offerCrucibleRecipe(RecipeExporter exporter, Item input, Item output, int count) {
-        CrucibleRecipeBuilder.create(input.asItem(), output, count)
+    private void offerCrucibleRecipe(RecipeExporter exporter, Item input, Item output) {
+        CrucibleRecipeBuilder.create(input.asItem(), output, 1)
                 .criterion(hasItem(input), conditionsFromItem(input))
                 .offerTo(exporter);
     }

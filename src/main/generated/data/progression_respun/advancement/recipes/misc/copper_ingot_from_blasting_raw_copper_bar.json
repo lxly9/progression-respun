@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:copper_ingot_from_blasting_raw_copper_bar"
+        "recipe": "progression_respun:copper_ingot_from_blasting_raw_copper_bar"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:copper_ingot_from_blasting_raw_copper_bar"
+      "progression_respun:copper_ingot_from_blasting_raw_copper_bar"
     ]
   }
 }

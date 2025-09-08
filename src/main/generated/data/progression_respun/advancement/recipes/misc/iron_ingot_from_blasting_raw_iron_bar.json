@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:iron_ingot_from_blasting_raw_iron_bar"
+        "recipe": "progression_respun:iron_ingot_from_blasting_raw_iron_bar"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:iron_ingot_from_blasting_raw_iron_bar"
+      "progression_respun:iron_ingot_from_blasting_raw_iron_bar"
     ]
   }
 }

@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_copper_crucible": {
+    "has_campfire": {
       "conditions": {
         "items": [
           {
-            "items": "progression_respun:copper_crucible"
+            "items": "minecraft:campfire"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:campfire"
+        "recipe": "progression_respun:campfire"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_copper_crucible"
+      "has_campfire"
     ]
   ],
   "rewards": {
     "recipes": [
-      "minecraft:campfire"
+      "progression_respun:campfire"
     ]
   }
 }

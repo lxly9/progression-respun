@@ -6,13 +6,12 @@ import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
+import static com.progression_respun.compat.VanillaItems.COPPER_NUGGET;
+
 public class ModItems {
     // Bars
     public static final Item FLINT_BAR = register(new Item(new Item.Settings()), "flint_bar");
-    public static final Item COPPER_BAR = register(new Item(new Item.Settings()), "copper_bar");
-    public static final Item IRON_BAR = register(new Item(new Item.Settings()), "iron_bar");
-    public static final Item GOLD_BAR = register(new Item(new Item.Settings()), "gold_bar");
-    public static final Item DIAMOND_BAR = register(new Item(new Item.Settings()), "diamond_bar");
+    public static final Item POLISHED_DIAMOND = register(new Item(new Item.Settings()), "polished_diamond");
     public static final Item RAW_COPPER_BAR = register(new Item(new Item.Settings()), "raw_copper_bar");
     public static final Item RAW_IRON_BAR = register(new Item(new Item.Settings()), "raw_iron_bar");
     public static final Item RAW_GOLD_BAR = register(new Item(new Item.Settings()), "raw_gold_bar");
@@ -38,16 +37,12 @@ public class ModItems {
         return Registry.register(Registries.ITEM, ProgressionRespun.id(name), item);
     }
 
-
-
     public static void initialize() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(group -> {
                     group.addAfter(Items.FLINT, FLINT_BAR);
-                    group.addAfter(Items.COPPER_INGOT, COPPER_BAR);
-                    group.addAfter(Items.IRON_INGOT, IRON_BAR);
-                    group.addAfter(Items.GOLD_INGOT, GOLD_BAR);
-                    group.addAfter(Items.DIAMOND, DIAMOND_BAR);
+                    group.addAfter(Items.DIAMOND, POLISHED_DIAMOND);
+                    group.addAfter(Items.GOLD_NUGGET, COPPER_NUGGET);
                     group.addAfter(Items.RAW_COPPER, RAW_COPPER_BAR);
                     group.addAfter(Items.RAW_IRON, RAW_IRON_BAR);
                     group.addAfter(Items.RAW_GOLD, RAW_GOLD_BAR);
