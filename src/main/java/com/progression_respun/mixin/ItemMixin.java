@@ -13,7 +13,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,7 +37,7 @@ public class ItemMixin {
     private ComponentMap components;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void makeBoatsAndMinecartsStackable(Item.Settings settings, CallbackInfo ci) {
+    private void changeStackSize(Item.Settings settings, CallbackInfo ci) {
         Item self = (Item) (Object) this;
         int newStackSize = -1;
 
