@@ -2,6 +2,8 @@
   "block.progression_respun.flint_pebbles": "Flint Pebbles",
   "block.progression_respun.copper_crucible": "Copper Crucible",
 
+  "block.minecraft.bed.not_possible_here": "You need a Shelter to sleep or set your spawn",
+
   "tag.item.progression_respun.incorrect_for_flint_tool": "Incorrect for Flint Tool",
   "tag.item.progression_respun.needs_under_armor": "Needs corresponding Under Armor to be equipped.",
 

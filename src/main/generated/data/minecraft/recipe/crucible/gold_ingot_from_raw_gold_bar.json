@@ -1,0 +1,10 @@
+{
+  "type": "progression_respun:crucible",
+  "ingredient": {
+    "item": "progression_respun:raw_gold_bar"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:gold_ingot"
+  }
+}

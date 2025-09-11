@@ -21,28 +21,29 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(GrindstoneBlock.class)
 public class GrindstoneBlockMixin {
-
     @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
     private void polishDiamonds(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack stack = player.getMainHandStack();
         int stackSize = 1;
-
-        if (state.getBlock() instanceof GrindstoneBlock && stack.isOf(Items.DIAMOND)) {
+        if (stack.isOf(Items.DIAMOND)) {
             if (!world.isClient) {
                 ServerWorld serverWorld = (ServerWorld) world;
                 if (player.isSneaking() && stack.getCount() > 1) {
                     stackSize = stack.getCount();
                 }
                 stack.decrement(stackSize);
-                ItemStack newStack = new ItemStack(ModItems.POLISHED_DIAMOND,stackSize);
-                player.getInventory().offerOrDrop(newStack);
+                ItemStack newStack = new ItemStack(ModItems.POLISHED_DIAMOND, stackSize);
+                player.getInventory().insertStack(newStack);
                 int totalXp = 0;
                 for (int i = 0; i < stackSize; i++) {
                     totalXp += serverWorld.getRandom().nextBetween(1, 5);
                 }
-                ExperienceOrbEntity.spawn(serverWorld, player.getPos(), totalXp);
-                world.playSound(null, pos, SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.BLOCKS);
+                ExperienceOrbEntity.spawn(serverWorld, hit.getPos(), totalXp);
+                world.playSound(null, hit.getBlockPos(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.BLOCKS);
                 cir.setReturnValue(ActionResult.SUCCESS);
+                cir.cancel();
+            } else {
+                cir.setReturnValue(ActionResult.CONSUME);
                 cir.cancel();
             }
         }

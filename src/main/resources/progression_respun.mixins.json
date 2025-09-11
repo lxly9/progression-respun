@@ -10,6 +10,7 @@
     "GrindstoneBlockMixin",
     "ItemMixin",
     "ItemStackMixin",
+    "ServerPlayerEntityMixin",
     "ToolMaterialsMixin",
     "compat.BronzeToolMaterialMixin",
     "underArmorHandling.ArmorItemMixin",
