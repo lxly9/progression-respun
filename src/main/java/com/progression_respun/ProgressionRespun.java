@@ -21,8 +21,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.Objects;
-
 public class ProgressionRespun implements ModInitializer {
 	public static final String MOD_ID = "progression_respun";
 
