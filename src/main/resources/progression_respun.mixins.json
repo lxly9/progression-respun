@@ -13,6 +13,9 @@
     "ServerPlayerEntityMixin",
     "ToolMaterialsMixin",
     "compat.BronzeToolMaterialMixin",
+    "mobAttributionScaling.EntityTypeMixin",
+    "mobAttributionScaling.SpawnHelperMixin",
+    "mobAttributionScaling.StructureTemplateMixin",
     "underArmorHandling.ArmorItemMixin",
     "underArmorHandling.LivingEntityMixin",
     "underArmorHandling.PlayerEntityMixin"

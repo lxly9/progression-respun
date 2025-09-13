@@ -1,0 +1,13 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "#down",
+    "side": "minecraft:block/redstone_device_side_rotated",
+    "down": "minecraft:block/furnace_top",
+    "up": "minecraft:block/dispenser_front_vertical",
+    "north": "#side",
+    "east": "#side",
+    "south": "#side",
+    "west": "#side"
+  }
+}

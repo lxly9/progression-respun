@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "front": "minecraft:block/dropper_front_alt_2",
+    "side": "minecraft:block/redstone_device_side",
+    "top": "minecraft:block/furnace_top",
+    "bottom": "minecraft:block/copper_block"
+  }
+}
