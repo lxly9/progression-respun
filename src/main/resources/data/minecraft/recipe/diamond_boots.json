@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "X": {
+      "item": "progression_respun:polished_diamond"
+    },
+    "S": {"item": "progression_respun:diamond_shard"}
+  },
+  "pattern": [
+    "S S",
+    "X X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:diamond_boots"
+  }
+}
