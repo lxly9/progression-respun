@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_minecraft/copper_nugget": {
+    "has_copper_ingot": {
       "conditions": {
         "items": [
           {
-            "items": "progression_respun:minecraft/copper_nugget"
+            "items": "minecraft:copper_ingot"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_minecraft/copper_nugget"
+      "has_copper_ingot"
     ]
   ],
   "rewards": {

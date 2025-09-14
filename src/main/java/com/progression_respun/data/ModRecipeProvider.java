@@ -53,11 +53,6 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(FabricRecipeProvider.hasItem(ModItems.FIRESTARTER), FabricRecipeProvider.conditionsFromItem(ModItems.FIRESTARTER))
                 .offerTo(exporter);
 
-        ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, Items.COPPER_INGOT)
-                .input(VanillaItems.COPPER_NUGGET,9)
-                .criterion(FabricRecipeProvider.hasItem(VanillaItems.COPPER_NUGGET), FabricRecipeProvider.conditionsFromItem(VanillaItems.COPPER_NUGGET))
-                .offerTo(exporter);
-
         //shaped
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModBlocks.CRUCIBLE_BLOCK)
@@ -75,6 +70,14 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern(" X ")
                 .pattern("X#X")
                 .criterion(hasItem(Blocks.CAMPFIRE), conditionsFromItem(Blocks.CAMPFIRE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Items.COPPER_INGOT)
+                .input('X', VanillaItems.COPPER_NUGGET)
+                .pattern("XXX")
+                .pattern("XXX")
+                .pattern("XXX")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
                 .offerTo(exporter);
 
         // Flint Tools

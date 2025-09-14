@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 
 public class EnderscapeItems {
 
-    public static Identifier RAW_SHADOLINE_BAR_ID = ProgressionRespun.id("enderscape/raw_silver_bar");
+    public static Identifier RAW_SHADOLINE_BAR_ID = ProgressionRespun.id("enderscape/raw_shadoline_bar");
     public static Item RAW_SHADOLINE_BAR;
 
     public static void initialize() {

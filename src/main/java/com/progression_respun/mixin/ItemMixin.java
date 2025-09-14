@@ -40,14 +40,27 @@ public class ItemMixin {
     private void changeStackSize(Item.Settings settings, CallbackInfo ci) {
         Item self = (Item) (Object) this;
         int newStackSize = -1;
+        int newMaxDamage = -1;
 
         if (self instanceof BedItem) {
             newStackSize = 16;
+        }
+        if (self instanceof PotionItem) {
+            newMaxDamage = 3;
         }
 
         if (newStackSize > 0) {
             ComponentMap override = ComponentMap.builder()
                     .add(DataComponentTypes.MAX_STACK_SIZE, newStackSize)
+                    .build();
+
+            components = ComponentMap.of(components, override);
+        }
+
+        if (newMaxDamage > 0) {
+            ComponentMap override = ComponentMap.builder()
+                    .add(DataComponentTypes.MAX_DAMAGE, newMaxDamage)
+                    .add(DataComponentTypes.DAMAGE, 0)
                     .build();
 
             components = ComponentMap.of(components, override);
@@ -67,20 +80,30 @@ public class ItemMixin {
         PlayerEntity player = context.getPlayer();
         World world = context.getWorld();
         ItemStack stack = player.getMainHandStack();
-        int stackSize = 1;
+        int stackSize = stack.getCount();
+        int decrement = 1;
+        int totalXp = 0;
+
         if (stack.isOf(Items.DIAMOND)) {
             if (!world.isClient) {
                 ServerWorld serverWorld = (ServerWorld) world;
-                if (player.isSneaking() && stack.getCount() > 1) {
-                    stackSize = stack.getCount();
+
+                if (player.isSneaking()) {
+                    decrement = stackSize;
                 }
-                stack.decrement(stackSize);
-                ItemStack newStack = new ItemStack(ModItems.POLISHED_DIAMOND, stackSize);
-                player.getInventory().insertStack(newStack);
-                int totalXp = 0;
-                for (int i = 0; i < stackSize; i++) {
+
+                ItemStack decrementedStack = new ItemStack(stack.getRegistryEntry(), stackSize - decrement);
+                player.getInventory().setStack(player.getInventory().selectedSlot, decrementedStack);
+
+                for (int i = 0; i < decrement; i++) {
+                    if (serverWorld.getRandom().nextFloat() < 0.25f) {
+                        player.getInventory().offerOrDrop(new ItemStack(ModItems.DIAMOND_SHARD));
+                    } else {
+                        player.getInventory().offerOrDrop(new ItemStack(ModItems.POLISHED_DIAMOND));
+                    }
                     totalXp += serverWorld.getRandom().nextBetween(1, 5);
                 }
+
                 ExperienceOrbEntity.spawn(serverWorld, context.getHitPos(), totalXp);
                 world.playSound(null, context.getBlockPos(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.BLOCKS);
                 cir.setReturnValue(ActionResult.SUCCESS);
@@ -91,4 +114,5 @@ public class ItemMixin {
             }
         }
     }
+
 }

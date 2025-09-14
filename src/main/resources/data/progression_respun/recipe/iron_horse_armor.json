@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "  i",
+        "i#i",
+        "I I"
+    ],
+    "key": {
+        "I": {
+            "item": "minecraft:iron_nugget"
+        },
+        "i": {
+            "item": "minecraft:iron_ingot"
+        },
+        "#": {"tag": "minecraft:wool"}
+    },
+    "result": {
+        "id": "minecraft:iron_horse_armor",
+        "count": 1
+    }
+}

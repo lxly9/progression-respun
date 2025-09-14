@@ -15,6 +15,7 @@ public class ModItems {
     public static final Item RAW_COPPER_BAR = register(new Item(new Item.Settings()), "raw_copper_bar");
     public static final Item RAW_IRON_BAR = register(new Item(new Item.Settings()), "raw_iron_bar");
     public static final Item RAW_GOLD_BAR = register(new Item(new Item.Settings()), "raw_gold_bar");
+    public static final Item DIAMOND_SHARD = register(new Item(new Item.Settings()), "diamond_shard");
     public static final FlintAndSteelItem FIRESTARTER = (FlintAndSteelItem) register(new FlintAndSteelItem(new FlintAndSteelItem.Settings().maxDamage(16)), "firestarter");
 
     // Flint Tools
@@ -41,6 +42,7 @@ public class ModItems {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(group -> {
                     group.addAfter(Items.FLINT, FLINT_BAR);
+                    group.addBefore(Items.DIAMOND, DIAMOND_SHARD);
                     group.addAfter(Items.DIAMOND, POLISHED_DIAMOND);
                     group.addAfter(Items.GOLD_NUGGET, COPPER_NUGGET);
                     group.addAfter(Items.RAW_COPPER, RAW_COPPER_BAR);

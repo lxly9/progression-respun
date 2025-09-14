@@ -1,34 +1,15 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "ingredients": [
-    {
-      "item": "progression_respun:minecraft/copper_nugget"
-    },
-    {
-      "item": "progression_respun:minecraft/copper_nugget"
-    },
-    {
-      "item": "progression_respun:minecraft/copper_nugget"
-    },
-    {
-      "item": "progression_respun:minecraft/copper_nugget"
-    },
-    {
-      "item": "progression_respun:minecraft/copper_nugget"
-    },
-    {
-      "item": "progression_respun:minecraft/copper_nugget"
-    },
-    {
-      "item": "progression_respun:minecraft/copper_nugget"
-    },
-    {
-      "item": "progression_respun:minecraft/copper_nugget"
-    },
-    {
+  "key": {
+    "X": {
       "item": "progression_respun:minecraft/copper_nugget"
     }
+  },
+  "pattern": [
+    "XXX",
+    "XXX",
+    "XXX"
   ],
   "result": {
     "count": 1,

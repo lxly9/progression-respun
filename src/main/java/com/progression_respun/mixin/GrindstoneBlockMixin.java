@@ -25,6 +25,7 @@ public class GrindstoneBlockMixin {
     private void polishDiamonds(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack stack = player.getMainHandStack();
         int stackSize = 1;
+        int totalXp = 0;
         if (stack.isOf(Items.DIAMOND)) {
             if (!world.isClient) {
                 ServerWorld serverWorld = (ServerWorld) world;
@@ -32,10 +33,12 @@ public class GrindstoneBlockMixin {
                     stackSize = stack.getCount();
                 }
                 stack.decrement(stackSize);
-                ItemStack newStack = new ItemStack(ModItems.POLISHED_DIAMOND, stackSize);
-                player.getInventory().insertStack(newStack);
-                int totalXp = 0;
                 for (int i = 0; i < stackSize; i++) {
+                    if (serverWorld.getRandom().nextFloat() < 0.25f) {
+                        player.getInventory().offerOrDrop(new ItemStack(ModItems.DIAMOND_SHARD));
+                    } else {
+                        player.getInventory().offerOrDrop(new ItemStack(ModItems.POLISHED_DIAMOND));
+                    }
                     totalXp += serverWorld.getRandom().nextBetween(1, 5);
                 }
                 ExperienceOrbEntity.spawn(serverWorld, hit.getPos(), totalXp);

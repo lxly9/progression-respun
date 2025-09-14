@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#S#",
+        "SiS",
+        "#S#"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:smooth_stone"
+        },
+        "S": {
+            "item": "minecraft:stone_bricks"
+        },
+        "i": {
+            "item": "minecraft:iron_ingot"
+        }
+    },
+    "result": {
+        "id": "minecraft:lodestone",
+        "count": 1
+    }
+}
