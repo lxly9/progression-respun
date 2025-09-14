@@ -1,20 +1,38 @@
 <center>
     <p align="center">
-        <img src="banner.png" alt="Divergent Progression banner"/>
+        <img src="banner.png" alt="Progression Respun banner"/>
     </p>
 </center>
 
-Divergent Progression is a mod that alters the way Minecraft's progression works inspired by [Minecraft Diverge](https://github.com/BlueStaggo/MCDiverge) and [Slow Your Roll](https://modrinth.com/mod/slow-your-roll/). Wooden and stone tools are no longer craftable and flint and copper tools take their places instead. Tool and armor recipes have been altered to be significantly more expensive and the durability system has been given some tweaks.
+Progression Respun is a mod that alters the way Minecraft's progression works inspired by [Minecraft Diverge](https://github.com/BlueStaggo/MCDiverge) and [Slow Your Roll](https://modrinth.com/mod/slow-your-roll/). Wooden and stone tools are no longer craftable and flint and copper tools take their places instead. Tool and armor recipes have been altered to be significantly more expensive and the durability system has been given some tweaks.
 
 ## Features
 - Flint and copper tools in place of wooden and stone tools
 - Flint pebbles generate all over the overworld
-- Added bars crafted from 6 of a material which are used for tool crafting, crafted like rails but rotated and without the stick
-- Anvils are now crafted with 4 bars and 3 ingots in place of 3 blocks and 4 ingots
-- Chainmail armor is craftable instead of iron armor; other armor can be crafted by smithing chainmail armor with their respective bars
+- Ores drop more raw materials but they will smelt into ingots, diamonds need to be polished before they can be used but they have a chance to shatter
+- Chainmail armor is craftable, it and leather are needed to be worn as Under Armor for other armor to be equipped (there is a tag for armor that can bypass under armor like turtle helmets)
 - Tools and armor no longer get destroyed upon breaking and instead simply become useless amidst the ongoing tool preservation crisis (armor trims, you're not helping)
 - Unit repairs at anvils are free and anvils break slightly less often
-- Durability for vanilla tool materials have been buffed
+- Durability for vanilla tool materials have been buffed and armor values have been nerfed (they stack with under armor)
 - Smelting iron and gold tools results in ingots instead of nuggets
-- Netherite rework: made ancient debris more common with a chance of air exposure, slightly more expensive ingot recipe, no need for upgrade templates, repair tools using netherite scrap
-- Compatibility with [BetterNether](https://modrinth.com/mod/betternether) and [Bronze](https://modrinth.com/mod/bronze)
+- Netherite rework: made ancient debris more common with a chance of air exposure, slightly more expensive ingot recipe, repair tools using netherite scrap
+- Mobs will have more HP and deal more damage depending on how low they spawn in the world
+- Potions can be used multiple times, there are no more Lingering Potions and Tipped Arrows are crafted with normal Potions
+- Redstone Devices use Copper instead of Iron, making them Oxidizable
+- Beds cannot be used without shelter
+- Copper crucible for smelting raw ores
+
+This mod is intended to be used alongside Farmers Delight and Immersive Interactions
+
+
+## To Do
+
+- **!!** Under Armor rendering
+- **!!** actually nerf armor across the board by 25%
+- **!!** custom oxidization behavior
+- mobs despawn on wake up (if theyre not in caves)
+- brewing stand can only brew one potion
+- rework mending
+- custom ORNGstone virtual resource pack
+- one-hit attacks leave you at 1 hp
+- **?** armadillo chestplate with roll-up functionality (idea u/Sea_Honey_2747)
