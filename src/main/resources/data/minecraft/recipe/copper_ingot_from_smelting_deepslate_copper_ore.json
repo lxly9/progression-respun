@@ -8,6 +8,6 @@
     "item": "minecraft:deepslate_copper_ore"
   },
   "result": {
-    "id": "progression_respun:minecraft/copper_nugget"
+    "id": "minecraft:copper_nugget"
   }
 }

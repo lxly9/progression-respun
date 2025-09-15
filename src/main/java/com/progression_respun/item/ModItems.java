@@ -42,9 +42,9 @@ public class ModItems {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(group -> {
                     group.addAfter(Items.FLINT, FLINT_BAR);
-                    group.addBefore(Items.DIAMOND, DIAMOND_SHARD);
-                    group.addAfter(Items.DIAMOND, POLISHED_DIAMOND);
-                    group.addAfter(Items.GOLD_NUGGET, COPPER_NUGGET);
+                    group.addBefore(Items.GOLD_NUGGET, DIAMOND_SHARD);
+                    group.addAfter(Items.GOLD_INGOT, POLISHED_DIAMOND);
+                    group.addBefore(Items.IRON_NUGGET, COPPER_NUGGET);
                     group.addAfter(Items.RAW_COPPER, RAW_COPPER_BAR);
                     group.addAfter(Items.RAW_IRON, RAW_IRON_BAR);
                     group.addAfter(Items.RAW_GOLD, RAW_GOLD_BAR);
