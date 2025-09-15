@@ -1,6 +1,5 @@
 package com.progression_respun;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.block.ModBlocks;
 import com.progression_respun.block.entity.ModBlockEntities;
 import com.progression_respun.compat.CompatMods;
@@ -11,8 +10,12 @@ import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.fabricmc.fabric.api.util.TriState;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -23,6 +26,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.WardenEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -32,12 +36,10 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class ProgressionRespun implements ModInitializer {
 	public static final String MOD_ID = "progression_respun";
+	public static final String MC_ID = "minecraft";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
@@ -52,6 +54,7 @@ public class ProgressionRespun implements ModInitializer {
 		registerTrinketPredicates();
 		changeMobAttributes();
 		despawnMobsOnWakeup();
+		registerResourcePacks();
 	}
 
 	public static void registerTrinketPredicates() {
@@ -171,5 +174,22 @@ public class ProgressionRespun implements ModInitializer {
 				}
 			}
 		});
+	}
+
+	public static void registerResourcePacks() {
+		ModContainer modContainer = FabricLoader.getInstance()
+				.getModContainer("progression_respun")
+				.orElseThrow(() -> new IllegalStateException("Missing mod modContainer"));
+
+		ResourceManagerHelper.registerBuiltinResourcePack(
+				Identifier.of(MOD_ID, "orngstone_copper"), modContainer,
+				Text.translatable("pack.progression_respun.orngstone_copper"),
+				ResourcePackActivationType.NORMAL
+		);
+		ResourceManagerHelper.registerBuiltinResourcePack(
+				Identifier.of(MOD_ID, "redstone_copper"), modContainer,
+				Text.translatable("pack.progression_respun.redstone_copper"),
+				ResourcePackActivationType.ALWAYS_ENABLED
+		);
 	}
 }

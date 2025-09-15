@@ -27,10 +27,10 @@ This mod is intended to be used alongside Farmers Delight and Immersive Interact
 
 ## To Do
 
-- **!!** Under Armor rendering
+- ~~**!!** Under Armor rendering~~ done
 - **!!** actually nerf armor across the board by 25%
 - **!!** custom oxidization behavior
-- brewing stand can only brew one potion
+- **?** brewing stand can only brew one potion
 - rework mending
 - custom ORNGstone virtual resource pack
 - one-hit attacks leave you at 1 hp

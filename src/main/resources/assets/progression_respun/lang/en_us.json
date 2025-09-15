@@ -38,5 +38,7 @@
   "trinkets.slot.head.under_armor_head":  "Coif",
   "trinkets.slot.chest.under_armor_chest":  "Gambeson",
   "trinkets.slot.legs.under_armor_legs":  "Chausses",
-  "trinkets.slot.feet.under_armor_feet":  "Booties"
+  "trinkets.slot.feet.under_armor_feet":  "Booties",
+  "pack.progression_respun.orngstone_copper": "ORNGstone Torches",
+  "pack.progression_respun.redstone_copper": "REDstone Torches"
 }

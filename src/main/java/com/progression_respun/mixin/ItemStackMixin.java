@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -33,6 +34,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
+
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack {
     @Unique private static final Text BROKEN_TEXT = Text.translatable(Util.createTranslationKey(
@@ -44,6 +47,8 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @Shadow public abstract Item getItem();
     @Shadow public abstract void decrement(int amount);
     @Shadow public abstract ComponentMap getComponents();
+
+    @Shadow public abstract boolean isIn(TagKey<Item> tag);
 
     @Unique
     private boolean isBroken() {
@@ -216,6 +221,9 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     )
     private void isEnchantableIfNotBroken(CallbackInfoReturnable<Boolean> cir) {
         if (isBroken()) {
+            cir.setReturnValue(false);
+        }
+        if (this.isIn(UNDER_ARMOR)) {
             cir.setReturnValue(false);
         }
     }

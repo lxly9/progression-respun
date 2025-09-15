@@ -1,0 +1,11 @@
+{
+	"pack": {
+		"description": " §6│§r  §fʙʏ:§r §6zanderest§r §fꜰᴏʀ: ≥1.13§r\n §6│§r  §7Revised redstone torches!§r",
+		"name": "REDstone Torches",
+		"pack_format": 16,
+		"supported_formats": {
+			"min_inclusive": 16,
+			"max_inclusive": 46
+		}
+	}
+}

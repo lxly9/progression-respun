@@ -1,4 +1,4 @@
-package com.progression_respun.mixin;
+package com.progression_respun.client_mixin;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;

@@ -15,9 +15,9 @@
     "ServerPlayerEntityMixin",
     "ToolMaterialsMixin",
     "compat.BronzeToolMaterialMixin",
-    "underArmorHandling.ArmorItemMixin",
-    "underArmorHandling.LivingEntityMixin",
-    "underArmorHandling.PlayerEntityMixin"
+    "under_armor_handling.ArmorItemMixin",
+    "under_armor_handling.LivingEntityMixin",
+    "under_armor_handling.PlayerEntityMixin"
   ],
 
   "injectors": {

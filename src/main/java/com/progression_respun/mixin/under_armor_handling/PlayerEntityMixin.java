@@ -1,11 +1,10 @@
-package com.progression_respun.mixin.underArmorHandling;
+package com.progression_respun.mixin.under_armor_handling;
 
 import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
