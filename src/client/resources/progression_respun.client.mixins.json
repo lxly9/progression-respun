@@ -1,10 +1,9 @@
 {
   "required": true,
-  "package": "com.progression_respun.client_mixin",
+  "package": "com.progression_respun.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
   "client": [
-    "UnderArmorFeatureRendererMixin"
+    "client.UnderArmorFeatureRendererMixin"
   ],
 
   "injectors": {
