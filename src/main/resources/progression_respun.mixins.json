@@ -19,6 +19,7 @@
     "underArmorHandling.LivingEntityMixin",
     "underArmorHandling.PlayerEntityMixin"
   ],
+
   "injectors": {
     "defaultRequire": 1
   }

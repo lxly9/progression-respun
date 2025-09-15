@@ -28,7 +28,8 @@
 		]
 	},
 	"mixins": [
-      "progression_respun.mixins.json"
+      "progression_respun.mixins.json",
+		"progression_respun.client.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.14",

@@ -16,7 +16,7 @@ Progression Respun is a mod that alters the way Minecraft's progression works in
 - Durability for vanilla tool materials have been buffed and armor values have been nerfed (they stack with under armor)
 - Smelting iron and gold tools results in ingots instead of nuggets
 - Netherite rework: made ancient debris more common with a chance of air exposure, slightly more expensive ingot recipe, repair tools using netherite scrap
-- Mobs will have more HP and deal more damage depending on how low they spawn in the world
+- Mobs will have more HP and deal more damage depending on how low they spawn in the world. They will despawn in a radius around the player when waking up (depends on the difficulty)
 - Potions can be used multiple times, there are no more Lingering Potions and Tipped Arrows are crafted with normal Potions
 - Redstone Devices use Copper instead of Iron, making them Oxidizable
 - Beds cannot be used without shelter
@@ -30,7 +30,6 @@ This mod is intended to be used alongside Farmers Delight and Immersive Interact
 - **!!** Under Armor rendering
 - **!!** actually nerf armor across the board by 25%
 - **!!** custom oxidization behavior
-- mobs despawn on wake up (if theyre not in caves)
 - brewing stand can only brew one potion
 - rework mending
 - custom ORNGstone virtual resource pack

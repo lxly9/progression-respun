@@ -1,5 +1,6 @@
 package com.progression_respun;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.block.ModBlocks;
 import com.progression_respun.block.entity.ModBlockEntities;
 import com.progression_respun.compat.CompatMods;
@@ -8,9 +9,11 @@ import com.progression_respun.recipe.ModRecipes;
 import com.progression_respun.worldgen.ModFeatures;
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -18,13 +21,20 @@ import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.WardenEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.LightType;
+import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ProgressionRespun implements ModInitializer {
 	public static final String MOD_ID = "progression_respun";
@@ -41,6 +51,7 @@ public class ProgressionRespun implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		registerTrinketPredicates();
 		changeMobAttributes();
+		despawnMobsOnWakeup();
 	}
 
 	public static void registerTrinketPredicates() {
@@ -120,6 +131,42 @@ public class ProgressionRespun implements ModInitializer {
 
 					if (!hasHealthMod && !hasDamageMod) {
 						registerMobAttributes(serverWorld, mobEntity);
+					}
+				}
+			}
+		});
+	}
+
+	public static void despawnMobsOnWakeup() {
+		EntitySleepEvents.STOP_SLEEPING.register((entity, blockPos) -> {
+			if (entity instanceof PlayerEntity player) {
+				World serverWorld = player.getWorld();
+				long time = serverWorld.getTimeOfDay();
+				Difficulty difficulty = serverWorld.getLevelProperties().getDifficulty();
+
+				if (time == 24000) {
+					int radius = 0;
+
+					if (difficulty == Difficulty.PEACEFUL) return;
+					if (difficulty == Difficulty.EASY) radius = 96;
+					if (difficulty == Difficulty.NORMAL) radius = 64;
+					if (difficulty == Difficulty.HARD) radius = 32;
+
+					Box area = new Box(
+							blockPos.getX() - radius, blockPos.getY() - radius, blockPos.getZ() - radius,
+							blockPos.getX() + radius, blockPos.getY() + radius, blockPos.getZ() + radius
+					);
+
+					for (Entity entity1 : serverWorld.getOtherEntities(player, area)){
+						if (entity1 instanceof MobEntity mobEntity) {
+
+							BlockPos mobPos = mobEntity.getBlockPos();
+							int lightLevel = serverWorld.getChunkManager().getLightingProvider().get(LightType.SKY).getLightLevel(mobPos);
+
+							if (!(mobEntity.cannotDespawn() || mobEntity.isPersistent()) && lightLevel >= 5) {
+								mobEntity.discard();
+							}
+						}
 					}
 				}
 			}
