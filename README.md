@@ -30,8 +30,9 @@ This mod is intended to be used alongside Farmers Delight and Immersive Interact
 - ~~**!!** Under Armor rendering~~ done
 - **!!** actually nerf armor across the board by 25%
 - **!!** custom oxidization behavior
+- **!!** rework crucible
 - **?** brewing stand can only brew one potion
 - rework mending
-- custom ORNGstone virtual resource pack
-- one-hit attacks leave you at 1 hp
+- ~~custom ORNGstone virtual resource pack~~ done
+- ~~one-hit attacks leave you at 1 hp~~ done
 - **?** armadillo chestplate with roll-up functionality (idea u/Sea_Honey_2747)
