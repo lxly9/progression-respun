@@ -19,6 +19,8 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.dimension.DimensionTypes;
 
 public class MobUtil {
 
@@ -34,6 +36,8 @@ public class MobUtil {
         if (mobEntity instanceof WardenEntity || mobEntity instanceof WitherEntity || mobEntity instanceof EnderDragonEntity) return;
 
         if (health != null && damage != null) {
+            DimensionType dimensionType = world.getDimension();
+
             double baseHealth = health.getBaseValue();
             double modifier = 0;
 
@@ -52,6 +56,9 @@ public class MobUtil {
             }
             if (mobPos < world.getSeaLevel() - world.getSeaLevel()) {
                 modifier = 0.75;
+            }
+            if (dimensionType.piglinSafe()) {
+                modifier = 1;
             }
 
             EntityAttributeModifier healthModifier = new EntityAttributeModifier(

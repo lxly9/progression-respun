@@ -6,7 +6,6 @@
     "AnvilScreenHandlerMixin",
     "ArmorItemMixin",
     "ArmorMaterialMixin",
-    "BrewingStandBlockEntityMixin",
     "CampfireBlockMixin",
     "ComponentHolderMixin",
     "EnchantmentHelperMixin",

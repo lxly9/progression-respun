@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import static com.progression_respun.util.ArmorUtil.*;
 import static com.progression_respun.util.MobUtil.*;
 import static com.progression_respun.util.PlayerUtil.*;
+import static com.progression_respun.util.RecipeUtil.*;
 
 
 public class ProgressionRespun implements ModInitializer {
@@ -40,6 +41,7 @@ public class ProgressionRespun implements ModInitializer {
 		despawnMobsOnWakeup();
 		registerResourcePacks();
 		oneHitToOneHp();
+		registerRecipeDisabler();
 	}
 
 	public static Identifier id(String name) {

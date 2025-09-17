@@ -27,7 +27,7 @@ This mod is intended to be used alongside Farmers' Delight, Mob AI Tweaks and Im
 ## To Do
 
 - ~~**!!** Under Armor rendering~~ done
-- ~~**!!** actually nerf armor across the board by 25%~~ done
+- ~~**!!** actually nerf armor across the board~~ done
 - **!!** custom oxidization behavior
 - **!!** rework crucible
 - **?** brewing stand can only brew one potion

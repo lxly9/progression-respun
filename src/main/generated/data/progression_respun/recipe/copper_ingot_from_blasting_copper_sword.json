@@ -3,11 +3,11 @@
   "category": "misc",
   "cookingtime": 100,
   "experience": 3.0,
-  "group": "copper_nugget",
+  "group": "copper_ingot",
   "ingredient": {
-    "item": "progression_respun:copper_pickaxe"
+    "item": "progression_respun:copper_sword"
   },
   "result": {
-    "id": "minecraft:copper_nugget"
+    "id": "minecraft:copper_ingot"
   }
 }

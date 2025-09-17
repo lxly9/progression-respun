@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_copper_pickaxe": {
+    "has_copper_sword": {
       "conditions": {
         "items": [
           {
-            "items": "progression_respun:copper_pickaxe"
+            "items": "progression_respun:copper_sword"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "progression_respun:copper_nugget_from_blasting_copper_pickaxe"
+        "recipe": "progression_respun:copper_ingot_from_blasting_copper_sword"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_copper_pickaxe"
+      "has_copper_sword"
     ]
   ],
   "rewards": {
     "recipes": [
-      "progression_respun:copper_nugget_from_blasting_copper_pickaxe"
+      "progression_respun:copper_ingot_from_blasting_copper_sword"
     ]
   }
 }

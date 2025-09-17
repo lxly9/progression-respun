@@ -1,12 +1,8 @@
 package com.progression_respun.util;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.DamageTypeTags;
 
-import static com.progression_respun.ProgressionRespun.LOGGER;
 import static com.progression_respun.util.ArmorUtil.*;
 
 public class PlayerUtil {
