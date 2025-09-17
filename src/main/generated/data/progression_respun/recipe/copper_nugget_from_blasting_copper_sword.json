@@ -2,10 +2,10 @@
   "type": "minecraft:blasting",
   "category": "misc",
   "cookingtime": 100,
-  "experience": 0.7,
-  "group": "copper_ingot",
+  "experience": 3.0,
+  "group": "copper_nugget",
   "ingredient": {
-    "item": "minecraft:raw_copper"
+    "item": "progression_respun:copper_sword"
   },
   "result": {
     "id": "minecraft:copper_nugget"

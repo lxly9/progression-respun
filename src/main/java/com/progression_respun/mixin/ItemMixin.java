@@ -1,5 +1,7 @@
 package com.progression_respun.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.progression_respun.data.ModItemTagProvider;
 import com.progression_respun.item.ModItems;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -115,4 +117,9 @@ public class ItemMixin {
         }
     }
 
+    @ModifyReturnValue(method = "isEnchantable", at = @At("RETURN"))
+    public boolean isEnchantable(boolean original) {
+        ItemStack item = ((Item) (Object) this).getDefaultStack();
+        return !item.isIn(ModItemTagProvider.UNDER_ARMOR);
+    }
 }

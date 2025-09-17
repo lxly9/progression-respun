@@ -18,7 +18,7 @@ import static com.progression_respun.compat.EnderscapeItems.*;
 public class ModModelProvider extends FabricModelProvider {
     public static final Map<Model, List<Item>> ITEM_MODEL_LISTS = Map.ofEntries(
             Map.entry(Models.GENERATED, List.of(
-                    FLINT_BAR, POLISHED_DIAMOND, RAW_COPPER_BAR, RAW_IRON_BAR, RAW_GOLD_BAR, FIRESTARTER
+                    FLINT_BAR, POLISHED_DIAMOND, RAW_COPPER_BAR, RAW_IRON_BAR, RAW_GOLD_BAR, FIRESTARTER, DIAMOND_SHARD
             )),
             Map.entry(Models.HANDHELD, List.of(
                     FLINT_SWORD, FLINT_AXE, FLINT_PICKAXE,

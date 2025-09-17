@@ -45,6 +45,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         offerBlasting(exporter, List.of(ModItems.RAW_COPPER_BAR), RecipeCategory.MISC, Items.COPPER_INGOT, 2.1f, 100, "copper_ingot");
         offerBlasting(exporter, List.of(ModItems.RAW_IRON_BAR), RecipeCategory.MISC, Items.IRON_INGOT, 2.1f, 100, "iron_ingot");
         offerBlasting(exporter, List.of(ModItems.RAW_GOLD_BAR), RecipeCategory.MISC, Items.GOLD_INGOT, 3.0f, 100, "gold_ingot");
+        offerBlasting(exporter, List.of(ModItems.COPPER_AXE, ModItems.COPPER_PICKAXE, ModItems.COPPER_SWORD), RecipeCategory.MISC, VanillaItems.COPPER_NUGGET, 3.0f, 100, "copper_nugget");
 
 
         //shapeless

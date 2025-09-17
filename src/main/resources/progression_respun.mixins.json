@@ -5,9 +5,11 @@
   "mixins": [
     "AnvilScreenHandlerMixin",
     "ArmorItemMixin",
+    "ArmorMaterialMixin",
     "BrewingStandBlockEntityMixin",
     "CampfireBlockMixin",
     "ComponentHolderMixin",
+    "EnchantmentHelperMixin",
     "GrindstoneBlockMixin",
     "ItemMixin",
     "ItemStackMixin",
@@ -19,7 +21,6 @@
     "under_armor_handling.LivingEntityMixin",
     "under_armor_handling.PlayerEntityMixin"
   ],
-
   "injectors": {
     "defaultRequire": 1
   }

@@ -11,6 +11,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -36,7 +37,7 @@ public abstract class UnderArmorFeatureRendererMixin<T extends LivingEntity, M e
     private void renderUnderArmor(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot slot, int light, A model, CallbackInfo ci) {
 
         ItemStack vanillaStack = entity.getEquippedStack(slot);
-        if (!vanillaStack.isEmpty()) return;
+        if (!vanillaStack.isEmpty() && !vanillaStack.isOf(Items.ELYTRA)) return;
 
         Optional<ItemStack> underArmor = Optional.empty();
 

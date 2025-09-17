@@ -1,11 +1,18 @@
 package com.progression_respun.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.progression_respun.data.ModItemTagProvider;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.*;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,58 +27,33 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 
     @Shadow @Final private Property levelCost;
 
+    @Shadow @Final private static Logger LOGGER;
+
     public AnvilScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(type, syncId, playerInventory, context);
     }
 
-    @Inject(
-            method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/screen/AnvilScreenHandler;addProperty(Lnet/minecraft/screen/Property;)Lnet/minecraft/screen/Property;"
-            )
-    )
+    @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/AnvilScreenHandler;addProperty(Lnet/minecraft/screen/Property;)Lnet/minecraft/screen/Property;"))
     private void addRepairProperty(int syncId, PlayerInventory inventory, ScreenHandlerContext context, CallbackInfo ci) {
         addProperty(isRepairing);
     }
 
-    @Inject(
-            method = "canTakeOutput",
-            at = @At("HEAD"),
-            cancellable = true
-    )
+    @Inject(method = "canTakeOutput", at = @At("HEAD"), cancellable = true)
     private void canTakeFreeRepair(PlayerEntity player, boolean present, CallbackInfoReturnable<Boolean> cir) {
-        if (isRepairing.get() != 0) {
-            cir.setReturnValue(true);
-        }
+        if (isRepairing.get() != 0) cir.setReturnValue(true);
     }
 
-    @ModifyConstant(
-            method = "method_24922",
-            constant = @Constant(floatValue = 0.12f)
-    )
+    @ModifyConstant(method = "method_24922", constant = @Constant(floatValue = 0.12f))
     private static float reduceBreakChance(float constant) {
         return 0.1f;
     }
 
-    @Inject(
-            method = "updateResult",
-            at = @At(value = "HEAD")
-    )
+    @Inject(method = "updateResult", at = @At(value = "HEAD"))
     private void resetRepair(CallbackInfo ci) {
         isRepairing.set(0);
     }
 
-    @Inject(
-            method = "updateResult",
-            at = @At(
-                    value = "FIELD",
-                    target = "Lnet/minecraft/screen/AnvilScreenHandler;repairItemUsage:I",
-                    ordinal = 1,
-                    shift = At.Shift.AFTER
-            ),
-            cancellable = true
-    )
+    @Inject(method = "updateResult", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/AnvilScreenHandler;repairItemUsage:I", ordinal = 1, shift = At.Shift.AFTER), cancellable = true)
     private void freeRepairs(CallbackInfo ci, @Local(ordinal = 1) ItemStack itemStack2) {
         isRepairing.set(1);
         levelCost.set(0);
