@@ -13,6 +13,6 @@ public class EnchantmentHelperMixin {
 
     @ModifyReturnValue(method = "canHaveEnchantments", at = @At("RETURN"))
     private static boolean underArmorCantHaveEnchantments(boolean original, @Local(argsOnly = true) ItemStack stack) {
-        return !stack.isIn(ModItemTagProvider.UNDER_ARMOR);
+        return !stack.isIn(ModItemTagProvider.UNDER_ARMOR) && stack.isEnchantable();
     }
 }

@@ -8,7 +8,7 @@ Progression Respun is a mod that alters the way Minecraft's progression works in
 ## Features
 - Flint and copper tools in place of wooden and stone tools
 - Flint pebbles generate all over the overworld
-- Ores drop more raw materials, but they will smelt into ingots, diamonds need to be polished before they can be used, but they have a chance to shatter
+- Ores drop more raw materials, but they will smelt into nuggets, diamonds need to be polished before they can be used, but they have a chance to shatter
 - Chainmail armor is craftable, it and leather are necessary to be worn as Under Armor for other armor to be equipped (there is a tag for armor that can bypass under armor like turtle helmets)
 - Tools and armor no longer get destroyed upon breaking and instead simply become useless amidst the ongoing tool preservation crisis (armor trims, you're not helping)
 - Unit repairs at anvils are free and anvils break slightly less often
