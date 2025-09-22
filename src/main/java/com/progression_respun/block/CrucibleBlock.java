@@ -83,7 +83,7 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
             ItemStack inputStack = crucibleBlockEntity.getStack(0);
             ItemStack outputStack = crucibleBlockEntity.getStack(1);
             if (!outputStack.isEmpty()) {
-                player.getInventory().insertStack(outputStack.copy());
+                player.getInventory().offerOrDrop(outputStack.copy());
                 crucibleBlockEntity.setStack(1, ItemStack.EMPTY);
                 crucibleBlockEntity.markDirty();
                 world.updateListeners(pos, state, state, 0);

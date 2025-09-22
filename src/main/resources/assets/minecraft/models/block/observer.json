@@ -1,11 +1,11 @@
 {
     "parent": "block/block",
     "textures": {
-        "bottom": "block/observer_back_2",
-        "side": "block/observer_side_2",
+        "bottom": "block/observer_back",
+        "side": "block/observer_side",
         "top": "block/observer_top",
         "down": "block/observer_bottom",
-        "front": "block/observer_front_3",
+        "front": "block/observer_front",
         "particle": "block/observer_front"
     },
     "elements": [
