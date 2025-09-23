@@ -74,6 +74,14 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Blocks.CAMPFIRE), conditionsFromItem(Blocks.CAMPFIRE))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TRANSPORTATION, Items.SADDLE)
+                .input('#', Items.LEATHER)
+                .input('X', Items.IRON_NUGGET)
+                .pattern("###")
+                .pattern(" X ")
+                .criterion(hasItem(Items.SADDLE), conditionsFromItem(Items.SADDLE))
+                .offerTo(exporter);
+
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Items.COPPER_INGOT)
                 .input('X', VanillaItems.COPPER_NUGGET)
                 .pattern("XXX")
