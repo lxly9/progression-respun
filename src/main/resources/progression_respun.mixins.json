@@ -16,6 +16,7 @@
     "ServerPlayerEntityMixin",
     "ToolMaterialsMixin",
     "compat.BronzeToolMaterialMixin",
+    "oxidizable.DropperBlockMixin",
     "under_armor_handling.ArmorItemMixin",
     "under_armor_handling.LivingEntityMixin",
     "under_armor_handling.PlayerEntityMixin"

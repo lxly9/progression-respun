@@ -34,6 +34,11 @@
 			"environment": "client"
 		}
 	],
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/class_2325": ["net/minecraft/block/Oxidizable"]
+		}
+	},
 	"depends": {
 		"fabricloader": ">=0.16.14",
 		"minecraft": "1.21.1",
