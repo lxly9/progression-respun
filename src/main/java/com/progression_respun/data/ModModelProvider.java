@@ -21,8 +21,8 @@ public class ModModelProvider extends FabricModelProvider {
                     FLINT_BAR, POLISHED_DIAMOND, RAW_COPPER_BAR, RAW_IRON_BAR, RAW_GOLD_BAR, FIRESTARTER, DIAMOND_SHARD
             )),
             Map.entry(Models.HANDHELD, List.of(
-                    FLINT_SWORD, FLINT_AXE, FLINT_PICKAXE,
-                    COPPER_SWORD, COPPER_AXE, COPPER_PICKAXE
+                    FLINT_SWORD, FLINT_AXE, FLINT_PICKAXE, FLINT_HOE, FLINT_SHOVEL,
+                    COPPER_SWORD, COPPER_AXE, COPPER_PICKAXE, COPPER_HOE, COPPER_SHOVEL
             ))
     );
     public static final Map<Model, List<Identifier>> COMPAT_ITEM_MODEL_LISTS = Map.ofEntries(

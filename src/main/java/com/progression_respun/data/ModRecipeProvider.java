@@ -52,7 +52,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         //shapeless
         ShapelessRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FIRESTARTER)
                 .input(Items.FLINT,2)
-                .criterion(FabricRecipeProvider.hasItem(ModItems.FIRESTARTER), FabricRecipeProvider.conditionsFromItem(ModItems.FIRESTARTER))
+                .criterion(FabricRecipeProvider.hasItem(Items.FLINT), FabricRecipeProvider.conditionsFromItem(ModItems.FIRESTARTER))
                 .offerTo(exporter);
 
         //shaped
@@ -63,7 +63,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern("X X")
                 .pattern("X X")
                 .pattern("#X#")
-                .criterion(hasItem(ModBlocks.CRUCIBLE_BLOCK), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
                 .offerTo(exporter);
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.CAMPFIRE)
@@ -79,7 +79,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .input('X', Items.IRON_NUGGET)
                 .pattern("###")
                 .pattern(" X ")
-                .criterion(hasItem(Items.SADDLE), conditionsFromItem(Items.SADDLE))
+                .criterion(hasItem(Items.LEATHER), conditionsFromItem(Items.SADDLE))
                 .offerTo(exporter);
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Items.COPPER_INGOT)
@@ -87,23 +87,32 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern("XXX")
                 .pattern("XXX")
                 .pattern("XXX")
-                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
+                .criterion(hasItem(VanillaItems.COPPER_NUGGET), conditionsFromItem(VanillaItems.COPPER_NUGGET))
                 .offerTo(exporter);
 
         // Flint Tools
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, ModItems.FLINT_SWORD)
                 .input('#', Items.STICK)
-                .input('X', Items.FLINT)
+                .input('X', ModItems.FLINT_BAR)
                 .pattern("X")
                 .pattern("X")
                 .pattern("#")
                 .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_SHOVEL)
+                .input('#', Items.STICK)
+                .input('X', ModItems.FLINT_BAR)
+                .pattern("X")
+                .pattern("#")
+                .pattern("#")
+                .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
+                .offerTo(exporter);
+
         ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_PICKAXE)
                 .input('#', Items.STICK)
-                .input('X', Items.FLINT)
+                .input('X', ModItems.FLINT_BAR)
                 .pattern("XXX")
                 .pattern(" # ")
                 .pattern(" # ")
@@ -112,9 +121,18 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_AXE)
                 .input('#', Items.STICK)
-                .input('X', Items.FLINT)
+                .input('X', ModItems.FLINT_BAR)
                 .pattern("XX")
                 .pattern("X#")
+                .pattern(" #")
+                .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_HOE)
+                .input('#', Items.STICK)
+                .input('X', ModItems.FLINT_BAR)
+                .pattern("XX")
+                .pattern(" #")
                 .pattern(" #")
                 .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
                 .offerTo(exporter);
@@ -126,6 +144,15 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .input('X', Items.COPPER_INGOT)
                 .pattern("X")
                 .pattern("X")
+                .pattern("#")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.COPPER_SHOVEL)
+                .input('#', Items.STICK)
+                .input('X', Items.COPPER_INGOT)
+                .pattern("X")
+                .pattern("#")
                 .pattern("#")
                 .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
                 .offerTo(exporter);
@@ -144,6 +171,15 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .input('X', Items.COPPER_INGOT)
                 .pattern("XX")
                 .pattern("X#")
+                .pattern(" #")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.COPPER_HOE)
+                .input('#', Items.STICK)
+                .input('X', Items.COPPER_INGOT)
+                .pattern("XX")
+                .pattern(" #")
                 .pattern(" #")
                 .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
                 .offerTo(exporter);

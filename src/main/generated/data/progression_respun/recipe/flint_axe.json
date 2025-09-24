@@ -6,7 +6,7 @@
       "item": "minecraft:stick"
     },
     "X": {
-      "item": "minecraft:flint"
+      "item": "progression_respun:flint_bar"
     }
   },
   "pattern": [

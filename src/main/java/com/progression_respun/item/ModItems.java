@@ -18,21 +18,30 @@ public class ModItems {
     public static final Item DIAMOND_SHARD = register(new Item(new Item.Settings()), "diamond_shard");
     public static final FlintAndSteelItem FIRESTARTER = (FlintAndSteelItem) register(new FlintAndSteelItem(new FlintAndSteelItem.Settings().maxDamage(16)), "firestarter");
 
+
     // Flint Tools
     public static final Item FLINT_SWORD = register(new SwordItem(ModToolMaterials.FLINT, new Item.Settings()
             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterials.FLINT, 3, -2.4f))), "flint_sword");
+    public static final Item FLINT_SHOVEL = register(new ShovelItem(ModToolMaterials.FLINT, new Item.Settings()
+            .attributeModifiers(ShovelItem.createAttributeModifiers(ModToolMaterials.FLINT, 1.5f, -3.0f))), "flint_shovel");
     public static final Item FLINT_PICKAXE = register(new PickaxeItem(ModToolMaterials.FLINT, new Item.Settings()
             .attributeModifiers(PickaxeItem.createAttributeModifiers(ModToolMaterials.FLINT, 1.0f, -2.8f))), "flint_pickaxe");
     public static final Item FLINT_AXE = register(new AxeItem(ModToolMaterials.FLINT, new Item.Settings()
             .attributeModifiers(AxeItem.createAttributeModifiers(ModToolMaterials.FLINT, 6.0f, -3.2f))), "flint_axe");
+    public static final Item FLINT_HOE = register(new HoeItem(ModToolMaterials.FLINT, new Item.Settings()
+            .attributeModifiers(HoeItem.createAttributeModifiers(ModToolMaterials.FLINT, 0.0f, -3.0f))), "flint_hoe");
 
     // Copper Tools
     public static final Item COPPER_SWORD = register(new SwordItem(ModToolMaterials.COPPER, new Item.Settings()
             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterials.COPPER, 3, -2.4f))), "copper_sword");
+    public static final Item COPPER_SHOVEL = register(new ShovelItem(ModToolMaterials.COPPER, new Item.Settings()
+            .attributeModifiers(ShovelItem.createAttributeModifiers(ModToolMaterials.COPPER, 1.5f, -3.0f))), "copper_shovel");
     public static final Item COPPER_PICKAXE = register(new PickaxeItem(ModToolMaterials.COPPER, new Item.Settings()
             .attributeModifiers(PickaxeItem.createAttributeModifiers(ModToolMaterials.COPPER, 1.0f, -2.8f))), "copper_pickaxe");
     public static final Item COPPER_AXE = register(new AxeItem(ModToolMaterials.COPPER, new Item.Settings()
             .attributeModifiers(AxeItem.createAttributeModifiers(ModToolMaterials.COPPER, 7.0f, -3.2f))), "copper_axe");
+    public static final Item COPPER_HOE = register(new HoeItem(ModToolMaterials.COPPER, new Item.Settings()
+            .attributeModifiers(HoeItem.createAttributeModifiers(ModToolMaterials.COPPER, 0.0f, -3.0f))), "copper_hoe");
 
     private static Item register(Item item, String name) {
         return Registry.register(Registries.ITEM, ProgressionRespun.id(name), item);
@@ -59,11 +68,15 @@ public class ModItems {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(group -> {
                     group.addAfter(Items.WOODEN_HOE,
+                            FLINT_SHOVEL,
                             FLINT_PICKAXE,
-                            FLINT_AXE);
+                            FLINT_AXE,
+                            FLINT_HOE);
                     group.addAfter(Items.STONE_HOE,
+                            COPPER_SHOVEL,
                             COPPER_PICKAXE,
-                            COPPER_AXE);
+                            COPPER_AXE,
+                            COPPER_HOE);
                     group.addBefore(Items.FLINT_AND_STEEL, FIRESTARTER);
                 });
     }

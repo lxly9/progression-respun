@@ -70,10 +70,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                 if (!hasValidTrinket) {
                     ItemStack armorStack = player.getEquippedStack(armorSlot);
                     if (!armorStack.isEmpty() && !armorStack.isIn(BYPASSES_UNDER_ARMOR)) {
-                        boolean inserted = player.getInventory().insertStack(armorStack);
-                        if (!inserted) {
-                            player.dropItem(armorStack, true);
-                        }
+                        player.getInventory().offerOrDrop(armorStack);
                         player.equipStack(armorSlot, ItemStack.EMPTY);
                     }
                 }
