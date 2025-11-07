@@ -33,6 +33,8 @@ This mod is intended to be used alongside Farmers' Delight, Mob AI Tweaks and Im
 - **?** brewing stand can only brew one potion
 - rework mending
 - properly sort Ingredients tab
+- Oven for Farmer's Delight
+- Campfire effects
 - ~~custom ORNGstone virtual resource pack~~ done
 - ~~one-hit attacks leave you at 1 hp~~ done
 - **?** armadillo chestplate with roll-up functionality (idea u/Sea_Honey_2747)
