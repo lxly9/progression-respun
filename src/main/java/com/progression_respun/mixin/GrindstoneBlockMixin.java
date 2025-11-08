@@ -1,14 +1,12 @@
 package com.progression_respun.mixin;
 
 import com.progression_respun.data.ModItemTagProvider;
-import com.progression_respun.item.ModItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.GrindstoneBlock;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -23,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static com.progression_respun.ProgressionRespun.LOGGER;
 import static com.progression_respun.ProgressionRespun.getItemByName;
 
 @Mixin(GrindstoneBlock.class)

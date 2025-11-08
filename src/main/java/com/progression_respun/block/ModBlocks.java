@@ -1,9 +1,7 @@
 package com.progression_respun.block;
 
 import com.progression_respun.ProgressionRespun;
-import com.progression_respun.util.OxidizableUtil;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -13,8 +11,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 
-import java.util.EnumMap;
-import java.util.Map;
 
 public class ModBlocks {
     public static final Block FLINT_PEBBLES = register(new PebblesBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.STONE).hardness(0.0f).noCollision()), "flint_pebbles", true);
