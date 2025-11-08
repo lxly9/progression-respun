@@ -25,6 +25,7 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
         super(output, registriesFuture);
     }
 
+    public static final TagKey<Item> POLISHABLE_GEM = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "polishable_gems"));
     public static final TagKey<Item> BYPASSES_UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "bypasses_under_armor"));
     public static final TagKey<Item> UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "under_armor"));
     public static final TagKey<Item> UNDER_ARMOR_HEAD = TagKey.of(RegistryKeys.ITEM, Identifier.of("trinkets", "head/under_armor_head"));
@@ -95,6 +96,11 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                 .forceAddTag(UNDER_ARMOR_CHEST)
                 .forceAddTag(UNDER_ARMOR_LEGS)
                 .forceAddTag(UNDER_ARMOR_FEET);
+
+        getOrCreateTagBuilder(POLISHABLE_GEM)
+                .add(
+                        Items.DIAMOND
+                );
 
         if (GALOSPHERE) {
             getOrCreateTagBuilder(ConventionalItemTags.RAW_MATERIALS)

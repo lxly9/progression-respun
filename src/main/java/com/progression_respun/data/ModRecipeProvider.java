@@ -90,6 +90,14 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(VanillaItems.COPPER_NUGGET), conditionsFromItem(VanillaItems.COPPER_NUGGET))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Items.DIAMOND)
+                .input('X', ModItems.DIAMOND_SHARD)
+                .pattern("XXX")
+                .pattern("XXX")
+                .pattern("XXX")
+                .criterion(hasItem(ModItems.DIAMOND_SHARD), conditionsFromItem(ModItems.DIAMOND_SHARD))
+                .offerTo(exporter);
+
         // Flint Tools
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, ModItems.FLINT_SWORD)

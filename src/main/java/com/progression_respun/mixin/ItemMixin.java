@@ -2,19 +2,20 @@ package com.progression_respun.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.progression_respun.data.ModItemTagProvider;
-import com.progression_respun.item.ModItems;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+import static com.progression_respun.ProgressionRespun.getItemByName;
 import static com.progression_respun.data.ModItemTagProvider.*;
 
 @Mixin(Item.class)
@@ -85,8 +87,11 @@ public class ItemMixin {
         int stackSize = stack.getCount();
         int decrement = 1;
         int totalXp = 0;
+        Identifier stackId = Registries.ITEM.getId(stack.getItem());
+        Item shard = getItemByName(stackId.getPath() + "_shard");
+        Item polishedGem = getItemByName("polished_" + stackId.getPath());
 
-        if (stack.isOf(Items.DIAMOND)) {
+        if (stack.isIn(POLISHABLE_GEM)) {
             if (!world.isClient) {
                 ServerWorld serverWorld = (ServerWorld) world;
 
@@ -99,9 +104,9 @@ public class ItemMixin {
 
                 for (int i = 0; i < decrement; i++) {
                     if (serverWorld.getRandom().nextFloat() < 0.25f) {
-                        player.getInventory().offerOrDrop(new ItemStack(ModItems.DIAMOND_SHARD));
+                        player.getInventory().offerOrDrop(new ItemStack(shard));
                     } else {
-                        player.getInventory().offerOrDrop(new ItemStack(ModItems.POLISHED_DIAMOND));
+                        player.getInventory().offerOrDrop(new ItemStack(polishedGem));
                     }
                     totalXp += serverWorld.getRandom().nextBetween(1, 5);
                 }

@@ -11,6 +11,9 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -63,5 +66,15 @@ public class ProgressionRespun implements ModInitializer {
 				Text.translatable("pack.progression_respun.redstone_copper"),
 				ResourcePackActivationType.ALWAYS_ENABLED
 		);
+	}
+
+	public static Item getItemByName(String name) {
+		for (Item item : Registries.ITEM) {
+			Identifier id = Registries.ITEM.getId(item);
+			if (id.getPath().equals(name)) {
+				return item;
+			}
+		}
+		return Items.AIR;
 	}
 }

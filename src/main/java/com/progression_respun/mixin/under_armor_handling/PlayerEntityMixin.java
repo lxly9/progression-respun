@@ -4,10 +4,14 @@ import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -76,6 +80,14 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                 }
             }
         });
+    }
+
+    @Inject(method = "updateTurtleHelmet", at = @At("HEAD"))
+    private void extendTurtleHelmet(CallbackInfo ci) {
+        ItemStack itemStack = this.getEquippedStack(EquipmentSlot.HEAD);
+        if (itemStack.isOf(Items.TURTLE_HELMET) && !this.isSubmergedIn(FluidTags.WATER)) {
+            this.addStatusEffect(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 900, 0, false, false, true));
+        }
     }
 
 }

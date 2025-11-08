@@ -21,22 +21,32 @@ Progression Respun is a mod that alters the way Minecraft's progression works in
 - Beds cannot be used without shelter
 - Copper crucible for smelting raw ores
 
-This mod is intended to be used alongside Farmers' Delight, Mob AI Tweaks and Immersive Interactions. Originally developed for Lily's Vanilla.
+This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, Farmers' Delight as well as Mob AI Tweaks and Immersive Interactions. Originally developed for Lily's Vanilla.
 
 
 ## To Do
 
-- ~~**!!** Under Armor rendering~~ done
-- ~~**!!** actually nerf armor across the board~~ done
-- **!!** custom oxidization behavior
+- **!!** loot table manipulation for balancing
 - **!!** rework crucible
+
+
 - **?** brewing stand can only brew one potion
+- **?** armadillo chestplate with roll-up functionality (idea u/Sea_Honey_2747)
+- **?** custom oxidization behavior
+
+
 - rework mending
 - properly sort Ingredients tab
 - Oven for Farmer's Delight
-- Campfire effects
-- ~~custom ORNGstone virtual resource pack~~ done
-- ~~one-hit attacks leave you at 1 hp~~ done
-- **?** armadillo chestplate with roll-up functionality (idea u/Sea_Honey_2747)
-
+- flint pebbles blockstates, stone pebbles
+- remove potions and tipped arrows
+  - water breathing
 - Level system revamp
+
+### Done
+- ~~**!!** Under Armor rendering~~
+- ~~**!!** actually nerf armor across the board~~
+- ~~custom ORNGstone virtual resource pack~~
+- ~~one-hit attacks leave you at 1 hp~~
+- ~~rework turtle helmet, more than 10 secs of water breathing~~
+- Campfire effects

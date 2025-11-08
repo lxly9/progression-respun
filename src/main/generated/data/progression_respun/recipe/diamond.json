@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "DD ",
-    "DD "
-  ],
+  "category": "misc",
   "key": {
-    "D": {
+    "X": {
       "item": "progression_respun:diamond_shard"
     }
   },
+  "pattern": [
+    "XXX",
+    "XXX",
+    "XXX"
+  ],
   "result": {
-    "count": 9,
-    "id": "progression_respun:polished_diamond"
+    "count": 1,
+    "id": "minecraft:diamond"
   }
 }

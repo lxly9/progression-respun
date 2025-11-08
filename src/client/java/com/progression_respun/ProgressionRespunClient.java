@@ -9,5 +9,6 @@ public class ProgressionRespunClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CRUCIBLE_BLOCK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLINT_PEBBLES, RenderLayer.getCutout());
     }
 }

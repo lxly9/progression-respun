@@ -1,6 +1,7 @@
 package com.progression_respun.util;
 
 import dev.emi.trinkets.api.TrinketsApi;
+import dev.emi.trinkets.api.event.TrinketEquipCallback;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.DamageUtil;

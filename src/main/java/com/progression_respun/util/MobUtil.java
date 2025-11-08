@@ -8,8 +8,7 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.WitherEntity;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.WardenEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -27,12 +26,12 @@ public class MobUtil {
     private static final Identifier SCALE_DAMAGE_BY_HEIGHT = Identifier.of("progression_respun", "scale_damage_by_height");
 
 
-    public static void registerMobAttributes(ServerWorld world, MobEntity mobEntity) {
+    public static void registerMobAttributes(ServerWorld world, HostileEntity hostileEntity) {
 
-        EntityAttributeInstance health = mobEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
-        EntityAttributeInstance damage = mobEntity.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+        EntityAttributeInstance health = hostileEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
+        EntityAttributeInstance damage = hostileEntity.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
 
-        if (mobEntity instanceof WardenEntity || mobEntity instanceof WitherEntity || mobEntity instanceof EnderDragonEntity) return;
+        if (hostileEntity instanceof WardenEntity || hostileEntity instanceof WitherEntity) return;
 
         if (health != null && damage != null) {
             DimensionType dimensionType = world.getDimension();
@@ -40,8 +39,8 @@ public class MobUtil {
             double baseHealth = health.getBaseValue();
             double modifier = 0;
 
-            double mobPos = mobEntity.getY();
-            BlockPos pos = mobEntity.getBlockPos().down();
+            double mobPos = hostileEntity.getY();
+            BlockPos pos = hostileEntity.getBlockPos().down();
 
             if (mobPos >= world.getSeaLevel()) {
                 if (world.getBiome(pos).isIn(ConventionalBiomeTags.IS_CAVE)) {
@@ -74,22 +73,23 @@ public class MobUtil {
             );
             damage.addPersistentModifier(damageModifier);
 
-            mobEntity.heal((float) (baseHealth * modifier));
+            hostileEntity.heal((float) (baseHealth * modifier));
         }
     }
 
     public static void changeMobAttributes() {
         ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {
-            if (entity instanceof MobEntity mobEntity) {
-                EntityAttributeInstance health = mobEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
-                EntityAttributeInstance damage = mobEntity.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+            if (entity instanceof HostileEntity hostileEntity) {
+
+                EntityAttributeInstance health = hostileEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
+                EntityAttributeInstance damage = hostileEntity.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
 
                 if (health != null && damage != null) {
                     boolean hasHealthMod = health.hasModifier(SCALE_HEALTH_BY_HEIGHT);
                     boolean hasDamageMod = damage.hasModifier(SCALE_DAMAGE_BY_HEIGHT);
 
                     if (!hasHealthMod && !hasDamageMod) {
-                        registerMobAttributes(serverWorld, mobEntity);
+                        registerMobAttributes(serverWorld, hostileEntity);
                     }
                 }
             }
@@ -117,13 +117,13 @@ public class MobUtil {
                     );
 
                     for (Entity entity1 : serverWorld.getOtherEntities(player, area)){
-                        if (entity1 instanceof MobEntity mobEntity) {
+                        if (entity1 instanceof HostileEntity hostileEntity) {
 
-                            BlockPos mobPos = mobEntity.getBlockPos();
+                            BlockPos mobPos = hostileEntity.getBlockPos();
                             int lightLevel = serverWorld.getChunkManager().getLightingProvider().get(LightType.SKY).getLightLevel(mobPos);
 
-                            if (!(mobEntity.cannotDespawn() || mobEntity.isPersistent()) && lightLevel >= 5) {
-                                mobEntity.discard();
+                            if (!(hostileEntity.cannotDespawn() || hostileEntity.isPersistent()) && lightLevel >= 5) {
+                                hostileEntity.discard();
                             }
                         }
                     }

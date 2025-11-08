@@ -1,22 +1,70 @@
 {
   "variants": {
-    "": [
+    "pebbles=1": [
       {
-        "model": "progression_respun:block/flint_pebbles"
+        "model": "progression_respun:block/flint_pebbles_1"
       },
       {
-        "model": "progression_respun:block/flint_pebbles",
-        "uvlock": true,
+        "model": "progression_respun:block/flint_pebbles_1",
         "y": 90
       },
       {
-        "model": "progression_respun:block/flint_pebbles",
-        "uvlock":  true,
+        "model": "progression_respun:block/flint_pebbles_1",
         "y": 180
       },
       {
-        "model": "progression_respun:block/flint_pebbles",
-        "uvlock":  true,
+        "model": "progression_respun:block/flint_pebbles_1",
+        "y": 270
+      }
+    ],
+    "pebbles=2": [
+      {
+        "model": "progression_respun:block/flint_pebbles_2"
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles_2",
+        "y": 90
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles_2",
+        "y": 180
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles_2",
+        "y": 270
+      }
+    ],
+    "pebbles=3": [
+      {
+        "model": "progression_respun:block/flint_pebbles_3"
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles_3",
+        "y": 90
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles_3",
+        "y": 180
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles_3",
+        "y": 270
+      }
+    ],
+    "pebbles=4": [
+      {
+        "model": "progression_respun:block/flint_pebbles_4"
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles_4",
+        "y": 90
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles_4",
+        "y": 180
+      },
+      {
+        "model": "progression_respun:block/flint_pebbles_4",
         "y": 270
       }
     ]
