@@ -8,12 +8,14 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -24,6 +26,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -79,12 +82,16 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
 
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.getBlockEntity(pos) instanceof CrucibleBlockEntity crucibleBlockEntity) {
+        if (world.getBlockEntity(pos) instanceof CrucibleBlockEntity crucibleBlockEntity && !world.isClient) {
             ItemStack inputStack = crucibleBlockEntity.getStack(0);
             ItemStack outputStack = crucibleBlockEntity.getStack(1);
+            int totalXp = (int) crucibleBlockEntity.getStoredExperience();
+            ServerWorld serverWorld = (ServerWorld) world;
             if (!outputStack.isEmpty()) {
                 player.getInventory().offerOrDrop(outputStack.copy());
                 crucibleBlockEntity.setStack(1, ItemStack.EMPTY);
+                ExperienceOrbEntity.spawn(serverWorld, Vec3d.ofCenter(pos), totalXp);
+                crucibleBlockEntity.storedExperience = 0;
                 crucibleBlockEntity.markDirty();
                 world.updateListeners(pos, state, state, 0);
                 world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);

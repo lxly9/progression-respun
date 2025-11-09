@@ -27,22 +27,20 @@ public class ModRecipeProvider extends FabricRecipeProvider {
     public void generate(RecipeExporter exporter) {
 
         //Crucible
-        offerCrucibleRecipe(exporter, Items.RAW_COPPER, VanillaItems.COPPER_NUGGET);
-        offerCrucibleRecipe(exporter, Items.RAW_GOLD, Items.GOLD_NUGGET);
-        offerCrucibleRecipe(exporter, Items.RAW_IRON, Items.IRON_NUGGET);
-        offerCrucibleRecipe(exporter, ModItems.RAW_COPPER_BAR, Items.COPPER_INGOT);
-        offerCrucibleRecipe(exporter, ModItems.RAW_GOLD_BAR, Items.GOLD_INGOT);
-        offerCrucibleRecipe(exporter, ModItems.RAW_IRON_BAR, Items.IRON_INGOT);
+        offerCrucibleRecipe(exporter, Items.RAW_COPPER, VanillaItems.COPPER_NUGGET, 0.7F);
+        offerCrucibleRecipe(exporter, Items.RAW_GOLD, Items.GOLD_NUGGET, 0.7F);
+        offerCrucibleRecipe(exporter, Items.RAW_IRON, Items.IRON_NUGGET, 0.7F);
+        offerCrucibleRecipe(exporter, ModItems.RAW_COPPER_BAR, Items.COPPER_INGOT, 0.7F);
+        offerCrucibleRecipe(exporter, ModItems.RAW_GOLD_BAR, Items.GOLD_INGOT, 0.7F);
+        offerCrucibleRecipe(exporter, ModItems.RAW_IRON_BAR, Items.IRON_INGOT, 0.7F);
 
         // Bars
-
         offerBarRecipe(exporter, Items.FLINT, ModItems.FLINT_BAR);
         offerBarRecipe(exporter, Items.RAW_COPPER, ModItems.RAW_COPPER_BAR);
         offerBarRecipe(exporter, Items.RAW_IRON, ModItems.RAW_IRON_BAR);
         offerBarRecipe(exporter, Items.RAW_GOLD, ModItems.RAW_GOLD_BAR);
 
         //smelting
-
         offerBlasting(exporter, List.of(ModItems.RAW_COPPER_BAR), RecipeCategory.MISC, Items.COPPER_INGOT, 2.1f, 100, "copper_ingot");
         offerBlasting(exporter, List.of(ModItems.RAW_IRON_BAR), RecipeCategory.MISC, Items.IRON_INGOT, 2.1f, 100, "iron_ingot");
         offerBlasting(exporter, List.of(ModItems.RAW_GOLD_BAR), RecipeCategory.MISC, Items.GOLD_INGOT, 3.0f, 100, "gold_ingot");
@@ -202,8 +200,8 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
 
-    private void offerCrucibleRecipe(RecipeExporter exporter, Item input, Item output) {
-        CrucibleRecipeBuilder.create(input.asItem(), output, 1)
+    private void offerCrucibleRecipe(RecipeExporter exporter, Item input, Item output, float experience) {
+        CrucibleRecipeBuilder.create(input.asItem(), output, experience, 1)
                 .criterion(hasItem(input), conditionsFromItem(input))
                 .offerTo(exporter);
     }

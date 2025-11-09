@@ -1,10 +1,13 @@
 package com.progression_respun.recipe;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
@@ -13,7 +16,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
-public record CrucibleRecipe(Ingredient inputItem, ItemStack output) implements Recipe<CrucibleRecipeInput> {
+public record CrucibleRecipe(Ingredient inputItem, ItemStack output, float experience) implements Recipe<CrucibleRecipeInput> {
 
     @Override
     public DefaultedList<Ingredient> getIngredients() {
@@ -58,13 +61,15 @@ public record CrucibleRecipe(Ingredient inputItem, ItemStack output) implements 
     public static class Serializer implements RecipeSerializer<CrucibleRecipe> {
         public static final MapCodec<CrucibleRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("ingredient").forGetter(CrucibleRecipe::inputItem),
-                ItemStack.CODEC.fieldOf("result").forGetter(CrucibleRecipe::output)
+                ItemStack.CODEC.fieldOf("result").forGetter(CrucibleRecipe::output),
+                Codec.FLOAT.fieldOf("experience").forGetter(CrucibleRecipe::experience)
         ).apply(inst, CrucibleRecipe::new));
 
         public static final PacketCodec<RegistryByteBuf, CrucibleRecipe> STREAM_CODEC =
                 PacketCodec.tuple(
                         Ingredient.PACKET_CODEC, CrucibleRecipe::inputItem,
                         ItemStack.PACKET_CODEC, CrucibleRecipe::output,
+                        PacketCodecs.FLOAT, CrucibleRecipe::experience,
                         CrucibleRecipe::new);
 
         @Override

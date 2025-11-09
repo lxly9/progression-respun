@@ -42,14 +42,14 @@ public class ItemMixin {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void changeStackSize(Item.Settings settings, CallbackInfo ci) {
-        Item self = (Item) (Object) this;
+        Item item = (Item) (Object) this;
         int newStackSize = -1;
         int newMaxDamage = -1;
 
-        if (self instanceof BedItem) {
+        if (item instanceof BedItem) {
             newStackSize = 16;
         }
-        if (self instanceof PotionItem) {
+        if (item instanceof PotionItem) {
             newMaxDamage = 3;
         }
 
@@ -79,10 +79,13 @@ public class ItemMixin {
             }
         }
     }
+
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
     private void polishDiamonds(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
         PlayerEntity player = context.getPlayer();
         World world = context.getWorld();
+
+        if (player == null) return;
         ItemStack stack = player.getMainHandStack();
         int stackSize = stack.getCount();
         int decrement = 1;

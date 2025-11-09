@@ -23,19 +23,21 @@ import java.util.Objects;
 public class CrucibleRecipeBuilder implements CraftingRecipeJsonBuilder {
     private final Item result;
     private final Ingredient ingredient;
+    private final float experience;
     private final int count;
     private final Map<String, AdvancementCriterion<?>> criteria = new LinkedHashMap<>();
     private final RecipeFactory<?> recipeFactory;
 
-    public CrucibleRecipeBuilder(ItemConvertible ingredient, ItemConvertible output, int count, RecipeFactory<?> recipeFactory) {
+    public CrucibleRecipeBuilder(ItemConvertible ingredient, ItemConvertible output, float experience, int count, RecipeFactory<?> recipeFactory) {
         this.ingredient = Ingredient.ofItems(ingredient);
         this.result = output.asItem();
+        this.experience = experience;
         this.count = count;
         this.recipeFactory = recipeFactory;
     }
 
-    public static CrucibleRecipeBuilder create(Item input, ItemConvertible output, int count) {
-        return new CrucibleRecipeBuilder(input, output, count, new RecipeFactory<>());
+    public static CrucibleRecipeBuilder create(Item input, ItemConvertible output, float experience, int count) {
+        return new CrucibleRecipeBuilder(input, output, experience, count, new RecipeFactory<>());
     }
 
     public CrucibleRecipeBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion) {
@@ -61,7 +63,7 @@ public class CrucibleRecipeBuilder implements CraftingRecipeJsonBuilder {
                 .criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
 
         Objects.requireNonNull(builder);
-        CrucibleRecipe crucibleRecipe = this.recipeFactory.create(this.ingredient, new ItemStack(this.result, this.count), this.count);
+        CrucibleRecipe crucibleRecipe = this.recipeFactory.create(this.ingredient, new ItemStack(this.result, this.count), this.experience, this.count);
         exporter.accept(recipeId, crucibleRecipe, builder.build(recipeId.withPrefixedPath("recipes/")));
     }
 
