@@ -42,6 +42,9 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - remove potions and tipped arrows
   - water breathing
 - Level system revamp
+- """temperature system"""
+  - water in cold biome freezes you
+  - heatstroke mechanic in hot biomes (requires a helmet)
 
 ### Done
 - ~~**!!** Under Armor rendering~~
