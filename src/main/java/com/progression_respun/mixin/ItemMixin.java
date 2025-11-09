@@ -80,51 +80,6 @@ public class ItemMixin {
         }
     }
 
-    @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
-    private void polishDiamonds(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        PlayerEntity player = context.getPlayer();
-        World world = context.getWorld();
-
-        if (player == null) return;
-        ItemStack stack = player.getMainHandStack();
-        int stackSize = stack.getCount();
-        int decrement = 1;
-        int totalXp = 0;
-        Identifier stackId = Registries.ITEM.getId(stack.getItem());
-        Item shard = getItemByName(stackId.getPath() + "_shard");
-        Item polishedGem = getItemByName("polished_" + stackId.getPath());
-
-        if (stack.isIn(POLISHABLE_GEM)) {
-            if (!world.isClient) {
-                ServerWorld serverWorld = (ServerWorld) world;
-
-                if (player.isSneaking()) {
-                    decrement = stackSize;
-                }
-
-                ItemStack decrementedStack = new ItemStack(stack.getRegistryEntry(), stackSize - decrement);
-                player.getInventory().setStack(player.getInventory().selectedSlot, decrementedStack);
-
-                for (int i = 0; i < decrement; i++) {
-                    if (serverWorld.getRandom().nextFloat() < 0.25f) {
-                        player.getInventory().offerOrDrop(new ItemStack(shard));
-                    } else {
-                        player.getInventory().offerOrDrop(new ItemStack(polishedGem));
-                    }
-                    totalXp += serverWorld.getRandom().nextBetween(1, 5);
-                }
-
-                ExperienceOrbEntity.spawn(serverWorld, context.getHitPos(), totalXp);
-                world.playSound(null, context.getBlockPos(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.BLOCKS);
-                cir.setReturnValue(ActionResult.SUCCESS);
-                cir.cancel();
-            } else {
-                cir.setReturnValue(ActionResult.CONSUME);
-                cir.cancel();
-            }
-        }
-    }
-
     @ModifyReturnValue(method = "isEnchantable", at = @At("RETURN"))
     public boolean isEnchantable(boolean original) {
         ItemStack item = ((Item) (Object) this).getDefaultStack();

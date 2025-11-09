@@ -45,6 +45,7 @@ public class ProgressionRespun implements ModInitializer {
 		registerResourcePacks();
 		oneHitToOneHp();
 		registerRecipeDisabler();
+		grindingRecipe();
 	}
 
 	public static Identifier id(String name) {
@@ -65,6 +66,11 @@ public class ProgressionRespun implements ModInitializer {
 				Identifier.of(MOD_ID, "redstone_copper"), modContainer,
 				Text.translatable("pack.progression_respun.redstone_copper"),
 				ResourcePackActivationType.ALWAYS_ENABLED
+		);
+		ResourceManagerHelper.registerBuiltinResourcePack(
+				Identifier.of(MOD_ID, "progression_respun_compat"), modContainer,
+				Text.translatable("pack.progression_respun.redstone_copper"),
+				ResourcePackActivationType.DEFAULT_ENABLED
 		);
 	}
 

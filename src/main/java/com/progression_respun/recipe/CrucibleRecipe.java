@@ -49,6 +49,11 @@ public record CrucibleRecipe(Ingredient inputItem, ItemStack output, float exper
     }
 
     @Override
+    public float experience() {
+        return experience;
+    }
+
+    @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipes.CRUCIBLE_RECIPE_SERIALIZER;
     }

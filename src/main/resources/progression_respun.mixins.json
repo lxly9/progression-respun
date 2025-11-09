@@ -10,7 +10,6 @@
     "CampfireBlockMixin",
     "ComponentHolderMixin",
     "EnchantmentHelperMixin",
-    "GrindstoneBlockMixin",
     "ItemMixin",
     "ItemStackMixin",
     "PotionItemMixin",

@@ -28,11 +28,16 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 
 - **!!** loot table manipulation for balancing
 - **!!** rework crucible
+- **!!** drop trinkets for under armor bundle-like behavior
 
 
 - **?** brewing stand can only brew one potion
 - **?** armadillo chestplate with roll-up functionality (idea u/Sea_Honey_2747)
 - **?** custom oxidization behavior
+- **?** temperature system
+  - akin to freezing mechanic, no need for drinking, cooling off, etc.
+  - water in cold biome freezes you
+  - heatstroke mechanic in hot biomes (requires a helmet)
 
 
 - rework mending
@@ -42,9 +47,6 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - remove potions and tipped arrows
   - water breathing
 - Level system revamp
-- """temperature system"""
-  - water in cold biome freezes you
-  - heatstroke mechanic in hot biomes (requires a helmet)
 
 ### Done
 - ~~**!!** Under Armor rendering~~
@@ -52,4 +54,4 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - ~~custom ORNGstone virtual resource pack~~
 - ~~one-hit attacks leave you at 1 hp~~
 - ~~rework turtle helmet, more than 10 secs of water breathing~~
-- Campfire effects
+- ~~Campfire effects~~

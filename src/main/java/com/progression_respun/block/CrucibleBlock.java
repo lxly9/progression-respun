@@ -3,17 +3,18 @@ package com.progression_respun.block;
 import com.mojang.serialization.MapCodec;
 import com.progression_respun.block.entity.CrucibleBlockEntity;
 import com.progression_respun.block.entity.ModBlockEntities;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import com.progression_respun.recipe.*;
+import com.progression_respun.util.RecipeUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -31,6 +32,8 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvider, Waterloggable {
 
@@ -78,40 +81,39 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
         }
     }
 
-
-
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (world.getBlockEntity(pos) instanceof CrucibleBlockEntity crucibleBlockEntity && !world.isClient) {
             ItemStack inputStack = crucibleBlockEntity.getStack(0);
             ItemStack outputStack = crucibleBlockEntity.getStack(1);
-            int totalXp = (int) crucibleBlockEntity.getStoredExperience();
+            Vec3d vec = Vec3d.ofCenter(pos);
             ServerWorld serverWorld = (ServerWorld) world;
+
+            Optional<RecipeEntry<CrucibleRecipe>> recipeOpt = world.getRecipeManager().getFirstMatch(ModRecipes.CRUCIBLE_RECIPE_TYPE, new CrucibleRecipeInput(stack), world);
+
+            CrucibleRecipe recipe = crucibleBlockEntity.getActiveRecipe();
+            float xp = recipe != null ? recipe.experience() : 0f;
+
             if (!outputStack.isEmpty()) {
                 player.getInventory().offerOrDrop(outputStack.copy());
                 crucibleBlockEntity.setStack(1, ItemStack.EMPTY);
-                ExperienceOrbEntity.spawn(serverWorld, Vec3d.ofCenter(pos), totalXp);
-                crucibleBlockEntity.storedExperience = 0;
+                RecipeUtil.dropExperience(serverWorld, vec, outputStack.getCount(), xp);
+                crucibleBlockEntity.setActiveRecipe(null);
                 crucibleBlockEntity.markDirty();
                 world.updateListeners(pos, state, state, 0);
-                world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);
-                return ItemActionResult.success(true);
-            } else if (!stack.isEmpty()) {
-                if (inputStack.isEmpty() && stack.isIn(ConventionalItemTags.RAW_MATERIALS)) {
-                    crucibleBlockEntity.setStack(0, stack.copy().split(1));
-                    stack.decrementUnlessCreative(1, player);
-                    world.playSound(player, pos, SoundEvents.BLOCK_COPPER_BULB_HIT, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                    crucibleBlockEntity.markDirty();
-                    world.updateListeners(pos, state, state, 0);
-                    return ItemActionResult.success(stack.isIn(ConventionalItemTags.RAW_MATERIALS));
-                } else if (inputStack.itemMatches(stack.getRegistryEntry()) && inputStack.getCount() < 16) {
-                    inputStack.increment(1);
-                    stack.decrementUnlessCreative(1, player);
-                    world.playSound(player, pos, SoundEvents.BLOCK_COPPER_BULB_HIT, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                    crucibleBlockEntity.markDirty();
-                    world.updateListeners(pos, state, state, 0);
-                    return ItemActionResult.success(true);
-                }
+                world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                return ItemActionResult.SUCCESS;
+            }
+
+            if (recipeOpt.isPresent() && inputStack.getCount() < 16) {
+                if (inputStack.isEmpty()) crucibleBlockEntity.setStack(0, stack.copy().split(1));
+                if (inputStack.itemMatches(stack.getRegistryEntry())) inputStack.increment(1);
+
+                world.playSound(null, pos, SoundEvents.BLOCK_COPPER_BULB_HIT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                stack.decrementUnlessCreative(1, player);
+                world.updateListeners(pos, state, state, 0);
+                crucibleBlockEntity.markDirty();
+                return ItemActionResult.SUCCESS;
             }
         }
         return super.onUseWithItem(stack, state, world, pos, player, hand, hit);

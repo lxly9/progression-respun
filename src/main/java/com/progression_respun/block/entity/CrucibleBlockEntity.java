@@ -32,7 +32,8 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
     protected final PropertyDelegate propertyDelegate;
     private int progress= 0;
     private int maxProgress= 600;
-    public float storedExperience = 0f;
+
+    private CrucibleRecipe activeRecipe = null;
 
 
     public CrucibleBlockEntity(BlockPos pos, BlockState state) {
@@ -75,7 +76,6 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
         Inventories.writeNbt(nbt, inventory, registryLookup);
         nbt.putInt("CrucibleProgress", progress);
         nbt.putInt("CrucibleMaxProgress", maxProgress);
-        nbt.putFloat("StoredExperience", storedExperience);
     }
 
     @Override
@@ -83,7 +83,6 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
         Inventories.readNbt(nbt, inventory, registryLookup);
         progress = nbt.getInt("CrucibleProgress");
         maxProgress = nbt.getInt("CrucibleMaxProgress");
-        storedExperience = nbt.getFloat("StoredExperience");
         super.readNbt(nbt, registryLookup);
     }
 
@@ -100,11 +99,14 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
 
     public void tick(World world, BlockPos pos, BlockState state) {
         if (hasCrucibleRecipe() && state.get(CrucibleBlock.HEATED)) {
+            Optional<RecipeEntry<CrucibleRecipe>> recipeEntry = getCurrentRecipe();
+            recipeEntry.ifPresent(recipe -> setActiveRecipe(recipe.value()));
             increaseSmeltingProgress();
             markDirty(world, pos, state);
             if (hasSmeltingFinished()) {
                 smeltItem();
                 resetProgress();
+                recipeEntry.ifPresent(recipe -> setActiveRecipe(recipe.value()));
             }
         } else {
             resetProgress();
@@ -117,7 +119,6 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
         ItemStack output = recipe.get().value().output();
         this.removeStack(INPUT_SLOT, 1);
         this.setStack(OUTPUT_SLOT, new ItemStack(output.getItem(), output.getCount() + this.getStack(OUTPUT_SLOT).getCount()));
-        this.storedExperience += recipe.get().value().experience();
     }
 
     private void resetProgress() {
@@ -159,8 +160,11 @@ public class CrucibleBlockEntity extends BlockEntity implements ImplementedInven
         return maxCount >= currentCount + count;
     }
 
-    public float getStoredExperience() {
-        return storedExperience;
+    public void setActiveRecipe(CrucibleRecipe recipe) {
+        this.activeRecipe = recipe;
     }
 
+    public CrucibleRecipe getActiveRecipe() {
+        return activeRecipe;
+    }
 }

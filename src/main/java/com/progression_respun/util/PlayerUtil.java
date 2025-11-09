@@ -18,13 +18,10 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+import static com.progression_respun.compat.CompatMods.FARMERSDELIGHT;
 import static com.progression_respun.util.ArmorUtil.*;
 
 public class PlayerUtil {
-
-
-    private static final Identifier COMFORT_ID = Identifier.of("farmersdelight", "comfort");
-    private static final RegistryEntry<StatusEffect> COMFORT_EFFECT = Registries.STATUS_EFFECT.getEntry(COMFORT_ID).orElse(null);
 
     public static void oneHitToOneHp() {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((livingEntity, damageSource, v) -> {
@@ -44,32 +41,49 @@ public class PlayerUtil {
         });
     }
 
-    public static void applyEffects(World world, BlockPos pos) {
+    public static void applyEffects(World world, BlockPos pos, int radius) {
+        Identifier comfort_id = Identifier.of("farmersdelight", "comfort");
+        RegistryEntry<StatusEffect> comfort_effect = Registries.STATUS_EFFECT.getEntry(comfort_id).orElse(null);
+
         if (!world.isClient) {
-            int radius = 0;
+            var effect = StatusEffects.REGENERATION;
             Difficulty difficulty = world.getLevelProperties().getDifficulty();
+            int mobRadius = radius;
 
-            if (difficulty == Difficulty.PEACEFUL) return;
-            if (difficulty == Difficulty.EASY) radius = 32;
-            if (difficulty == Difficulty.NORMAL) radius = 16;
-            if (difficulty == Difficulty.HARD) radius = 8;
+            if (difficulty == Difficulty.EASY) {
+                radius = radius - radius/4;
+                mobRadius = radius;
+            }
+            if (difficulty == Difficulty.NORMAL) {
+                radius = radius / 2;
+                mobRadius = radius - radius/4;
+            }
+            if (difficulty == Difficulty.HARD) {
+                radius = radius / 4;
+                mobRadius = radius / 2;
+            }
 
-            Box area = new Box(
+            Box litArea = new Box(
                     pos.getX() - radius, pos.getY() - radius, pos.getZ() - radius,
                     pos.getX() + radius, pos.getY() + radius, pos.getZ() + radius
             );
-            List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, area, player -> !player.isCreative());
-            List<HostileEntity> mobList = world.getEntitiesByClass(HostileEntity.class, area, hostileEntity -> true);
-            List<TameableEntity> petList = world.getEntitiesByClass(TameableEntity.class, area, TameableEntity::isTamed);
+            Box mobArea = new Box(
+                    pos.getX() - mobRadius, pos.getY() - mobRadius, pos.getZ() - mobRadius,
+                    pos.getX() + mobRadius, pos.getY() + mobRadius, pos.getZ() + mobRadius
+            );
+            List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, litArea, player -> !player.isCreative());
+            List<HostileEntity> mobList = world.getEntitiesByClass(HostileEntity.class, mobArea, hostileEntity -> true);
+            List<TameableEntity> petList = world.getEntitiesByClass(TameableEntity.class, litArea, TameableEntity::isTamed);
 
-            for (PlayerEntity playerEntity : list) {
-                if (mobList.isEmpty()) {
-                    playerEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 100, 0, false, false, false));
+            if (mobList.isEmpty()) {
+                if (FARMERSDELIGHT) effect = comfort_effect;
+
+                for (PlayerEntity playerEntity : list) {
+                    playerEntity.addStatusEffect(new StatusEffectInstance(effect, 100, 0, false, false, false));
                 }
-            }
-            for (TameableEntity tameableEntity : petList) {
-                if (mobList.isEmpty()) {
-                    tameableEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 100, 0, false, false, false));
+
+                for (TameableEntity tameableEntity : petList) {
+                    tameableEntity.addStatusEffect(new StatusEffectInstance(effect, 100, 0, false, true, false));
                 }
             }
         }

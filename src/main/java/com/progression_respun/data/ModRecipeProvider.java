@@ -4,6 +4,7 @@ import com.progression_respun.block.ModBlocks;
 import com.progression_respun.compat.VanillaItems;
 import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.CrucibleRecipeBuilder;
+import com.progression_respun.recipe.GrindingRecipeBuilder;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Blocks;
@@ -27,12 +28,15 @@ public class ModRecipeProvider extends FabricRecipeProvider {
     public void generate(RecipeExporter exporter) {
 
         //Crucible
-        offerCrucibleRecipe(exporter, Items.RAW_COPPER, VanillaItems.COPPER_NUGGET, 0.7F);
-        offerCrucibleRecipe(exporter, Items.RAW_GOLD, Items.GOLD_NUGGET, 0.7F);
-        offerCrucibleRecipe(exporter, Items.RAW_IRON, Items.IRON_NUGGET, 0.7F);
-        offerCrucibleRecipe(exporter, ModItems.RAW_COPPER_BAR, Items.COPPER_INGOT, 0.7F);
-        offerCrucibleRecipe(exporter, ModItems.RAW_GOLD_BAR, Items.GOLD_INGOT, 0.7F);
-        offerCrucibleRecipe(exporter, ModItems.RAW_IRON_BAR, Items.IRON_INGOT, 0.7F);
+        offerCrucibleRecipe(exporter, Items.RAW_COPPER, VanillaItems.COPPER_NUGGET, 0.2F);
+        offerCrucibleRecipe(exporter, Items.RAW_GOLD, Items.GOLD_NUGGET, 0.2F);
+        offerCrucibleRecipe(exporter, Items.RAW_IRON, Items.IRON_NUGGET, 0.2F);
+        offerCrucibleRecipe(exporter, ModItems.RAW_COPPER_BAR, Items.COPPER_INGOT, 0.5F);
+        offerCrucibleRecipe(exporter, ModItems.RAW_GOLD_BAR, Items.GOLD_INGOT, 0.5F);
+        offerCrucibleRecipe(exporter, ModItems.RAW_IRON_BAR, Items.IRON_INGOT, 0.5F);
+
+        //Grinding
+        offerGrindingRecipe(exporter, Items.DIAMOND, ModItems.POLISHED_DIAMOND, ModItems.DIAMOND_SHARD, 0.2F, 4, 0.3F);
 
         // Bars
         offerBarRecipe(exporter, Items.FLINT, ModItems.FLINT_BAR);
@@ -202,6 +206,12 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
     private void offerCrucibleRecipe(RecipeExporter exporter, Item input, Item output, float experience) {
         CrucibleRecipeBuilder.create(input.asItem(), output, experience, 1)
+                .criterion(hasItem(input), conditionsFromItem(input))
+                .offerTo(exporter);
+    }
+
+    private void offerGrindingRecipe(RecipeExporter exporter, Item input, Item output, Item shard, float experience, int shardMaxCount, float chance) {
+        GrindingRecipeBuilder.create(input.asItem(), output, shard, experience, shardMaxCount, chance)
                 .criterion(hasItem(input), conditionsFromItem(input))
                 .offerTo(exporter);
     }
