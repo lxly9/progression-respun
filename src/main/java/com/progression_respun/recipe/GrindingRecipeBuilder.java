@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class GrindingRecipeBuilder implements CraftingRecipeJsonBuilder {
     private final Item result;

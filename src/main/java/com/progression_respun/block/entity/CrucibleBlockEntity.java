@@ -6,7 +6,6 @@ import com.progression_respun.recipe.CrucibleRecipeInput;
 import com.progression_respun.recipe.ModRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;

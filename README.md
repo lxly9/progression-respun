@@ -27,7 +27,6 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 ## To Do
 
 - **!!** loot table manipulation for balancing
-- **!!** rework crucible
 - **!!** drop trinkets for under armor bundle-like behavior
 
 
@@ -51,6 +50,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 ### Done
 - ~~**!!** Under Armor rendering~~
 - ~~**!!** actually nerf armor across the board~~
+- **!!** rework crucible
 - ~~custom ORNGstone virtual resource pack~~
 - ~~one-hit attacks leave you at 1 hp~~
 - ~~rework turtle helmet, more than 10 secs of water breathing~~
