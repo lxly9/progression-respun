@@ -46,6 +46,8 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - remove potions and tipped arrows
   - water breathing
 - Level system revamp
+- banners as capes
+  - applied at smithing table or put into chestplate?
 
 ### Done
 - ~~**!!** Under Armor rendering~~
