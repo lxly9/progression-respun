@@ -19,6 +19,7 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.progression_respun.component.ModDataComponentTypes.registerModDataComponentTypes;
 import static com.progression_respun.util.ArmorUtil.*;
 import static com.progression_respun.util.MobUtil.*;
 import static com.progression_respun.util.PlayerUtil.*;
@@ -39,13 +40,13 @@ public class ProgressionRespun implements ModInitializer {
 		CompatMods.initialize();
 		ModRecipes.register();
 		ModBlocks.registerModBlocks();
-		registerTrinketPredicates();
 		changeMobAttributes();
 		despawnMobsOnWakeup();
 		registerResourcePacks();
 		oneHitToOneHp();
 		registerRecipeDisabler();
 		grindingRecipe();
+		registerModDataComponentTypes();
 	}
 
 	public static Identifier id(String name) {

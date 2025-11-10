@@ -2,6 +2,8 @@ package com.progression_respun.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.ProgressionRespun;
+import com.progression_respun.component.type.UnderArmorContentsComponent;
+import com.progression_respun.util.SoundUtil;
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.ComponentHolder;
@@ -55,26 +57,24 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         return isDamageable() && getDamage() >= getMaxDamage();
     }
 
-    @Inject(
-            method = "damage(ILnet/minecraft/server/world/ServerWorld;Lnet/minecraft/server/network/ServerPlayerEntity;Ljava/util/function/Consumer;)V",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/item/ItemStack;decrement(I)V",
-                    shift = At.Shift.BEFORE
-            ),
-            cancellable = true
-    )
-    private void damageRestrictDecrement(int amount, ServerWorld world, @Nullable ServerPlayerEntity player,
-                                         Consumer<Item> breakCallback, CallbackInfo ci, @Local(ordinal = 1) int i) {
+    @Inject(method = "damage(ILnet/minecraft/server/world/ServerWorld;Lnet/minecraft/server/network/ServerPlayerEntity;Ljava/util/function/Consumer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", shift = At.Shift.BEFORE), cancellable = true)
+    private void damageRestrictDecrement(int amount, ServerWorld world, @Nullable ServerPlayerEntity player, Consumer<Item> breakCallback, CallbackInfo ci, @Local(ordinal = 1) int i) {
         Item item = getItem();
         boolean noDestroy = item instanceof ToolItem || item instanceof ArmorItem || item instanceof ShieldItem;
+
         if (!noDestroy) {
             decrement(amount);
         }
         if (!noDestroy || i - amount < this.getMaxDamage()) {
             breakCallback.accept(item);
+            ItemStack stack = (ItemStack)(Object)this;
+            if (UnderArmorContentsComponent.hasArmorSlot(stack) && player != null) {
+                UnderArmorContentsComponent.dropAllBundledItems(stack, player);
+                SoundUtil.playDropContentsSound(player);
+            }
         }
         ci.cancel();
+
     }
 
     @Inject(

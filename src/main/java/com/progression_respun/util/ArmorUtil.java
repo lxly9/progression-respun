@@ -1,7 +1,5 @@
 package com.progression_respun.util;
 
-import dev.emi.trinkets.api.TrinketsApi;
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.DamageUtil;
 import net.minecraft.entity.LivingEntity;
@@ -11,21 +9,8 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 
 public class ArmorUtil {
-
-    public static void registerTrinketPredicates() {
-        TrinketsApi.registerTrinketPredicate(
-                Identifier.of("progression_respun", "equippable_if_not_broken"), (stack, slot, entity) -> {
-                    if (stack.getDamage() >= stack.getMaxDamage()) {
-                        return TriState.FALSE;
-                    } else {
-                        return TriState.DEFAULT;
-                    }
-                }
-        );
-    }
 
     public static float calculatePredictedDamage(LivingEntity entity, DamageSource source, float incoming) {
         float afterArmor = source.isIn(DamageTypeTags.BYPASSES_ARMOR)
@@ -52,5 +37,9 @@ public class ArmorUtil {
         }
 
         return afterEnchants;
+    }
+
+    public static void registerComponent() {
+
     }
 }

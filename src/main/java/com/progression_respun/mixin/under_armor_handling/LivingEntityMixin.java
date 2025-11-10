@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.progression_respun.data.ModItemTagProvider.BYPASSES_UNDER_ARMOR;
+import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
@@ -78,36 +79,12 @@ public abstract class LivingEntityMixin {
 
     @Inject(method = "getPreferredEquipmentSlot", at = @At("HEAD"), cancellable = true)
     private void redirectArmorIfNoUnderArmor(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> ci) {
-        if (stack.getItem() instanceof ArmorItem armorItem) {
-            EquipmentSlot defaultSlot = armorItem.getSlotType();
+        if (stack.getItem() instanceof ArmorItem) {
 
-            if ((Object) this instanceof PlayerEntity player) {
-
-                String group = switch (defaultSlot) {
-                    case HEAD -> "head";
-                    case CHEST -> "chest";
-                    case LEGS -> "legs";
-                    case FEET -> "feet";
-                    default -> null;
-                };
-
-                if (group != null) {
-                    Identifier tagId = Identifier.of("trinkets", group + "/under_armor_" + group);
-
-                    boolean hasValidUnderArmor = TrinketsApi.getTrinketComponent(player)
-                            .map(component -> component.isEquipped(stack2 ->
-                                    stack2.isIn(TagKey.of(RegistryKeys.ITEM, tagId)) && stack2.getDamage() < stack2.getMaxDamage()
-                            ))
-                            .orElse(false);
-
-                    if (stack.getDamage() >= stack.getMaxDamage()) {
-                        ci.setReturnValue(EquipmentSlot.MAINHAND);
-                    }
-
-                    if (!hasValidUnderArmor && !stack.isIn(BYPASSES_UNDER_ARMOR)) {
-                        ci.setReturnValue(EquipmentSlot.MAINHAND);
-                    }
-                }
+            if ((Object) this instanceof PlayerEntity) {
+                if (!stack.isIn(BYPASSES_UNDER_ARMOR)) ci.setReturnValue(EquipmentSlot.MAINHAND);
+                if (!stack.isIn(UNDER_ARMOR)) ci.setReturnValue(EquipmentSlot.MAINHAND);
+                if (stack.getDamage() >= stack.getMaxDamage()) ci.setReturnValue(EquipmentSlot.MAINHAND);
             }
         }
     }
