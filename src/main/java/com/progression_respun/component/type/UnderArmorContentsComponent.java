@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.2.2 (FabricMC 7c48b8c4).
- */
 package com.progression_respun.component.type;
 
 import com.google.common.collect.Lists;
@@ -11,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.data.ModItemTagProvider;
+import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -116,7 +114,7 @@ implements TooltipData {
     }
 
     public String toString() {
-        return "BundleContents" + String.valueOf(this.stacks);
+        return "Armor" + String.valueOf(this.stacks);
     }
 
     public static void dropAllBundledItems(ItemStack stack2, PlayerEntity player) {

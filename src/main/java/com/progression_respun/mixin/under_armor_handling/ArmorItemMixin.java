@@ -6,15 +6,12 @@ import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.data.ModItemTagProvider;
 import com.progression_respun.util.SoundUtil;
 import com.progression_respun.util.UnderArmorTooltipData;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
@@ -24,7 +21,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
@@ -44,16 +40,7 @@ public abstract class ArmorItemMixin extends Item {
     }
 
     public ArmorItemMixin(Settings settings) {
-        super(settings);
-    }
-
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void onInit(RegistryEntry material, ArmorItem.Type type, Settings settings, CallbackInfo ci) {
-        ArmorItem armorItem = (ArmorItem) (Object) this;
-
-        if (UnderArmorContentsComponent.isAllowedInUnderArmor(armorItem.getDefaultStack())) {
-            settings.component(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, new UnderArmorContentsComponent(new ArrayList<>()));
-        }
+        super(settings.component(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, new UnderArmorContentsComponent(new ArrayList<>())));
     }
 
     @Unique
@@ -125,9 +112,9 @@ public abstract class ArmorItemMixin extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        BundleContentsComponent bundleContentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
-        if (bundleContentsComponent != null) {
-            int i = MathHelper.multiplyFraction(bundleContentsComponent.getOccupancy(), 64);
+        UnderArmorContentsComponent underArmorContentsComponent = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+        if (underArmorContentsComponent != null) {
+            int i = MathHelper.multiplyFraction(underArmorContentsComponent.getOccupancy(), 64);
             tooltip.add(Text.translatable("item.minecraft.bundle.fullness", i, 64).formatted(Formatting.GRAY));
         }
     }

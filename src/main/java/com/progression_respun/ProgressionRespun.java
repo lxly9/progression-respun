@@ -5,6 +5,7 @@ import com.progression_respun.block.entity.ModBlockEntities;
 import com.progression_respun.compat.CompatMods;
 import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.ModRecipes;
+import com.progression_respun.util.ArmorUtil;
 import com.progression_respun.worldgen.ModFeatures;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -20,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.progression_respun.component.ModDataComponentTypes.registerModDataComponentTypes;
-import static com.progression_respun.util.ArmorUtil.*;
 import static com.progression_respun.util.MobUtil.*;
 import static com.progression_respun.util.PlayerUtil.*;
 import static com.progression_respun.util.RecipeUtil.*;
@@ -47,6 +47,7 @@ public class ProgressionRespun implements ModInitializer {
 		registerRecipeDisabler();
 		grindingRecipe();
 		registerModDataComponentTypes();
+		ArmorUtil.registerComponent();
 	}
 
 	public static Identifier id(String name) {
