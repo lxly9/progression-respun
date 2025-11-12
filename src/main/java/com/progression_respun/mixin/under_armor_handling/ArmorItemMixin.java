@@ -1,11 +1,10 @@
 package com.progression_respun.mixin.under_armor_handling;
 
-import com.progression_respun.ProgressionRespun;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.data.ModItemTagProvider;
 import com.progression_respun.util.SoundUtil;
-import com.progression_respun.util.UnderArmorTooltipData;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
@@ -30,9 +29,6 @@ import java.util.Optional;
 @Mixin(ArmorItem.class)
 public abstract class ArmorItemMixin extends Item {
 
-    @Unique
-    private static final int ITEM_BAR_COLOR = MathHelper.packRgb(0.4f, 0.4f, 1.0f);
-
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     private void equipAndSwap(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         ItemStack stack = user.getStackInHand(hand);
@@ -52,16 +48,18 @@ public abstract class ArmorItemMixin extends Item {
     @Override
     public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
         int i;
-        if (clickType != ClickType.RIGHT) {
-            return false;
-        }
-
-        boolean pocketable = UnderArmorContentsComponent.isAllowedInUnderArmor(stack);
+        if (clickType != ClickType.RIGHT) return false;
+        if (!UnderArmorContentsComponent.hasArmorSlot(stack)) return false;
 
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
         if (component == null) return false;
+
         ItemStack itemStack = slot.getStack();
+        if (!UnderArmorContentsComponent.isAllowedInUnderArmor(stack)) return false;
         UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(component);
+
+        ArmorItem armorItem = (ArmorItem) stack.getItem();
+
         if (itemStack.isEmpty()) {
             SoundUtil.playRemoveOneSound(player);
             ItemStack itemStack2 = builder.removeFirst();
@@ -69,21 +67,20 @@ public abstract class ArmorItemMixin extends Item {
                 ItemStack itemStack3 = slot.insertStack(itemStack2);
                 builder.add(itemStack3);
             }
+        } else if (itemStack.getItem() instanceof ArmorItem otherArmor && !(armorItem.getSlotType() == otherArmor.getSlotType())) {
+            return false;
         } else if (itemStack.getItem().canBeNested() && (i = builder.add(slot, player)) > 0) {
             SoundUtil.playInsertSound(player);
         }
         stack.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
-        return pocketable;
+        return true;
     }
 
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
-        if (clickType != ClickType.RIGHT || !slot.canTakePartial(player)) {
-            return false;
-        }
 
-        boolean pocketable = UnderArmorContentsComponent.hasArmorSlot(stack) && UnderArmorContentsComponent.isAllowedInUnderArmor(otherStack);
-        ProgressionRespun.LOGGER.info(String.valueOf(pocketable));
+        if (clickType != ClickType.RIGHT || !slot.canTakePartial(player)) return false;
+        if (!UnderArmorContentsComponent.hasArmorSlot(stack)) return false;
 
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
         if (component == null) return false;
@@ -95,19 +92,25 @@ public abstract class ArmorItemMixin extends Item {
                 cursorStackReference.set(itemStack);
             }
         } else {
+            ArmorItem armorItem = (ArmorItem) stack.getItem();
+            ArmorItem otherArmor = (ArmorItem) otherStack.getItem();
+            EquipmentSlot armorSlot = armorItem.getSlotType();
+            EquipmentSlot otherSlot = otherArmor.getSlotType();
+            if (!UnderArmorContentsComponent.isAllowedInUnderArmor(otherStack) || !(armorSlot == otherSlot)) return false;
             int i = builder.add(otherStack);
             if (i > 0) {
                 SoundUtil.playInsertSound(player);
             }
         }
         stack.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
-        return pocketable;
+        return true;
     }
 
     @Override
     public Optional<TooltipData> getTooltipData(ItemStack stack) {
         if(!UnderArmorContentsComponent.hasArmorSlot(stack)) return Optional.empty();
-        return Optional.ofNullable(stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS)).map(UnderArmorTooltipData::new);
+//        return Optional.ofNullable(stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS)).map(UnderArmorTooltipData::new);
+        return Optional.empty();
     }
 
     @Override
@@ -123,10 +126,5 @@ public abstract class ArmorItemMixin extends Item {
     public void onItemEntityDestroyed(ItemEntity entity) {
         SoundUtil.playDropContentsSound(entity);
         ItemUsage.spawnItemContents(entity, UnderArmorContentsComponent.DEFAULT.iterate());
-    }
-
-    @Override
-    public int getItemBarColor(ItemStack stack) {
-        return ITEM_BAR_COLOR;
     }
 }

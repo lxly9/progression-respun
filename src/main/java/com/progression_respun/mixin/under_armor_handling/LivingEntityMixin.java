@@ -1,88 +1,75 @@
 package com.progression_respun.mixin.under_armor_handling;
 
-import dev.emi.trinkets.api.TrinketsApi;
+import com.progression_respun.component.ModDataComponentTypes;
+import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
+import org.slf4j.Logger;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.progression_respun.data.ModItemTagProvider.BYPASSES_UNDER_ARMOR;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
 
+    @Shadow @Final private static Logger LOGGER;
+
     @Inject(method = "damageEquipment", at = @At("HEAD"))
     private void damageUnderArmor(DamageSource source, float amount, EquipmentSlot[] slots, CallbackInfo ci) {
-        if (((Object) this) instanceof PlayerEntity player) {
-            if (!source.isIn(DamageTypeTags.BYPASSES_ARMOR)) {
-                TrinketsApi.getTrinketComponent(player).ifPresent(component -> {
-                    Map<EquipmentSlot, Identifier> slotTagMap = Map.of(
-                            EquipmentSlot.HEAD, Identifier.of("trinkets", "head/under_armor_head"),
-                            EquipmentSlot.CHEST, Identifier.of("trinkets", "chest/under_armor_chest"),
-                            EquipmentSlot.LEGS, Identifier.of("trinkets", "legs/under_armor_legs"),
-                            EquipmentSlot.FEET, Identifier.of("trinkets", "feet/under_armor_feet")
-                    );
+        if (((Object)this) instanceof PlayerEntity player) {
+            if (source.isIn(DamageTypeTags.BYPASSES_ARMOR)) return;
 
-                    for (Map.Entry<EquipmentSlot, Identifier> entry : slotTagMap.entrySet()) {
-                        EquipmentSlot armorSlot = entry.getKey();
-                        Identifier trinketTagId = entry.getValue();
+            for (EquipmentSlot armorSlot : EquipmentSlot.values()) {
 
-                        ItemStack armorStack = player.getEquippedStack(armorSlot);
+                if (armorSlot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) continue;
 
-                        TagKey<Item> trinketTag = TagKey.of(RegistryKeys.ITEM, trinketTagId);
+                ItemStack outerArmor = player.getEquippedStack(armorSlot);
+                float occupancy = UnderArmorContentsComponent.getAmountFilled(outerArmor);
+                if (occupancy <= 0) return;
 
-                        int damageToApply;
+                if (outerArmor.isEmpty() || !(outerArmor.getItem() instanceof ArmorItem outerArmorItem)) continue;
 
-                        if (!armorStack.isEmpty() && armorStack.getItem() instanceof ArmorItem) {
-                            if (player.getRandom().nextFloat() < 0.25f) {
-                                damageToApply = Math.round(amount);
-                            } else {
-                                damageToApply = 0;
-                            }
-                        } else {
-                            damageToApply = Math.round(amount);
-                        }
+                UnderArmorContentsComponent component = outerArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                if (component == null) continue;
 
-                        if (damageToApply <= 0) continue;
+                ItemStack innerArmor = component.get(0);
+                if (innerArmor.isEmpty() || !(innerArmor.getItem() instanceof ArmorItem innerArmorItem)) continue;
 
-                        component.getEquipped(trinketStack -> trinketStack.isIn(trinketTag)).forEach(pair -> {
-                            ItemStack underArmorStack = pair.getRight();
+                int damageToApply;
+                if (player.getRandom().nextFloat() < 0.25f) {
+                    damageToApply = Math.round(amount);
+                } else {
+                    damageToApply = 0;
+                }
 
-                            if (!underArmorStack.isEmpty() && underArmorStack.getItem() instanceof ArmorItem armor && armorStack.getItem() instanceof ArmorItem armorItem) {
-                                int armorPoints = armor.getProtection();
-                                int armorPoints1 = armorItem.getProtection();
-                                int scaledDamage = Math.max(1, Math.round(damageToApply * (armorPoints / 5f) * (armorPoints1 / 5f)));
-                                underArmorStack.damage(scaledDamage, player, armorSlot);
-                            }
-                        });
-                    }
-                });
+                if (damageToApply <= 0) continue;
+
+                int innerProtection = innerArmorItem.getProtection();
+                int outerProtection = outerArmorItem.getProtection();
+                int scaledDamage = Math.max(1, Math.round(damageToApply * (innerProtection / 5f) * (outerProtection / 5f)));
+
+                innerArmor.damage(scaledDamage, player, armorSlot);
             }
         }
     }
+
 
     @Inject(method = "getPreferredEquipmentSlot", at = @At("HEAD"), cancellable = true)
     private void redirectArmorIfNoUnderArmor(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> ci) {
         if (stack.getItem() instanceof ArmorItem) {
 
             if ((Object) this instanceof PlayerEntity) {
-                if (!stack.isIn(BYPASSES_UNDER_ARMOR)) ci.setReturnValue(EquipmentSlot.MAINHAND);
                 if (!stack.isIn(UNDER_ARMOR)) ci.setReturnValue(EquipmentSlot.MAINHAND);
                 if (stack.getDamage() >= stack.getMaxDamage()) ci.setReturnValue(EquipmentSlot.MAINHAND);
             }
@@ -90,19 +77,30 @@ public abstract class LivingEntityMixin {
     }
 
     @Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
-    private void addUnderArmor(CallbackInfoReturnable<Integer> ci) {
+    private void addArmorToUnderArmor(CallbackInfoReturnable<Integer> ci) {
         if ((Object)this instanceof PlayerEntity player) {
-            TrinketsApi.getTrinketComponent(player).ifPresent(component -> {
-                AtomicInteger bonusArmor = new AtomicInteger();
-                component.getEquipped(stack -> stack.getItem() instanceof ArmorItem).forEach(pair -> {
-                    ItemStack stack = pair.getRight();
 
-                    if (stack.getDamage() >= stack.getMaxDamage()) return;
-                    ArmorItem armor = (ArmorItem) pair.getRight().getItem();
-                    bonusArmor.addAndGet(armor.getProtection());
-                });
-                ci.setReturnValue(ci.getReturnValue() + bonusArmor.get());
-            });
+            int bonusArmor = 0;
+
+            for (EquipmentSlot armorSlot : EquipmentSlot.values()) {
+                if (armorSlot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) continue;
+
+                ItemStack outerArmor = player.getEquippedStack(armorSlot);
+                float occupancy = UnderArmorContentsComponent.getAmountFilled(outerArmor);
+                if (occupancy <= 0) return;
+
+                if (outerArmor.isEmpty() || !(outerArmor.getItem() instanceof ArmorItem)) continue;
+
+                UnderArmorContentsComponent component = outerArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                if (component == null) continue;
+
+                ItemStack innerArmor = component.get(0);
+                if (innerArmor.isEmpty() || !(innerArmor.getItem() instanceof ArmorItem armor)) continue;
+                if (innerArmor.getDamage() >= innerArmor.getMaxDamage()) continue;
+
+                bonusArmor += armor.getProtection();
+            }
+            ci.setReturnValue(ci.getReturnValue() + bonusArmor);
         }
     }
 }

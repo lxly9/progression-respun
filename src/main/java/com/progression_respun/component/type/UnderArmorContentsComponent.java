@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.data.ModItemTagProvider;
-import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,7 +27,7 @@ implements TooltipData {
     public static final UnderArmorContentsComponent DEFAULT = new UnderArmorContentsComponent(List.of());
     public static final Codec<UnderArmorContentsComponent> CODEC = ItemStack.CODEC.listOf().xmap(UnderArmorContentsComponent::new, component -> component.stacks);
     public static final PacketCodec<RegistryByteBuf, UnderArmorContentsComponent> PACKET_CODEC = ItemStack.PACKET_CODEC.collect(PacketCodecs.toList()).xmap(UnderArmorContentsComponent::new, component -> component.stacks);
-    private static final Fraction NESTED_UNDER_ARMOR_OCCUPANCY = Fraction.getFraction(1, 16);
+    private static final Fraction NESTED_UNDER_ARMOR_OCCUPANCY = Fraction.ONE;
     private static final int ADD_TO_NEW_SLOT = -1;
     final List<ItemStack> stacks;
     final Fraction occupancy;
@@ -48,6 +47,11 @@ implements TooltipData {
 
     public UnderArmorContentsComponent(List<ItemStack> stacks) {
         this(stacks, UnderArmorContentsComponent.calculateOccupancy(stacks));
+    }
+
+    public static float getAmountFilled(ItemStack stack) {
+        UnderArmorContentsComponent component = stack.getOrDefault(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, UnderArmorContentsComponent.DEFAULT);
+        return component.getOccupancy().floatValue();
     }
 
     private static Fraction calculateOccupancy(List<ItemStack> stacks) {
