@@ -128,7 +128,7 @@ implements TooltipData {
         }
         stack2.set(DataComponentTypes.BUNDLE_CONTENTS, BundleContentsComponent.DEFAULT);
         if (player instanceof ServerPlayerEntity) {
-            bundleContentsComponent.iterateCopy().forEach(stack -> player.dropItem((ItemStack)stack, true));
+            bundleContentsComponent.iterateCopy().forEach(stack -> player.getInventory().offerOrDrop(stack));
         }
     }
 

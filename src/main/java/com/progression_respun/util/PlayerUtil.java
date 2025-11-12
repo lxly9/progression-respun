@@ -83,10 +83,10 @@ public class PlayerUtil {
                 for (PlayerEntity player : list) {
                     if (player.hasStatusEffect(effect)) {
                         if (Objects.requireNonNull(player.getStatusEffect(effect)).getDuration() <= 20) {
-                            player.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, false, true));
+                            player.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, false, false));
                         }
                     } else {
-                        player.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, false, true));
+                        player.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, false, false));
                     }
                 }
 

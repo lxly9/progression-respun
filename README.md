@@ -27,8 +27,9 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 ## To Do
 
 - **!!** loot table manipulation for balancing
-- **!!** rework crucible
 - **!!** drop trinkets for under armor bundle-like behavior
+  - second tooltip rendering
+  - both textures rendering as item model
 
 
 - **?** brewing stand can only brew one potion
@@ -55,3 +56,4 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - ~~one-hit attacks leave you at 1 hp~~
 - ~~rework turtle helmet, more than 10 secs of water breathing~~
 - ~~Campfire effects~~
+- **!!** rework crucible

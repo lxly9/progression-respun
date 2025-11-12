@@ -60,18 +60,21 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @Inject(method = "damage(ILnet/minecraft/server/world/ServerWorld;Lnet/minecraft/server/network/ServerPlayerEntity;Ljava/util/function/Consumer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", shift = At.Shift.BEFORE), cancellable = true)
     private void damageRestrictDecrement(int amount, ServerWorld world, @Nullable ServerPlayerEntity player, Consumer<Item> breakCallback, CallbackInfo ci, @Local(ordinal = 1) int i) {
         Item item = getItem();
+        ItemStack stack = item.getDefaultStack();
         boolean noDestroy = item instanceof ToolItem || item instanceof ArmorItem || item instanceof ShieldItem;
 
+        if (item instanceof ArmorItem && stack.isIn(UNDER_ARMOR) && stack.getDamage() >= stack.getMaxDamage()) {
+            UnderArmorContentsComponent.dropAllBundledItems(item.getDefaultStack(), player);
+        }
         if (!noDestroy) {
             decrement(amount);
         }
         if (!noDestroy || i - amount < this.getMaxDamage()) {
             breakCallback.accept(item);
-            ItemStack stack = (ItemStack)(Object)this;
-            if (UnderArmorContentsComponent.hasArmorSlot(stack) && player != null) {
-                UnderArmorContentsComponent.dropAllBundledItems(stack, player);
-                SoundUtil.playDropContentsSound(player);
-            }
+        }
+        if (UnderArmorContentsComponent.hasArmorSlot(item.getDefaultStack()) && player != null) {
+            UnderArmorContentsComponent.dropAllBundledItems(item.getDefaultStack(), player);
+            SoundUtil.playDropContentsSound(player);
         }
         ci.cancel();
 

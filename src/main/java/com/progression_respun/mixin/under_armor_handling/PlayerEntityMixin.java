@@ -39,6 +39,18 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         return itemStack.getItem();
     }
 
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void onTick(CallbackInfo ci) {
+        PlayerEntity player = (PlayerEntity)(Object)this;
+
+        for (EquipmentSlot armorSlot : EquipmentSlot.values()) {
+            ItemStack armorStack = player.getEquippedStack(armorSlot);
+            if (!armorStack.isEmpty() && armorStack.getDamage() >= armorStack.getMaxDamage()) {
+                player.getInventory().offerOrDrop(armorStack);
+            }
+        }
+    }
+
     @Inject(method = "updateTurtleHelmet", at = @At("HEAD"))
     private void extendTurtleHelmet(CallbackInfo ci) {
         ItemStack itemStack = this.getEquippedStack(EquipmentSlot.HEAD);
