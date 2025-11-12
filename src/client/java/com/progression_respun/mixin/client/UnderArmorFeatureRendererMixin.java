@@ -1,28 +1,43 @@
 package com.progression_respun.mixin.client;
 
-import net.minecraft.client.render.VertexConsumerProvider;
+import com.progression_respun.component.ModDataComponentTypes;
+import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class UnderArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
 
-    @Final
-    @Shadow
-    private SpriteAtlasTexture armorTrimsAtlas;
+    @Redirect(
+            method = "renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/LivingEntity;getEquippedStack(Lnet/minecraft/entity/EquipmentSlot;)Lnet/minecraft/item/ItemStack;"
+            )
+    )
+    private ItemStack redirectGetEquippedStack(LivingEntity entity, EquipmentSlot slot) {
+        ItemStack originalStack = entity.getEquippedStack(slot);
 
-    @Inject(method = "renderArmor", at = @At("HEAD"), cancellable = true)
-    private void renderUnderArmor(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot slot, int light, A model, CallbackInfo ci) {
-        ci.cancel();
+        if (originalStack.getItem() instanceof ArmorItem armorItem) {
+            if (!UnderArmorContentsComponent.hasArmorSlot(originalStack)) return originalStack;
+            float occupancy = UnderArmorContentsComponent.getAmountFilled(originalStack);
+            if (occupancy <= 0) return originalStack;
+
+            UnderArmorContentsComponent component = originalStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component == null) return originalStack;
+
+            ItemStack armorInside = component.get(0);
+            if (armorInside.isEmpty() || !(armorInside.getItem() instanceof ArmorItem)) return originalStack;
+            return armorInside;
+        }
+
+        return originalStack;
     }
 }

@@ -6,6 +6,7 @@
 
   "tag.item.progression_respun.incorrect_for_flint_tool": "Incorrect for Flint Tool",
   "tag.item.progression_respun.needs_under_armor": "Needs corresponding Under Armor to be equipped.",
+  "tag.item.progression_respun.under_armor": "Can be worn as Under Armor.",
 
   "item.progression_respun.tooltip.broken": "Broken! Repair to use it again!",
 

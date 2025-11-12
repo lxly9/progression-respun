@@ -17,6 +17,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.progression_respun.compat.CompatMods.FARMERSDELIGHT;
 import static com.progression_respun.util.ArmorUtil.*;
@@ -78,12 +79,19 @@ public class PlayerUtil {
             if (mobList.isEmpty()) {
                 if (FARMERSDELIGHT) effect = comfort_effect;
 
-                for (PlayerEntity playerEntity : list) {
-                    playerEntity.addStatusEffect(new StatusEffectInstance(effect, 100, 0, false, false, false));
+
+                for (PlayerEntity player : list) {
+                    if (player.hasStatusEffect(effect)) {
+                        if (Objects.requireNonNull(player.getStatusEffect(effect)).getDuration() <= 20) {
+                            player.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, false, true));
+                        }
+                    } else {
+                        player.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, false, true));
+                    }
                 }
 
                 for (TameableEntity tameableEntity : petList) {
-                    tameableEntity.addStatusEffect(new StatusEffectInstance(effect, 100, 0, false, true, false));
+                    tameableEntity.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, true, false));
                 }
             }
         }

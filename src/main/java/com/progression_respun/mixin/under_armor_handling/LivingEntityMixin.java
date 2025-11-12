@@ -23,9 +23,7 @@ import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
 
-    @Shadow @Final private static Logger LOGGER;
-
-    @Inject(method = "damageEquipment", at = @At("HEAD"))
+    @Inject(method = "damageEquipment", at = @At("HEAD"), cancellable = true)
     private void damageUnderArmor(DamageSource source, float amount, EquipmentSlot[] slots, CallbackInfo ci) {
         if (((Object)this) instanceof PlayerEntity player) {
             if (source.isIn(DamageTypeTags.BYPASSES_ARMOR)) return;
@@ -34,17 +32,17 @@ public abstract class LivingEntityMixin {
 
                 if (armorSlot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) continue;
 
-                ItemStack outerArmor = player.getEquippedStack(armorSlot);
-                float occupancy = UnderArmorContentsComponent.getAmountFilled(outerArmor);
+                ItemStack underArmor = player.getEquippedStack(armorSlot);
+                float occupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
                 if (occupancy <= 0) return;
 
-                if (outerArmor.isEmpty() || !(outerArmor.getItem() instanceof ArmorItem outerArmorItem)) continue;
+                if (underArmor.isEmpty() || !(underArmor.getItem() instanceof ArmorItem outerArmorItem)) continue;
 
-                UnderArmorContentsComponent component = outerArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                UnderArmorContentsComponent component = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
                 if (component == null) continue;
 
-                ItemStack innerArmor = component.get(0);
-                if (innerArmor.isEmpty() || !(innerArmor.getItem() instanceof ArmorItem innerArmorItem)) continue;
+                ItemStack armorItem = component.get(0);
+                if (armorItem.isEmpty() || !(armorItem.getItem() instanceof ArmorItem innerArmorItem)) continue;
 
                 int damageToApply;
                 if (player.getRandom().nextFloat() < 0.25f) {
@@ -52,14 +50,21 @@ public abstract class LivingEntityMixin {
                 } else {
                     damageToApply = 0;
                 }
-
+                int i = (int)Math.max(1.0f, amount / 4.0f);
                 if (damageToApply <= 0) continue;
 
                 int innerProtection = innerArmorItem.getProtection();
                 int outerProtection = outerArmorItem.getProtection();
                 int scaledDamage = Math.max(1, Math.round(damageToApply * (innerProtection / 5f) * (outerProtection / 5f)));
 
-                innerArmor.damage(scaledDamage, player, armorSlot);
+
+                if (underArmor.takesDamageFrom(source)) {
+                    underArmor.damage(scaledDamage, player, armorSlot);
+                }
+                if (armorItem.takesDamageFrom(source)) {
+                    armorItem.damage(i, player, armorSlot);
+                }
+                ci.cancel();
             }
         }
     }
@@ -85,18 +90,18 @@ public abstract class LivingEntityMixin {
             for (EquipmentSlot armorSlot : EquipmentSlot.values()) {
                 if (armorSlot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) continue;
 
-                ItemStack outerArmor = player.getEquippedStack(armorSlot);
-                float occupancy = UnderArmorContentsComponent.getAmountFilled(outerArmor);
+                ItemStack underArmor = player.getEquippedStack(armorSlot);
+                float occupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
                 if (occupancy <= 0) return;
 
-                if (outerArmor.isEmpty() || !(outerArmor.getItem() instanceof ArmorItem)) continue;
+                if (underArmor.isEmpty() || !(underArmor.getItem() instanceof ArmorItem)) continue;
 
-                UnderArmorContentsComponent component = outerArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                UnderArmorContentsComponent component = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
                 if (component == null) continue;
 
-                ItemStack innerArmor = component.get(0);
-                if (innerArmor.isEmpty() || !(innerArmor.getItem() instanceof ArmorItem armor)) continue;
-                if (innerArmor.getDamage() >= innerArmor.getMaxDamage()) continue;
+                ItemStack armorItem = component.get(0);
+                if (armorItem.isEmpty() || !(armorItem.getItem() instanceof ArmorItem armor)) continue;
+                if (armorItem.getDamage() >= armorItem.getMaxDamage()) continue;
 
                 bonusArmor += armor.getProtection();
             }

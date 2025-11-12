@@ -2,19 +2,16 @@ package com.progression_respun.mixin.under_armor_handling;
 
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
-import com.progression_respun.data.ModItemTagProvider;
 import com.progression_respun.util.SoundUtil;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
-import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -24,7 +21,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import static com.progression_respun.data.ModItemTagProvider.BYPASSES_UNDER_ARMOR;
+import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 @Mixin(ArmorItem.class)
 public abstract class ArmorItemMixin extends Item {
@@ -32,7 +31,7 @@ public abstract class ArmorItemMixin extends Item {
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     private void equipAndSwap(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         ItemStack stack = user.getStackInHand(hand);
-        if (!(stack.getItem() instanceof ArmorItem) || !stack.isIn(ModItemTagProvider.UNDER_ARMOR)) cir.setReturnValue(TypedActionResult.fail(stack));
+        if (!(stack.getItem() instanceof ArmorItem) || !stack.isIn(UNDER_ARMOR)) cir.setReturnValue(TypedActionResult.fail(stack));
     }
 
     public ArmorItemMixin(Settings settings) {
@@ -69,6 +68,8 @@ public abstract class ArmorItemMixin extends Item {
             }
         } else if (itemStack.getItem() instanceof ArmorItem otherArmor && !(armorItem.getSlotType() == otherArmor.getSlotType())) {
             return false;
+        } else if (itemStack.getItem() instanceof ElytraItem) {
+            return false;
         } else if (itemStack.getItem().canBeNested() && (i = builder.add(slot, player)) > 0) {
             SoundUtil.playInsertSound(player);
         }
@@ -92,8 +93,8 @@ public abstract class ArmorItemMixin extends Item {
                 cursorStackReference.set(itemStack);
             }
         } else {
+            if (!(otherStack.getItem() instanceof ArmorItem otherArmor)) return false;
             ArmorItem armorItem = (ArmorItem) stack.getItem();
-            ArmorItem otherArmor = (ArmorItem) otherStack.getItem();
             EquipmentSlot armorSlot = armorItem.getSlotType();
             EquipmentSlot otherSlot = otherArmor.getSlotType();
             if (!UnderArmorContentsComponent.isAllowedInUnderArmor(otherStack) || !(armorSlot == otherSlot)) return false;
@@ -107,18 +108,14 @@ public abstract class ArmorItemMixin extends Item {
     }
 
     @Override
-    public Optional<TooltipData> getTooltipData(ItemStack stack) {
-        if(!UnderArmorContentsComponent.hasArmorSlot(stack)) return Optional.empty();
-//        return Optional.ofNullable(stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS)).map(UnderArmorTooltipData::new);
-        return Optional.empty();
-    }
-
-    @Override
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
         UnderArmorContentsComponent underArmorContentsComponent = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
         if (underArmorContentsComponent != null) {
-            int i = MathHelper.multiplyFraction(underArmorContentsComponent.getOccupancy(), 64);
-            tooltip.add(Text.translatable("item.minecraft.bundle.fullness", i, 64).formatted(Formatting.GRAY));
+            if (stack.isIn(UNDER_ARMOR)) {
+                tooltip.add(Text.translatable("tag.item.progression_respun.under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+            } else if (!stack.isIn(UNDER_ARMOR) && !(stack.isIn(BYPASSES_UNDER_ARMOR))) {
+                tooltip.add(Text.translatable("tag.item.progression_respun.needs_under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+            }
         }
     }
 
