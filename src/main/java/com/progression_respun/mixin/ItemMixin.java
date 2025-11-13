@@ -46,27 +46,16 @@ public class ItemMixin {
         int newStackSize = -1;
         int newMaxDamage = -1;
 
-        if (item instanceof BedItem) {
-            newStackSize = 16;
-        }
-        if (item instanceof PotionItem) {
-            newMaxDamage = 3;
-        }
+        if (item instanceof BedItem) newStackSize = 16;
+        if (item instanceof PotionItem) newMaxDamage = 3;
 
         if (newStackSize > 0) {
-            ComponentMap override = ComponentMap.builder()
-                    .add(DataComponentTypes.MAX_STACK_SIZE, newStackSize)
-                    .build();
-
+            ComponentMap override = ComponentMap.builder().add(DataComponentTypes.MAX_STACK_SIZE, newStackSize).build();
             components = ComponentMap.of(components, override);
         }
 
         if (newMaxDamage > 0) {
-            ComponentMap override = ComponentMap.builder()
-                    .add(DataComponentTypes.MAX_DAMAGE, newMaxDamage)
-                    .add(DataComponentTypes.DAMAGE, 0)
-                    .build();
-
+            ComponentMap override = ComponentMap.builder().add(DataComponentTypes.MAX_DAMAGE, newMaxDamage).add(DataComponentTypes.DAMAGE, 0).build();
             components = ComponentMap.of(components, override);
         }
     }

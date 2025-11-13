@@ -11,6 +11,8 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.world.ServerWorld;
 
@@ -54,5 +56,19 @@ public class ArmorUtil {
                     }
             );
         });
+    }
+
+    public static ItemStack getArmorFromUnderArmor(ItemStack underArmorItem) {
+        if (UnderArmorContentsComponent.hasArmorSlot(underArmorItem)){
+            float occupancy = UnderArmorContentsComponent.getAmountFilled(underArmorItem);
+            if (occupancy <= 0) {
+                UnderArmorContentsComponent component = underArmorItem.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                if (component != null) {
+                    ItemStack armorInside = component.get(0);
+                    if (!armorInside.isEmpty() && armorInside.getItem() instanceof ArmorItem) return armorInside;
+                }
+            }
+        }
+        return Items.AIR.getDefaultStack();
     }
 }

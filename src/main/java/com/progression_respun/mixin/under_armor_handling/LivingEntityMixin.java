@@ -1,5 +1,8 @@
 package com.progression_respun.mixin.under_armor_handling;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.minecraft.entity.EquipmentSlot;
@@ -8,74 +11,57 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.DamageTypeTags;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Random;
+
+import static com.progression_respun.data.ModItemTagProvider.BYPASSES_UNDER_ARMOR;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
 
-    @Inject(method = "damageEquipment", at = @At("HEAD"), cancellable = true)
-    private void damageUnderArmor(DamageSource source, float amount, EquipmentSlot[] slots, CallbackInfo ci) {
-        if (((Object)this) instanceof PlayerEntity player) {
-            if (source.isIn(DamageTypeTags.BYPASSES_ARMOR)) return;
+    @Shadow @Final private static Logger LOGGER;
 
-            for (EquipmentSlot armorSlot : EquipmentSlot.values()) {
-
-                if (armorSlot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) continue;
-
-                ItemStack underArmor = player.getEquippedStack(armorSlot);
-                float occupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
-                if (occupancy <= 0) return;
-
-                if (underArmor.isEmpty() || !(underArmor.getItem() instanceof ArmorItem outerArmorItem)) continue;
-
-                UnderArmorContentsComponent component = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                if (component == null) continue;
-
-                ItemStack armorItem = component.get(0);
-                if (armorItem.isEmpty() || !(armorItem.getItem() instanceof ArmorItem innerArmorItem)) continue;
-
-                int damageToApply;
-                if (player.getRandom().nextFloat() < 0.25f) {
-                    damageToApply = Math.round(amount);
-                } else {
-                    damageToApply = 0;
+    @WrapOperation(method = "damageEquipment", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;)V"))
+    private void damageUnderArmor(ItemStack item, int amount, LivingEntity entity, EquipmentSlot slot, Operation<Void> underArmor, @Local(argsOnly = true) DamageSource source) {
+        if (((Object) this) instanceof PlayerEntity player) {
+            if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+                if (!item.isEmpty() && item.getItem() instanceof ArmorItem) {
+                    boolean hasArmor = UnderArmorContentsComponent.getAmountFilled(item) > 0;
+                    if (hasArmor) {
+                        var component = item.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                        if (component != null) {
+                            ItemStack armor = component.get(0);
+                            Random random = new Random();
+                            if (armor.takesDamageFrom(source)) {
+                                armor.damage(amount, player, slot);
+                            }
+                            if (random.nextDouble() < 0.25) {
+                                underArmor.call(item, amount, entity, slot);
+                            }
+                            return;
+                        }
+                    }
                 }
-                int i = (int)Math.max(1.0f, amount / 4.0f);
-                if (damageToApply <= 0) continue;
-
-                int innerProtection = innerArmorItem.getProtection();
-                int outerProtection = outerArmorItem.getProtection();
-                int scaledDamage = Math.max(1, Math.round(damageToApply * (innerProtection / 5f) * (outerProtection / 5f)));
-
-
-                if (underArmor.takesDamageFrom(source)) {
-                    underArmor.damage(scaledDamage, player, armorSlot);
-                }
-                if (armorItem.takesDamageFrom(source)) {
-                    armorItem.damage(i, player, armorSlot);
-                }
-                ci.cancel();
             }
         }
-    }
 
+        underArmor.call(item, amount, entity, slot);
+    }
 
     @Inject(method = "getPreferredEquipmentSlot", at = @At("HEAD"), cancellable = true)
     private void redirectArmorIfNoUnderArmor(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> ci) {
         if (stack.getItem() instanceof ArmorItem) {
 
             if ((Object) this instanceof PlayerEntity) {
-                if (!stack.isIn(UNDER_ARMOR)) ci.setReturnValue(EquipmentSlot.MAINHAND);
+                if (!stack.isIn(UNDER_ARMOR) && !stack.isIn(BYPASSES_UNDER_ARMOR)) ci.setReturnValue(EquipmentSlot.MAINHAND);
                 if (stack.getDamage() >= stack.getMaxDamage()) ci.setReturnValue(EquipmentSlot.MAINHAND);
             }
         }
@@ -92,7 +78,7 @@ public abstract class LivingEntityMixin {
 
                 ItemStack underArmor = player.getEquippedStack(armorSlot);
                 float occupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
-                if (occupancy <= 0) return;
+                if (occupancy <= 0) continue;
 
                 if (underArmor.isEmpty() || !(underArmor.getItem() instanceof ArmorItem)) continue;
 

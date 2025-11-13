@@ -41,13 +41,25 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - heatstroke mechanic in hot biomes (requires a helmet)
 
 
-- rework mending
 - properly sort Ingredients tab
 - Oven for Farmer's Delight
 - flint pebbles blockstates, stone pebbles
+- Seed pouch, Bouquet of Flowers, Dye pouch
+- no elytra rocket boosting
 - remove potions and tipped arrows
   - water breathing
 - Level system revamp
+  - linear levels
+  - no level loss on death
+  - levels wont be consumed
+  - levels unlock abilities
+- Enchantments Rework 
+  - rework mending → lowers the number of necessary materials for repairing tools
+  - no enchanting books, books are found and need to be inserted into chiseled bookshelves at the enchanting table to appear in it
+  - different Tool Material Types interact with specific Enchantments → Buffs & Nerfs
+  - no more "base" enchantments → no sharpness, protection, efficiency
+  - **?** tools can be sharpened on a grindstone
+    - sharpness/efficiency for limited durability on the tool
 
 ### Done
 - ~~**!!** Under Armor rendering~~

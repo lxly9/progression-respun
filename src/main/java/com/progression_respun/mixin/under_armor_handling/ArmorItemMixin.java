@@ -28,10 +28,45 @@ import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 @Mixin(ArmorItem.class)
 public abstract class ArmorItemMixin extends Item {
 
-    @Inject(method = "use", at = @At("HEAD"), cancellable = true)
-    private void equipAndSwap(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
-        ItemStack stack = user.getStackInHand(hand);
-        if (!(stack.getItem() instanceof ArmorItem) || !stack.isIn(UNDER_ARMOR)) cir.setReturnValue(TypedActionResult.fail(stack));
+    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ArmorItem;equipAndSwap(Lnet/minecraft/item/Item;Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/TypedActionResult;"), cancellable = true)
+    private void equipAndSwap(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+        ItemStack stack = player.getStackInHand(hand);
+        if (stack.getItem() instanceof ArmorItem armorItem) {
+            EquipmentSlot slot = armorItem.getSlotType();
+            ItemStack underArmor = player.getEquippedStack(slot);
+            if (stack.isIn(UNDER_ARMOR)) {
+                if (!underArmor.isEmpty()) {
+                    float armorOccupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
+                    if (armorOccupancy <= 0) {
+                        float stackOccupancy = UnderArmorContentsComponent.getAmountFilled(stack);
+                        if (stackOccupancy <= 0) {
+                            UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                            if (stackComponent != null) {
+                                UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
+                                builder.add(stack);
+                                underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
+                                cir.setReturnValue(TypedActionResult.success(stack));
+                            }
+                        }
+                    }
+                }
+            } else if (!stack.isIn(BYPASSES_UNDER_ARMOR)) {
+                if (!underArmor.isEmpty()) {
+                    float armorOccupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
+                    if (armorOccupancy <= 0) {
+                        UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                        if (stackComponent != null) {
+                            UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
+                            builder.add(stack);
+                            underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
+                            cir.setReturnValue(TypedActionResult.success(stack));
+                        }
+                    }
+                    cir.setReturnValue(TypedActionResult.fail(stack));
+                }
+                cir.setReturnValue(TypedActionResult.fail(stack));
+            }
+        }
     }
 
     public ArmorItemMixin(Settings settings) {
@@ -109,12 +144,19 @@ public abstract class ArmorItemMixin extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        UnderArmorContentsComponent underArmorContentsComponent = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-        if (underArmorContentsComponent != null) {
+        UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+        if (component != null) {
             if (stack.isIn(UNDER_ARMOR)) {
-                tooltip.add(Text.translatable("tag.item.progression_respun.under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+                boolean hasArmor = UnderArmorContentsComponent.getAmountFilled(stack) > 0;
+                if (!hasArmor) {
+                    tooltip.add(Text.translatable("tag.item.progression_respun.under_armor").formatted(Formatting.GRAY));
+                    tooltip.add(Text.translatable("tag.item.progression_respun.equip_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+                } else {
+                    tooltip.add(Text.translatable("tag.item.progression_respun.unequip_under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+                }
             } else if (!stack.isIn(UNDER_ARMOR) && !(stack.isIn(BYPASSES_UNDER_ARMOR))) {
-                tooltip.add(Text.translatable("tag.item.progression_respun.needs_under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+                tooltip.add(Text.translatable("tag.item.progression_respun.needs_under_armor").formatted(Formatting.GRAY));
+                tooltip.add(Text.translatable("tag.item.progression_respun.equip_under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
             }
         }
     }
