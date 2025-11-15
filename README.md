@@ -61,6 +61,8 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - **?** tools can be sharpened on a grindstone
     - sharpness/efficiency for limited durability on the tool
 - End Platform spawns in Outer End
+- Sprinting stops after ~5 seconds, you need to take a breath
+- Food system overhaul
 
 ### Done
 - ~~**!!** Under Armor rendering~~
