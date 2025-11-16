@@ -47,25 +47,20 @@ public abstract class LivingEntityMixin {
         if (((Object) this) instanceof PlayerEntity player) {
             if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
                 if (!item.isEmpty() && item.getItem() instanceof ArmorItem) {
-                    boolean hasArmor = UnderArmorContentsComponent.getAmountFilled(item) > 0;
-                    if (hasArmor) {
-                        var component = item.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                        if (component != null) {
-                            ItemStack armor = component.get(0);
-                            Random random = new Random();
-                            if (armor.takesDamageFrom(source)) {
-                                armor.damage(amount, player, slot);
-                                if (random.nextDouble() < 0.25) {
-                                    underArmor.call(item, amount, entity, slot);
-                                }
+                    var component = item.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                    if (component != null && !component.isEmpty()) {
+                        ItemStack armor = component.get(0);
+                        Random random = new Random();
+                        if (armor.takesDamageFrom(source)) {
+                            armor.damage(amount, player, slot);
+                            if (random.nextDouble() < 0.25) {
+                                underArmor.call(item, amount, entity, slot);
                             }
-                            return;
                         }
                     }
                 }
             }
         }
-        underArmor.call(item, amount, entity, slot);
     }
 
     @Inject(method = "getPreferredEquipmentSlot", at = @At("HEAD"), cancellable = true)

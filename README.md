@@ -63,6 +63,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - End Platform spawns in Outer End
 - Sprinting stops after ~5 seconds, you need to take a breath
 - Food system overhaul
+- Farming Overhaul like in Jaiz' Video
 - Cobweb burning
 
 ### Done
