@@ -1,5 +1,7 @@
 package com.progression_respun.mixin.client;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
@@ -42,37 +44,35 @@ public abstract class DrawContextMixin {
     @Inject(method = "drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isItemBarVisible()Z"))
     private void renderArmorDurabilityBar(net.minecraft.client.font.TextRenderer textRenderer, ItemStack stack, int x, int y, String countOverride, CallbackInfo ci) {
         if (!UnderArmorContentsComponent.hasArmorSlot(stack)) return;
-        float occupancy = UnderArmorContentsComponent.getAmountFilled(stack);
-        if (occupancy <= 0) return;
 
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-        if (component == null) return;
+        if (component != null && !component.isEmpty())
+        {
+            ItemStack armorInside = component.get(0);
+            if (armorInside.isEmpty() || !(armorInside.getItem() instanceof ArmorItem)) return;
+            if (armorInside.getDamage() == 0) return;
 
-        ItemStack armorInside = component.get(0);
-        if (armorInside.isEmpty() || !(armorInside.getItem() instanceof ArmorItem)) return;
-        if (armorInside.getDamage() == 0) return;
-
-        RenderSystem.disableDepthTest();
-        int i = armorInside.getItemBarStep();
-        int j = armorInside.getItemBarColor();
-        int drawX = x + 2;
-        int drawY = y + 11;
-        this.fill(RenderLayer.getGuiOverlay(), drawX, drawY, drawX + 13, drawY + 2, -16777216);
-        this.fill(RenderLayer.getGuiOverlay(), drawX, drawY, drawX + i, drawY + 1, j | -16777216);
-        RenderSystem.enableDepthTest();
+            RenderSystem.disableDepthTest();
+            int i = armorInside.getItemBarStep();
+            int j = armorInside.getItemBarColor();
+            int drawX = x + 2;
+            int drawY = y + 11;
+            this.fill(RenderLayer.getGuiOverlay(), drawX, drawY, drawX + 13, drawY + 2, -16777216);
+            this.fill(RenderLayer.getGuiOverlay(), drawX, drawY, drawX + i, drawY + 1, j | -16777216);
+            RenderSystem.enableDepthTest();
+        }
     }
 
-    @Inject(method = "drawItemTooltip", at = @At("HEAD"), cancellable = true)
-    private void drawArmorTooltip(TextRenderer textRenderer, ItemStack stack, int x, int y, CallbackInfo ci) {
-        if (UnderArmorContentsComponent.hasArmorSlot(stack)) return;
-        float occupancy = UnderArmorContentsComponent.getAmountFilled(stack);
-        if (occupancy <= 0) return;
-
-        UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-        if (component == null) return;
-
-        ItemStack armorInside = component.get(0);
-        drawTooltip(textRenderer, Screen.getTooltipFromItem(client, armorInside), armorInside.getTooltipData(), x, y);
-        ci.cancel();
-    }
+//    @WrapMethod(method = "drawItemTooltip")
+//    private void drawArmorTooltip(TextRenderer textRenderer, ItemStack stack, int x, int y, Operation<Void> original) {
+//        if (UnderArmorContentsComponent.hasArmorSlot(stack)) return;
+//        float occupancy = UnderArmorContentsComponent.getAmountFilled(stack);
+//        if (occupancy <= 0) return;
+//
+//        UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+//        if (component == null) return;
+//
+//        ItemStack armorInside = component.get(0);
+//        drawTooltip(textRenderer, Screen.getTooltipFromItem(client, armorInside), armorInside.getTooltipData(), x, y);
+//    }
 }

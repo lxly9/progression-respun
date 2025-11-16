@@ -11,6 +11,7 @@
     "EnchantmentHelperMixin",
     "ItemMixin",
     "ItemStackMixin",
+    "LivingEntityAccessor",
     "PotionItemMixin",
     "PotionsMixin",
     "ServerPlayerEntityMixin",

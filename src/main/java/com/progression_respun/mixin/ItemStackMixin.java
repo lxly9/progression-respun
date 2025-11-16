@@ -1,14 +1,20 @@
 package com.progression_respun.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.ProgressionRespun;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.component.ComponentHolder;
 import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -18,12 +24,15 @@ import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,7 +46,10 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
+import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
+import static net.minecraft.data.DataProvider.LOGGER;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack {
@@ -52,6 +64,10 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @Shadow public abstract ComponentMap getComponents();
 
     @Shadow public abstract boolean isIn(TagKey<Item> tag);
+
+    @Shadow public abstract void applyAttributeModifier(AttributeModifierSlot slot, BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer);
+
+    @Shadow protected abstract void appendAttributeModifierTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player, RegistryEntry<EntityAttribute> attribute, EntityAttributeModifier modifier);
 
     @Unique
     private boolean isBroken() {
@@ -83,23 +99,58 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     }
 
     @ModifyReturnValue(method = "getName", at = @At("RETURN"))
-    private Text gay(Text original) {
+    private Text MaterialWithArmorName(Text original) {
         ItemStack stack = (ItemStack)(Object) this;
         if (stack.getItem() instanceof ArmorItem underArmorItem && stack.isIn(UNDER_ARMOR)) {
-            float occupancy = UnderArmorContentsComponent.getAmountFilled(stack);
-            if (occupancy > 0) {
-                UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                if (component != null) {
-                    ItemStack armorItem = component.get(0);
-                    String[] material = underArmorItem.getMaterial().getIdAsString().split("[/:_]");
-                    String materialTranslation = "util.progression_respun." + material[1];
-                    String with = "util.progression_respun.with";
-                    return Text.translatable(materialTranslation).append(" ").append(Text.translatable(with)).append(" ").append(Text.translatable(armorItem.getTranslationKey()));
-                }
+            UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component != null && !component.isEmpty()) {
+                ItemStack armorItem = component.get(0);
+                String[] material = underArmorItem.getMaterial().getIdAsString().split("[/:_]");
+                String materialTranslation = "util.progression_respun." + material[1];
+                String with = "util.progression_respun.with";
+                return Text.translatable(materialTranslation).append(" ").append(Text.translatable(with)).append(" ").append(Text.translatable(armorItem.getTranslationKey()));
             }
             return this.getItem().getName(stack);
         }
         return this.getItem().getName(stack);
+    }
+
+    @WrapMethod(method = "appendAttributeModifiersTooltip")
+    private void appendArmorToUnderArmorAttributes(Consumer<Text> textConsumer, @Nullable PlayerEntity player, Operation<Void> original) {
+        AttributeModifiersComponent attributeModifiersComponent = this.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
+        if (!attributeModifiersComponent.showInTooltip()) {
+            return;
+        }
+        if (this.getItem() instanceof ArmorItem && this.isIn(UNDER_ARMOR)) {
+            UnderArmorContentsComponent component = this.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component != null && !component.isEmpty()) {
+                ItemStack armor = component.get(0);
+                if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) return;
+
+                for (AttributeModifierSlot attributeModifierSlot : AttributeModifierSlot.values()) {
+                    MutableBoolean mutableBoolean = new MutableBoolean(true);
+                    this.applyAttributeModifier(attributeModifierSlot, (attribute, modifier) -> {
+                        if (mutableBoolean.isTrue()) {
+                            textConsumer.accept(ScreenTexts.EMPTY);
+                            textConsumer.accept(Text.translatable("item.modifiers." + attributeModifierSlot.asString()).formatted(Formatting.GRAY));
+                            mutableBoolean.setFalse();
+                        }
+                        this.appendAttributeModifierTooltip(textConsumer, player, attribute, modifier);
+                    });
+                }
+            }
+        }
+        for (AttributeModifierSlot attributeModifierSlot : AttributeModifierSlot.values()) {
+            MutableBoolean mutableBoolean = new MutableBoolean(true);
+            this.applyAttributeModifier(attributeModifierSlot, (attribute, modifier) -> {
+                if (mutableBoolean.isTrue()) {
+                    textConsumer.accept(ScreenTexts.EMPTY);
+                    textConsumer.accept(Text.translatable("item.modifiers." + attributeModifierSlot.asString()).formatted(Formatting.GRAY));
+                    mutableBoolean.setFalse();
+                }
+                this.appendAttributeModifierTooltip(textConsumer, player, attribute, modifier);
+            });
+        }
     }
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)

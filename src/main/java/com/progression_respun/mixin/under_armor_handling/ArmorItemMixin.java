@@ -3,6 +3,8 @@ package com.progression_respun.mixin.under_armor_handling;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.util.SoundUtil;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -38,31 +40,24 @@ public abstract class ArmorItemMixin extends Item {
                 if (!underArmor.isEmpty()) {
                     float armorOccupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
                     if (armorOccupancy <= 0) {
-                        float stackOccupancy = UnderArmorContentsComponent.getAmountFilled(stack);
-                        if (stackOccupancy <= 0) {
-                            UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                            if (stackComponent != null) {
-                                UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
-                                builder.add(stack);
-                                underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
-                                cir.setReturnValue(TypedActionResult.success(stack));
-                            }
-                        }
-                    }
-                }
-            } else if (!stack.isIn(BYPASSES_UNDER_ARMOR)) {
-                if (!underArmor.isEmpty()) {
-                    float armorOccupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
-                    if (armorOccupancy <= 0) {
                         UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                        if (stackComponent != null) {
+                        if (stackComponent != null && !stackComponent.isEmpty()) {
                             UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
                             builder.add(stack);
                             underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
                             cir.setReturnValue(TypedActionResult.success(stack));
                         }
                     }
-                    cir.setReturnValue(TypedActionResult.fail(stack));
+                }
+            } else if (!stack.isIn(BYPASSES_UNDER_ARMOR)) {
+                if (!underArmor.isEmpty()) {
+                    UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                    if (stackComponent != null && !stackComponent.isEmpty()) {
+                        cir.setReturnValue(TypedActionResult.success(stack));
+                        UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
+                        builder.add(stack);
+                        underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
+                    }
                 }
                 cir.setReturnValue(TypedActionResult.fail(stack));
             }
@@ -89,7 +84,7 @@ public abstract class ArmorItemMixin extends Item {
         if (component == null) return false;
 
         ItemStack itemStack = slot.getStack();
-        if (!UnderArmorContentsComponent.isAllowedInUnderArmor(stack)) return false;
+        if (!UnderArmorContentsComponent.isAllowedInUnderArmor(itemStack)) return false;
         UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(component);
 
         ArmorItem armorItem = (ArmorItem) stack.getItem();
@@ -163,7 +158,9 @@ public abstract class ArmorItemMixin extends Item {
 
     @Override
     public void onItemEntityDestroyed(ItemEntity entity) {
-        SoundUtil.playDropContentsSound(entity);
-        ItemUsage.spawnItemContents(entity, UnderArmorContentsComponent.DEFAULT.iterate());
+        UnderArmorContentsComponent component = entity.getStack().get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+        if (component == null) return;
+        entity.getStack().set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, UnderArmorContentsComponent.DEFAULT);
+        ItemUsage.spawnItemContents(entity, component.iterateCopy());
     }
 }

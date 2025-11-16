@@ -31,5 +31,8 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
 
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(ModBlocks.CRUCIBLE_BLOCK);
+
+        getOrCreateTagBuilder(ModBlockTags.BURNABLE_COBWEBS)
+                .add(Blocks.COBWEB);
     }
 }
