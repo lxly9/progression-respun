@@ -65,6 +65,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - Food system overhaul
 - Farming Overhaul like in Jaiz' Video
 - Cobweb burning
+- remove Creeper griefing
 
 ### Done
 - ~~**!!** Under Armor rendering~~

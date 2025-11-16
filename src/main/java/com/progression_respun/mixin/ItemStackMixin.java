@@ -9,7 +9,6 @@ import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.component.ComponentHolder;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -27,7 +26,6 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -49,7 +47,6 @@ import java.util.function.Consumer;
 import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
-import static net.minecraft.data.DataProvider.LOGGER;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack {
@@ -140,17 +137,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
                 }
             }
         }
-        for (AttributeModifierSlot attributeModifierSlot : AttributeModifierSlot.values()) {
-            MutableBoolean mutableBoolean = new MutableBoolean(true);
-            this.applyAttributeModifier(attributeModifierSlot, (attribute, modifier) -> {
-                if (mutableBoolean.isTrue()) {
-                    textConsumer.accept(ScreenTexts.EMPTY);
-                    textConsumer.accept(Text.translatable("item.modifiers." + attributeModifierSlot.asString()).formatted(Formatting.GRAY));
-                    mutableBoolean.setFalse();
-                }
-                this.appendAttributeModifierTooltip(textConsumer, player, attribute, modifier);
-            });
-        }
+//        original.call(textConsumer, player, attribute, modifier);
     }
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
