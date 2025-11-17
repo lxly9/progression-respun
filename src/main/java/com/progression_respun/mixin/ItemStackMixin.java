@@ -1,5 +1,6 @@
 package com.progression_respun.mixin;
 
+import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -7,31 +8,35 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.ProgressionRespun;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
+import com.progression_respun.util.ArmorUtil;
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.minecraft.block.BlockState;
-import net.minecraft.component.ComponentHolder;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.*;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
+import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -40,12 +45,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
-import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 @Mixin(ItemStack.class)
@@ -65,6 +69,22 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @Shadow public abstract void applyAttributeModifier(AttributeModifierSlot slot, BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer);
 
     @Shadow protected abstract void appendAttributeModifierTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player, RegistryEntry<EntityAttribute> attribute, EntityAttributeModifier modifier);
+
+    @Shadow protected abstract <T extends TooltipAppender> void appendTooltip(ComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type);
+
+    @Shadow protected abstract void appendAttributeModifiersTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player);
+
+    @Shadow public abstract boolean isDamaged();
+
+    @Shadow @Final private ComponentMapImpl components;
+
+    @Shadow public abstract Text getName();
+
+    @Shadow public abstract Rarity getRarity();
+
+    @Shadow public abstract boolean isOf(Item item);
+
+    @Shadow @Final private static Text DISABLED_TEXT;
 
     @Unique
     private boolean isBroken() {
@@ -105,7 +125,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
                 String[] material = underArmorItem.getMaterial().getIdAsString().split("[/:_]");
                 String materialTranslation = "util.progression_respun." + material[1];
                 String with = "util.progression_respun.with";
-                return Text.translatable(materialTranslation).append(" ").append(Text.translatable(with)).append(" ").append(Text.translatable(armorItem.getTranslationKey()));
+                return Text.translatable(materialTranslation).append(Text.translatable(with)).append(Text.translatable(armorItem.getTranslationKey()));
             }
             return this.getItem().getName(stack);
         }
@@ -118,26 +138,96 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         if (!attributeModifiersComponent.showInTooltip()) {
             return;
         }
-        if (this.getItem() instanceof ArmorItem && this.isIn(UNDER_ARMOR)) {
-            UnderArmorContentsComponent component = this.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-            if (component != null && !component.isEmpty()) {
-                ItemStack armor = component.get(0);
-                if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) return;
+        ItemStack underArmor = (ItemStack) (Object) this;
+        ItemStack armor = null;
 
-                for (AttributeModifierSlot attributeModifierSlot : AttributeModifierSlot.values()) {
-                    MutableBoolean mutableBoolean = new MutableBoolean(true);
-                    this.applyAttributeModifier(attributeModifierSlot, (attribute, modifier) -> {
-                        if (mutableBoolean.isTrue()) {
-                            textConsumer.accept(ScreenTexts.EMPTY);
-                            textConsumer.accept(Text.translatable("item.modifiers." + attributeModifierSlot.asString()).formatted(Formatting.GRAY));
-                            mutableBoolean.setFalse();
-                        }
-                        this.appendAttributeModifierTooltip(textConsumer, player, attribute, modifier);
-                    });
+        if (underArmor.getItem() instanceof ArmorItem) {
+            if (underArmor.isIn(UNDER_ARMOR)) {
+                var component = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                if (component != null && !component.isEmpty()) {
+                    armor = component.get(0);
                 }
             }
+
+            for (AttributeModifierSlot slot : AttributeModifierSlot.values()) {
+                var collected = ArmorUtil.collectModifiersForSlot(underArmor, armor, slot);
+                if (collected.isEmpty()) continue;
+
+                textConsumer.accept(ScreenTexts.EMPTY);
+                textConsumer.accept(Text.translatable("item.modifiers." + slot.asString()).formatted(Formatting.GRAY));
+
+                for (var entry : collected.entrySet()) {
+                    ArmorUtil.printAttributeLine(textConsumer, entry.getKey(), entry.getValue().getLeft(), entry.getValue().getRight());
+                }
+            }
+        } else {
+            original.call(textConsumer, player);
         }
-//        original.call(textConsumer, player, attribute, modifier);
+    }
+
+    @WrapMethod(method = "getTooltip")
+    private List<Text> isUnderArmor(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type, Operation<List<Text>> original) {
+        ItemStack stack = (ItemStack)(Object)this;
+
+        if (stack.getItem() instanceof ArmorItem && stack.isIn(UNDER_ARMOR)) {
+            var component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component != null && !component.isEmpty()) {
+                ItemStack stack1 = component.get(0);
+                BlockPredicatesChecker blockPredicatesChecker2;
+                MapIdComponent mapIdComponent;
+                if (!type.isCreative() && this.contains(DataComponentTypes.HIDE_TOOLTIP)) {
+                    return List.of();
+                }
+                ArrayList<Text> list = Lists.newArrayList();
+                MutableText mutableText = Text.empty().append(stack.getName()).formatted(stack1.getRarity().getFormatting());
+                if (stack1.contains(DataComponentTypes.CUSTOM_NAME)) {
+                    mutableText.formatted(Formatting.ITALIC);
+                }
+                list.add(mutableText);
+                if (!type.isAdvanced() && !stack1.contains(DataComponentTypes.CUSTOM_NAME) && stack1.isOf(Items.FILLED_MAP) && (mapIdComponent = stack1.get(DataComponentTypes.MAP_ID)) != null) {
+                    list.add(FilledMapItem.getIdText(mapIdComponent));
+                }
+                Consumer<Text> consumer = list::add;
+                if (!stack1.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)) {
+                    stack1.getItem().appendTooltip(stack1, context, list, type);
+                }
+                appendTooltip(DataComponentTypes.JUKEBOX_PLAYABLE, context, consumer, type);
+                appendTooltip(DataComponentTypes.TRIM, context, consumer, type);
+                appendTooltip(DataComponentTypes.STORED_ENCHANTMENTS, context, consumer, type);
+                appendTooltip(DataComponentTypes.ENCHANTMENTS, context, consumer, type);
+                appendTooltip(DataComponentTypes.DYED_COLOR, context, consumer, type);
+                appendTooltip(DataComponentTypes.LORE, context, consumer, type);
+                this.appendAttributeModifiersTooltip(consumer, player);
+                appendTooltip(DataComponentTypes.UNBREAKABLE, context, consumer, type);
+                BlockPredicatesChecker blockPredicatesChecker = stack1.get(DataComponentTypes.CAN_BREAK);
+                if (blockPredicatesChecker != null && blockPredicatesChecker.showInTooltip()) {
+                    consumer.accept(ScreenTexts.EMPTY);
+                    consumer.accept(BlockPredicatesChecker.CAN_BREAK_TEXT);
+                    blockPredicatesChecker.addTooltips(consumer);
+                }
+                if ((blockPredicatesChecker2 = stack1.get(DataComponentTypes.CAN_PLACE_ON)) != null && blockPredicatesChecker2.showInTooltip()) {
+                    consumer.accept(ScreenTexts.EMPTY);
+                    consumer.accept(BlockPredicatesChecker.CAN_PLACE_TEXT);
+                    blockPredicatesChecker2.addTooltips(consumer);
+                }
+                if (type.isAdvanced()) {
+                    if (stack1.isDamaged()) {
+                        list.add(Text.translatable("item.durability", stack1.getMaxDamage() - stack1.getDamage(), stack1.getMaxDamage()));
+                    }
+                    list.add(Text.literal(Registries.ITEM.getId(stack1.getItem()).toString()).formatted(Formatting.DARK_GRAY));
+                    int i = stack1.getComponents().size();
+                    if (i > 0) {
+                        list.add(Text.translatable("item.components", i).formatted(Formatting.DARK_GRAY));
+                    }
+                }
+                if (player != null && !stack1.getItem().isEnabled(player.getWorld().getEnabledFeatures())) {
+                    list.add(DISABLED_TEXT);
+                }
+                return list;
+            }
+        }
+        original.call(context, player, type);
+        return List.of();
     }
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)

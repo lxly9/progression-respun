@@ -8,7 +8,7 @@
   "tag.item.progression_respun.needs_under_armor": "Needs corresponding Under Armor to be equipped.",
   "tag.item.progression_respun.under_armor": "Can be worn as Under Armor.",
 
-  "util.progression_respun.with": "with",
+  "util.progression_respun.with": " with ",
   "util.progression_respun.chainmail": "Chainmail",
   "util.progression_respun.leather": "Leather",
 
@@ -47,5 +47,6 @@
   "pack.progression_respun.redstone_copper": "REDstone Torches",
   "tag.item.progression_respun.equip_armor": "Equip Armor by right-clicking another Armor piece.",
   "tag.item.progression_respun.equip_under_armor": "Equip Armor by right-clicking an Under-Armor piece.",
-  "tag.item.progression_respun.unequip_under_armor": "Unequip Armor by right-clicking the Armor piece."
+  "tag.item.progression_respun.unequip_under_armor": "Unequip Armor by right-clicking the Armor piece.",
+  "util.progression_respun.plus": "+"
 }

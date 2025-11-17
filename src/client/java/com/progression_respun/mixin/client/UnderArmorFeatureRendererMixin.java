@@ -27,11 +27,9 @@ public abstract class UnderArmorFeatureRendererMixin<T extends LivingEntity, M e
 
         if (originalStack.getItem() instanceof ArmorItem armorItem) {
             if (!UnderArmorContentsComponent.hasArmorSlot(originalStack)) return originalStack;
-            float occupancy = UnderArmorContentsComponent.getAmountFilled(originalStack);
-            if (occupancy <= 0) return originalStack;
 
             UnderArmorContentsComponent component = originalStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-            if (component == null) return originalStack;
+            if (component == null || component.isEmpty()) return originalStack;
 
             ItemStack armorInside = component.get(0);
             if (armorInside.isEmpty() || !(armorInside.getItem() instanceof ArmorItem)) return originalStack;
