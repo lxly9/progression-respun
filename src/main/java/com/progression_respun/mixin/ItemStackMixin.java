@@ -104,7 +104,6 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
             breakCallback.accept(item);
         }
         ci.cancel();
-
     }
 
     @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;appendTooltip(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/Item$TooltipContext;Ljava/util/List;Lnet/minecraft/item/tooltip/TooltipType;)V", ordinal = 0, shift = At.Shift.BEFORE))
@@ -133,7 +132,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     }
 
     @WrapMethod(method = "appendAttributeModifiersTooltip")
-    private void appendArmorToUnderArmorAttributes(Consumer<Text> textConsumer, @Nullable PlayerEntity player, Operation<Void> original) {
+    private void appendArmorToUnderArmorAttributesTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player, Operation<Void> original) {
         AttributeModifiersComponent attributeModifiersComponent = this.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
         if (!attributeModifiersComponent.showInTooltip()) {
             return;
