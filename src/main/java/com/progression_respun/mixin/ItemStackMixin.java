@@ -168,66 +168,65 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @WrapMethod(method = "getTooltip")
     private List<Text> isUnderArmor(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type, Operation<List<Text>> original) {
         ItemStack stack = (ItemStack)(Object)this;
+        ItemStack stack1 = stack;
 
         if (stack.getItem() instanceof ArmorItem && stack.isIn(UNDER_ARMOR)) {
             var component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
             if (component != null && !component.isEmpty()) {
-                ItemStack stack1 = component.get(0);
-                BlockPredicatesChecker blockPredicatesChecker2;
-                MapIdComponent mapIdComponent;
-                if (!type.isCreative() && this.contains(DataComponentTypes.HIDE_TOOLTIP)) {
-                    return List.of();
-                }
-                ArrayList<Text> list = Lists.newArrayList();
-                MutableText mutableText = Text.empty().append(stack.getName()).formatted(stack1.getRarity().getFormatting());
-                if (stack1.contains(DataComponentTypes.CUSTOM_NAME)) {
-                    mutableText.formatted(Formatting.ITALIC);
-                }
-                list.add(mutableText);
-                if (!type.isAdvanced() && !stack1.contains(DataComponentTypes.CUSTOM_NAME) && stack1.isOf(Items.FILLED_MAP) && (mapIdComponent = stack1.get(DataComponentTypes.MAP_ID)) != null) {
-                    list.add(FilledMapItem.getIdText(mapIdComponent));
-                }
-                Consumer<Text> consumer = list::add;
-                if (!stack1.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)) {
-                    stack1.getItem().appendTooltip(stack1, context, list, type);
-                }
-                appendTooltip(DataComponentTypes.JUKEBOX_PLAYABLE, context, consumer, type);
-                appendTooltip(DataComponentTypes.TRIM, context, consumer, type);
-                appendTooltip(DataComponentTypes.STORED_ENCHANTMENTS, context, consumer, type);
-                appendTooltip(DataComponentTypes.ENCHANTMENTS, context, consumer, type);
-                appendTooltip(DataComponentTypes.DYED_COLOR, context, consumer, type);
-                appendTooltip(DataComponentTypes.LORE, context, consumer, type);
-                this.appendAttributeModifiersTooltip(consumer, player);
-                appendTooltip(DataComponentTypes.UNBREAKABLE, context, consumer, type);
-                BlockPredicatesChecker blockPredicatesChecker = stack1.get(DataComponentTypes.CAN_BREAK);
-                if (blockPredicatesChecker != null && blockPredicatesChecker.showInTooltip()) {
-                    consumer.accept(ScreenTexts.EMPTY);
-                    consumer.accept(BlockPredicatesChecker.CAN_BREAK_TEXT);
-                    blockPredicatesChecker.addTooltips(consumer);
-                }
-                if ((blockPredicatesChecker2 = stack1.get(DataComponentTypes.CAN_PLACE_ON)) != null && blockPredicatesChecker2.showInTooltip()) {
-                    consumer.accept(ScreenTexts.EMPTY);
-                    consumer.accept(BlockPredicatesChecker.CAN_PLACE_TEXT);
-                    blockPredicatesChecker2.addTooltips(consumer);
-                }
-                if (type.isAdvanced()) {
-                    if (stack1.isDamaged()) {
-                        list.add(Text.translatable("item.durability", stack1.getMaxDamage() - stack1.getDamage(), stack1.getMaxDamage()));
-                    }
-                    list.add(Text.literal(Registries.ITEM.getId(stack1.getItem()).toString()).formatted(Formatting.DARK_GRAY));
-                    int i = stack1.getComponents().size();
-                    if (i > 0) {
-                        list.add(Text.translatable("item.components", i).formatted(Formatting.DARK_GRAY));
-                    }
-                }
-                if (player != null && !stack1.getItem().isEnabled(player.getWorld().getEnabledFeatures())) {
-                    list.add(DISABLED_TEXT);
-                }
-                return list;
+                stack1 = component.get(0);
             }
         }
-        original.call(context, player, type);
-        return List.of();
+        BlockPredicatesChecker blockPredicatesChecker2;
+        MapIdComponent mapIdComponent;
+        if (!type.isCreative() && this.contains(DataComponentTypes.HIDE_TOOLTIP)) {
+            return List.of();
+        }
+        ArrayList<Text> list = Lists.newArrayList();
+        MutableText mutableText = Text.empty().append(stack.getName()).formatted(stack1.getRarity().getFormatting());
+        if (stack1.contains(DataComponentTypes.CUSTOM_NAME)) {
+            mutableText.formatted(Formatting.ITALIC);
+        }
+        list.add(mutableText);
+        if (!type.isAdvanced() && !stack1.contains(DataComponentTypes.CUSTOM_NAME) && stack1.isOf(Items.FILLED_MAP) && (mapIdComponent = stack1.get(DataComponentTypes.MAP_ID)) != null) {
+            list.add(FilledMapItem.getIdText(mapIdComponent));
+        }
+        Consumer<Text> consumer = list::add;
+        if (!stack1.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)) {
+            stack1.getItem().appendTooltip(stack1, context, list, type);
+        }
+        appendTooltip(DataComponentTypes.JUKEBOX_PLAYABLE, context, consumer, type);
+        appendTooltip(DataComponentTypes.TRIM, context, consumer, type);
+        appendTooltip(DataComponentTypes.STORED_ENCHANTMENTS, context, consumer, type);
+        appendTooltip(DataComponentTypes.ENCHANTMENTS, context, consumer, type);
+        appendTooltip(DataComponentTypes.DYED_COLOR, context, consumer, type);
+        appendTooltip(DataComponentTypes.LORE, context, consumer, type);
+        this.appendAttributeModifiersTooltip(consumer, player);
+        appendTooltip(DataComponentTypes.UNBREAKABLE, context, consumer, type);
+        BlockPredicatesChecker blockPredicatesChecker = stack1.get(DataComponentTypes.CAN_BREAK);
+        if (blockPredicatesChecker != null && blockPredicatesChecker.showInTooltip()) {
+            consumer.accept(ScreenTexts.EMPTY);
+            consumer.accept(BlockPredicatesChecker.CAN_BREAK_TEXT);
+            blockPredicatesChecker.addTooltips(consumer);
+        }
+        if ((blockPredicatesChecker2 = stack1.get(DataComponentTypes.CAN_PLACE_ON)) != null && blockPredicatesChecker2.showInTooltip()) {
+            consumer.accept(ScreenTexts.EMPTY);
+            consumer.accept(BlockPredicatesChecker.CAN_PLACE_TEXT);
+            blockPredicatesChecker2.addTooltips(consumer);
+        }
+        if (type.isAdvanced()) {
+            if (stack1.isDamaged()) {
+                list.add(Text.translatable("item.durability", stack1.getMaxDamage() - stack1.getDamage(), stack1.getMaxDamage()));
+            }
+            list.add(Text.literal(Registries.ITEM.getId(stack1.getItem()).toString()).formatted(Formatting.DARK_GRAY));
+            int i = stack1.getComponents().size();
+            if (i > 0) {
+                list.add(Text.translatable("item.components", i).formatted(Formatting.DARK_GRAY));
+            }
+        }
+        if (player != null && !stack1.getItem().isEnabled(player.getWorld().getEnabledFeatures())) {
+            list.add(DISABLED_TEXT);
+        }
+        return list;
     }
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)

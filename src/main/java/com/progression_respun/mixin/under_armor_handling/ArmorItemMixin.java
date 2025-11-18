@@ -40,24 +40,31 @@ public abstract class ArmorItemMixin extends Item {
                 if (!underArmor.isEmpty()) {
                     float armorOccupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
                     if (armorOccupancy <= 0) {
+                        float stackOccupancy = UnderArmorContentsComponent.getAmountFilled(stack);
+                        if (stackOccupancy <= 0) {
+                            UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                            if (stackComponent != null) {
+                                UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
+                                builder.add(stack);
+                                underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
+                                cir.setReturnValue(TypedActionResult.success(stack));
+                            }
+                        }
+                    }
+                }
+            } else if (!stack.isIn(BYPASSES_UNDER_ARMOR)) {
+                if (!underArmor.isEmpty()) {
+                    float armorOccupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
+                    if (armorOccupancy <= 0) {
                         UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                        if (stackComponent != null && !stackComponent.isEmpty()) {
+                        if (stackComponent != null) {
                             UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
                             builder.add(stack);
                             underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
                             cir.setReturnValue(TypedActionResult.success(stack));
                         }
                     }
-                }
-            } else if (!stack.isIn(BYPASSES_UNDER_ARMOR)) {
-                if (!underArmor.isEmpty()) {
-                    UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                    if (stackComponent != null && !stackComponent.isEmpty()) {
-                        cir.setReturnValue(TypedActionResult.success(stack));
-                        UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
-                        builder.add(stack);
-                        underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
-                    }
+                    cir.setReturnValue(TypedActionResult.fail(stack));
                 }
                 cir.setReturnValue(TypedActionResult.fail(stack));
             }
