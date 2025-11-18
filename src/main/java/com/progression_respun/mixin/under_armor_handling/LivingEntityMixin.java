@@ -94,12 +94,12 @@ public abstract class LivingEntityMixin {
                 map.put(equipmentSlot, itemStack2);
                 AttributeContainer attributeContainer = player.getAttributes();
                 if (itemStack.isEmpty()) continue;
+
                 itemStack.applyAttributeModifiers(equipmentSlot, (attribute, modifier) -> {
                     EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance(attribute);
-                    EntityAttributeModifier modifier1 = new EntityAttributeModifier(modifier.id().withSuffixedPath("_under_armor"), modifier.value(), modifier.operation());
                     if (entityAttributeInstance != null) {
                         entityAttributeInstance.removeModifier(modifier);
-                        entityAttributeInstance.removeModifier(modifier1);
+                        entityAttributeInstance.removeModifier(modifier.id().withSuffixedPath("_under_armor"));
                     }
                     EnchantmentHelper.removeLocationBasedEffects(itemStack, player, equipmentSlot);
                 });
@@ -109,6 +109,17 @@ public abstract class LivingEntityMixin {
                     EquipmentSlot equipmentSlot2 = (EquipmentSlot) entry.getKey();
                     ItemStack itemStack3 = (ItemStack) entry.getValue();
                     if (itemStack3.isEmpty()) continue;
+
+                    ItemStack armor;
+
+                    if (!(itemStack3.getItem() instanceof ArmorItem) && !itemStack3.isIn(UNDER_ARMOR)) continue;
+
+                    UnderArmorContentsComponent component = itemStack3.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                    if (component == null || component.isEmpty()) continue;
+
+                    armor = component.get(0);
+                    if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) continue;
+
                     itemStack3.applyAttributeModifiers(equipmentSlot2, (registryEntry, entityAttributeModifier) -> {
                         World world;
                         EntityAttributeInstance entityAttributeInstance = this.attributes.getCustomInstance(registryEntry);
@@ -118,31 +129,28 @@ public abstract class LivingEntityMixin {
                         }
                         if ((world = player.getWorld()) instanceof ServerWorld) {
                             ServerWorld serverWorld = (ServerWorld) world;
+
                             EnchantmentHelper.applyLocationBasedEffects(serverWorld, itemStack3, player, equipmentSlot2);
                         }
                     });
 
-                    if (!(itemStack3.getItem() instanceof ArmorItem) && !itemStack3.isIn(UNDER_ARMOR)) continue;
+                    if (!armor.isEmpty()){
+                        armor.applyAttributeModifiers(equipmentSlot2, (registryEntry, entityAttributeModifier) -> {
+                            World world;
+                            EntityAttributeInstance entityAttributeInstance = this.attributes.getCustomInstance(registryEntry);
+                            EntityAttributeModifier entityAttributeModifier1 = new EntityAttributeModifier(entityAttributeModifier.id().withSuffixedPath("_under_armor"), entityAttributeModifier.value(), entityAttributeModifier.operation());
+                            if (entityAttributeInstance != null) {
+                                entityAttributeInstance.removeModifier(entityAttributeModifier1.id());
+                                entityAttributeInstance.addTemporaryModifier(entityAttributeModifier1);
+                            }
+                            if ((world = player.getWorld()) instanceof ServerWorld) {
+                                ServerWorld serverWorld = (ServerWorld) world;
 
-                    UnderArmorContentsComponent component = itemStack3.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                    if (component == null || component.isEmpty()) continue;
-
-                    ItemStack armor = component.get(0);
-                    if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) continue;
-
-                    armor.applyAttributeModifiers(equipmentSlot2, (registryEntry, entityAttributeModifier) -> {
-                        World world;
-                        EntityAttributeInstance entityAttributeInstance = this.attributes.getCustomInstance((RegistryEntry<EntityAttribute>) registryEntry);
-                        EntityAttributeModifier entityAttributeModifier1 = new EntityAttributeModifier(entityAttributeModifier.id().withSuffixedPath("_under_armor"), entityAttributeModifier.value(), entityAttributeModifier.operation());
-                        if (entityAttributeInstance != null) {
-                            entityAttributeInstance.removeModifier(entityAttributeModifier1.id());
-                            entityAttributeInstance.addTemporaryModifier(entityAttributeModifier1);
-                        }
-                        if ((world = player.getWorld()) instanceof ServerWorld) {
-                            ServerWorld serverWorld = (ServerWorld) world;
-                            EnchantmentHelper.applyLocationBasedEffects(serverWorld, armor, player, equipmentSlot2);
-                        }
-                    });
+                                EnchantmentHelper.removeLocationBasedEffects(armor, player, equipmentSlot2);
+                                EnchantmentHelper.applyLocationBasedEffects(serverWorld, armor, player, equipmentSlot2);
+                            }
+                        });
+                    }
                 }
             }
         }
