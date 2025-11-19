@@ -27,26 +27,23 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 ## To Do
 
 - **!!** loot table manipulation for balancing
-- **!!** drop trinkets for under armor bundle-like behavior
-  - second tooltip rendering
-  - both textures rendering as item model
 
 
-- **?** brewing stand can only brew one potion
-- **?** armadillo chestplate with roll-up functionality (idea u/Sea_Honey_2747)
-- **?** custom oxidization behavior
-- **?** temperature system
+- **?** Brewing stand can only brew one potion
+- **?** Armadillo chestplate with roll-up functionality (idea u/Sea_Honey_2747)
+- **?** Custom oxidization behavior for Redstone blocks made of Copper
+- **?** Temperature system
   - akin to freezing mechanic, no need for drinking, cooling off, etc.
   - water in cold biome freezes you
   - heatstroke mechanic in hot biomes (requires a helmet)
+- **?** properly sort Ingredients tab
 
 
-- properly sort Ingredients tab
 - Oven for Farmer's Delight
-- flint pebbles blockstates, stone pebbles
+- Flint pebbles blockstates
 - Seed pouch, Bouquet of Flowers, Dye pouch
-- no elytra rocket boosting
-- remove potions and tipped arrows
+- **?** No Elytra rocket boosting
+- Remove potions and tipped arrows
   - water breathing
 - Level system revamp
   - linear levels
@@ -66,15 +63,23 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - Farming Overhaul like in Jaiz' Video
 - Cobweb burning
 - remove Creeper griefing
-- banners as capes
+- Iron Golems don't drop Ingots, except when spawned by Players
+- Endermen won't attack Endermites
+- Biome-based mob spawns
+- Smithing templates only break upon use, can be repaired in anvil
+- Per-weapon crit chance
+- Right-click Totems of Undying to not die
+- All ice blocks melt in the Nether
+- Grindstone damages Items when removing enchants
+- Banners as capes
   - applied at smithing table or put into chestplate?
 
 ### Done
 - ~~**!!** Under Armor rendering~~
 - ~~**!!** actually nerf armor across the board~~
-- **!!** rework crucible
+- ~~**!!** drop trinkets for under armor bundle-like behavior~~
+- ~~**!!** rework crucible~~
 - ~~custom ORNGstone virtual resource pack~~
 - ~~one-hit attacks leave you at 1 hp~~
 - ~~rework turtle helmet, more than 10 secs of water breathing~~
 - ~~Campfire effects~~
-- **!!** rework crucible
