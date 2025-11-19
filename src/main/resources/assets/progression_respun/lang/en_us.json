@@ -9,6 +9,7 @@
   "tag.item.progression_respun.under_armor": "Can be worn as Under Armor.",
 
   "util.progression_respun.with": " with ",
+  "util.durability.underarmor": "Durability of Under Armor: %s / %s",
   "util.progression_respun.chainmail": "Chainmail",
   "util.progression_respun.leather": "Leather",
 

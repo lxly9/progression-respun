@@ -191,8 +191,9 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         }
         Consumer<Text> consumer = list::add;
         if (!stack1.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)) {
-            stack1.getItem().appendTooltip(stack1, context, list, type);
+            stack1.getItem().appendTooltip(stack, context, list, type);
         }
+
         appendTooltip(DataComponentTypes.JUKEBOX_PLAYABLE, context, consumer, type);
         appendTooltip(DataComponentTypes.TRIM, context, consumer, type);
         appendTooltip(DataComponentTypes.STORED_ENCHANTMENTS, context, consumer, type);
@@ -215,6 +216,9 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         if (type.isAdvanced()) {
             if (stack1.isDamaged()) {
                 list.add(Text.translatable("item.durability", stack1.getMaxDamage() - stack1.getDamage(), stack1.getMaxDamage()));
+                if (stack != stack1) {
+                    list.add(Text.translatable("util.durability.underarmor", stack.getMaxDamage() - stack.getDamage(), stack.getMaxDamage()));
+                }
             }
             list.add(Text.literal(Registries.ITEM.getId(stack1.getItem()).toString()).formatted(Formatting.DARK_GRAY));
             int i = stack1.getComponents().size();

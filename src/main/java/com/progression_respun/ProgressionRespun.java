@@ -42,7 +42,7 @@ public class ProgressionRespun implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		MobUtil.changeMobAttributes();
 		MobUtil.despawnMobsOnWakeup();
-		PlayerUtil.oneHitToOneHp();
+//		PlayerUtil.oneHitToOneHp();
 		RecipeUtil.registerRecipeDisabler();
 		RecipeUtil.grindingRecipe();
 		ModDataComponentTypes.registerModDataComponentTypes();

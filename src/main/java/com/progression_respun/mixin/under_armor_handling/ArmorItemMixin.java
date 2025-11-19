@@ -91,7 +91,6 @@ public abstract class ArmorItemMixin extends Item {
         if (component == null) return false;
 
         ItemStack itemStack = slot.getStack();
-        if (!UnderArmorContentsComponent.isAllowedInUnderArmor(itemStack)) return false;
         UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(component);
 
         ArmorItem armorItem = (ArmorItem) stack.getItem();
@@ -107,7 +106,7 @@ public abstract class ArmorItemMixin extends Item {
             return false;
         } else if (itemStack.getItem() instanceof ElytraItem) {
             return false;
-        } else if (itemStack.getItem().canBeNested() && (i = builder.add(slot, player)) > 0) {
+        } else if (UnderArmorContentsComponent.isAllowedInUnderArmor(itemStack) && itemStack.getItem().canBeNested() && (i = builder.add(slot, player)) > 0) {
             SoundUtil.playInsertSound(player);
         }
         stack.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());

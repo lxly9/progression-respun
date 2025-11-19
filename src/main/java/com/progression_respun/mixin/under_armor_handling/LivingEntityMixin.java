@@ -16,16 +16,12 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -76,92 +72,101 @@ public abstract class LivingEntityMixin {
 
     @WrapMethod(method = "getEquipmentChanges")
     private @Nullable Map<EquipmentSlot, ItemStack> getArmorChanges(Operation<Map<EquipmentSlot, ItemStack>> original) {
-        EnumMap<EquipmentSlot, ItemStack> map = null;
-        if ((LivingEntity) (Object) this instanceof PlayerEntity player){
-            for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-                ItemStack itemStack = switch (equipmentSlot.getType()) {
-                    default -> throw new MatchException(null, null);
-                    case EquipmentSlot.Type.HAND -> ((LivingEntityAccessor) player).invokeGetSyncedHandStack(equipmentSlot);
-                    case EquipmentSlot.Type.HUMANOID_ARMOR -> ((LivingEntityAccessor) player).invokeGetSyncedArmorStack(equipmentSlot);
-                    case EquipmentSlot.Type.ANIMAL_ARMOR -> ((LivingEntityAccessor) player).getSyncedBodyArmorStack();
-                };
-                ItemStack itemStack2 = player.getEquippedStack(equipmentSlot);
+        Map<EquipmentSlot, ItemStack> map = null;
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
 
-                if (!player.areItemsDifferent(itemStack, itemStack2)) continue;
+        for(EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            ItemStack var10000;
+            switch (equipmentSlot.getType()) {
+                case HAND -> var10000 = ((LivingEntityAccessor) livingEntity).invokeGetSyncedHandStack(equipmentSlot);
+                case HUMANOID_ARMOR -> var10000 = ((LivingEntityAccessor) livingEntity).invokeGetSyncedArmorStack(equipmentSlot);
+                case ANIMAL_ARMOR -> var10000 = ((LivingEntityAccessor) livingEntity).getSyncedBodyArmorStack();
+                default -> throw new MatchException((String)null, (Throwable)null);
+            }
+
+            ItemStack itemStack = var10000;
+            ItemStack itemStack2 = livingEntity.getEquippedStack(equipmentSlot);
+            if (livingEntity.areItemsDifferent(itemStack, itemStack2)) {
                 if (map == null) {
                     map = Maps.newEnumMap(EquipmentSlot.class);
                 }
+
                 map.put(equipmentSlot, itemStack2);
-                AttributeContainer attributeContainer = player.getAttributes();
-                if (itemStack.isEmpty()) continue;
-                itemStack.applyAttributeModifiers(equipmentSlot, (attribute, modifier) -> {
-                    EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance(attribute);
-                    if (entityAttributeInstance != null) {
-                        entityAttributeInstance.removeModifier(modifier);
+                AttributeContainer attributeContainer = livingEntity.getAttributes();
+                if (!itemStack.isEmpty()) {
+                    itemStack.applyAttributeModifiers(equipmentSlot, (attribute, modifier) -> {
+                        EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance(attribute);
+                        if (entityAttributeInstance != null) {
+                            entityAttributeInstance.removeModifier(modifier);
+                        }
+
+                        EnchantmentHelper.removeLocationBasedEffects(itemStack, livingEntity, equipmentSlot);
+                    });
+                    if (itemStack.getItem() instanceof ArmorItem && itemStack.isIn(UNDER_ARMOR)) {
+
+                        UnderArmorContentsComponent component = itemStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                        if (component == null || component.isEmpty()) continue;
+
+                        ItemStack armor = component.get(0);
+                        if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) continue;
+
+                        armor.applyAttributeModifiers(equipmentSlot, (attribute, modifier) -> {
+                            EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance(attribute);
+                            EntityAttributeModifier modifier1 = new EntityAttributeModifier(modifier.id().withSuffixedPath("_under_armor"), modifier.value(), modifier.operation());
+                            if (entityAttributeInstance != null) {
+                                entityAttributeInstance.removeModifier(modifier1);
+                            }
+                            EnchantmentHelper.removeLocationBasedEffects(armor, livingEntity, equipmentSlot);
+                        });
                     }
-                    EnchantmentHelper.removeLocationBasedEffects(itemStack, player, equipmentSlot);
-                });
-
-                if (!(itemStack.getItem() instanceof ArmorItem) && !itemStack.isIn(UNDER_ARMOR)) continue;
-
-                UnderArmorContentsComponent component = itemStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                if (component == null || component.isEmpty()) continue;
-
-                ItemStack armor = component.get(0);
-                if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) continue;
-
-                armor.applyAttributeModifiers(equipmentSlot, (attribute, modifier) -> {
-                    EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance(attribute);
-                    EntityAttributeModifier modifier1 = new EntityAttributeModifier(modifier.id().withSuffixedPath("_under_armor"), modifier.value(), modifier.operation());
-                    if (entityAttributeInstance != null) {
-                        entityAttributeInstance.removeModifier(modifier);
-                        entityAttributeInstance.removeModifier(modifier1);
-                    }
-                    EnchantmentHelper.removeLocationBasedEffects(armor, player, equipmentSlot);
-                });
+                }
             }
-            if (map != null) {
-                for (Map.Entry entry : map.entrySet()) {
-                    EquipmentSlot equipmentSlot2 = (EquipmentSlot) entry.getKey();
-                    ItemStack itemStack3 = (ItemStack) entry.getValue();
-                    if (itemStack3.isEmpty()) continue;
+        }
+
+        if (map != null) {
+            for(Map.Entry<EquipmentSlot, ItemStack> entry : map.entrySet()) {
+                EquipmentSlot equipmentSlot2 = (EquipmentSlot)entry.getKey();
+                ItemStack itemStack3 = (ItemStack)entry.getValue();
+                if (!itemStack3.isEmpty()) {
                     itemStack3.applyAttributeModifiers(equipmentSlot2, (registryEntry, entityAttributeModifier) -> {
-                        World world;
-                        EntityAttributeInstance entityAttributeInstance = this.attributes.getCustomInstance(registryEntry);
+                        EntityAttributeInstance entityAttributeInstance = livingEntity.getAttributes().getCustomInstance(registryEntry);
                         if (entityAttributeInstance != null) {
                             entityAttributeInstance.removeModifier(entityAttributeModifier.id());
                             entityAttributeInstance.addTemporaryModifier(entityAttributeModifier);
                         }
-                        if ((world = player.getWorld()) instanceof ServerWorld) {
-                            ServerWorld serverWorld = (ServerWorld) world;
-                            EnchantmentHelper.applyLocationBasedEffects(serverWorld, itemStack3, player, equipmentSlot2);
+
+                        World world = livingEntity.getWorld();
+                        if (world instanceof ServerWorld serverWorld) {
+                            EnchantmentHelper.applyLocationBasedEffects(serverWorld, itemStack3, livingEntity, equipmentSlot2);
                         }
+
                     });
+                    if (itemStack3.getItem() instanceof ArmorItem && itemStack3.isIn(UNDER_ARMOR)) {
 
-                    if (!(itemStack3.getItem() instanceof ArmorItem) && !itemStack3.isIn(UNDER_ARMOR)) continue;
+                        UnderArmorContentsComponent component = itemStack3.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                        if (component == null || component.isEmpty()) continue;
 
-                    UnderArmorContentsComponent component = itemStack3.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                    if (component == null || component.isEmpty()) continue;
+                        ItemStack armor = component.get(0);
+                        if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) continue;
 
-                    ItemStack armor = component.get(0);
-                    if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) continue;
-
-                    armor.applyAttributeModifiers(equipmentSlot2, (registryEntry, entityAttributeModifier) -> {
-                        World world;
-                        EntityAttributeInstance entityAttributeInstance = this.attributes.getCustomInstance((RegistryEntry<EntityAttribute>) registryEntry);
-                        EntityAttributeModifier entityAttributeModifier1 = new EntityAttributeModifier(entityAttributeModifier.id().withSuffixedPath("_under_armor"), entityAttributeModifier.value(), entityAttributeModifier.operation());
-                        if (entityAttributeInstance != null) {
-                            entityAttributeInstance.removeModifier(entityAttributeModifier1.id());
-                            entityAttributeInstance.addTemporaryModifier(entityAttributeModifier1);
-                        }
-                        if ((world = player.getWorld()) instanceof ServerWorld) {
-                            ServerWorld serverWorld = (ServerWorld) world;
-                            EnchantmentHelper.applyLocationBasedEffects(serverWorld, armor, player, equipmentSlot2);
-                        }
-                    });
+                        armor.applyAttributeModifiers(equipmentSlot2, (registryEntry, entityAttributeModifier) -> {
+                            World world;
+                            EntityAttributeInstance entityAttributeInstance = this.attributes.getCustomInstance(registryEntry);
+                            EntityAttributeModifier entityAttributeModifier1 = new EntityAttributeModifier(entityAttributeModifier.id().withSuffixedPath("_under_armor"), entityAttributeModifier.value(), entityAttributeModifier.operation());
+                            if (entityAttributeInstance != null) {
+                                entityAttributeInstance.removeModifier(entityAttributeModifier1.id());
+                                entityAttributeInstance.addTemporaryModifier(entityAttributeModifier1);
+                            }
+                            if ((world = livingEntity.getWorld()) instanceof ServerWorld) {
+                                ServerWorld serverWorld = (ServerWorld) world;
+                                EnchantmentHelper.applyLocationBasedEffects(serverWorld, armor, livingEntity, equipmentSlot2);
+                            }
+                        });
+                    }
                 }
             }
         }
+
         return map;
     }
 }
