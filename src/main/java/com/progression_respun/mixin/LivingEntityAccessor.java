@@ -10,11 +10,11 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(LivingEntity.class)
 public interface LivingEntityAccessor {
     @Invoker("getSyncedArmorStack")
-    ItemStack invokeGetSyncedArmorStack(EquipmentSlot slot);
+    ItemStack progressionrespun$getSyncedArmorStack(EquipmentSlot slot);
     @Invoker("getSyncedHandStack")
-    ItemStack invokeGetSyncedHandStack(EquipmentSlot slot);
+    ItemStack progressionrespun$getSyncedHandStack(EquipmentSlot slot);
     @Accessor("syncedBodyArmorStack")
-    ItemStack getSyncedBodyArmorStack();
+    ItemStack progressionrespun$getSyncedBodyArmorStack();
     @Accessor("syncedBodyArmorStack")
-    void setSyncedBodyArmorStack(ItemStack stack);
+    void progressionrespun$setSyncedBodyArmorStack(ItemStack stack);
 }

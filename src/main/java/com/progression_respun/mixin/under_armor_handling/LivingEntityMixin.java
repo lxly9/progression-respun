@@ -1,6 +1,7 @@
 package com.progression_respun.mixin.under_armor_handling;
 
 import com.google.common.collect.Maps;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -16,7 +17,10 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -26,7 +30,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -37,6 +40,8 @@ import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 public abstract class LivingEntityMixin {
 
     @Shadow @Final private AttributeContainer attributes;
+
+    @Shadow public abstract double getAttributeValue(RegistryEntry<EntityAttribute> attribute);
 
     @WrapOperation(method = "damageEquipment", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;)V"))
     private void damageUnderArmor(ItemStack item, int amount, LivingEntity entity, EquipmentSlot slot, Operation<Void> underArmor, @Local(argsOnly = true) DamageSource source) {
@@ -78,10 +83,10 @@ public abstract class LivingEntityMixin {
         for(EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             ItemStack var10000;
             switch (equipmentSlot.getType()) {
-                case HAND -> var10000 = ((LivingEntityAccessor) livingEntity).invokeGetSyncedHandStack(equipmentSlot);
-                case HUMANOID_ARMOR -> var10000 = ((LivingEntityAccessor) livingEntity).invokeGetSyncedArmorStack(equipmentSlot);
-                case ANIMAL_ARMOR -> var10000 = ((LivingEntityAccessor) livingEntity).getSyncedBodyArmorStack();
-                default -> throw new MatchException((String)null, (Throwable)null);
+                case HAND -> var10000 = ((LivingEntityAccessor) livingEntity).progressionrespun$getSyncedHandStack(equipmentSlot);
+                case HUMANOID_ARMOR -> var10000 = ((LivingEntityAccessor) livingEntity).progressionrespun$getSyncedArmorStack(equipmentSlot);
+                case ANIMAL_ARMOR -> var10000 = ((LivingEntityAccessor) livingEntity).progressionrespun$getSyncedBodyArmorStack();
+                default -> throw new MatchException(null, null);
             }
 
             ItemStack itemStack = var10000;
@@ -166,7 +171,6 @@ public abstract class LivingEntityMixin {
                 }
             }
         }
-
         return map;
     }
 }
