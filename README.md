@@ -28,6 +28,8 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 
 - **!!** loot table manipulation for balancing
 - **!!** drop trinkets for under armor bundle-like behavior
+  - second tooltip rendering
+  - both textures rendering as item model
 
 
 - **?** brewing stand can only brew one potion
@@ -39,13 +41,31 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - heatstroke mechanic in hot biomes (requires a helmet)
 
 
-- rework mending
 - properly sort Ingredients tab
 - Oven for Farmer's Delight
 - flint pebbles blockstates, stone pebbles
+- Seed pouch, Bouquet of Flowers, Dye pouch
+- no elytra rocket boosting
 - remove potions and tipped arrows
   - water breathing
 - Level system revamp
+  - linear levels
+  - no level loss on death
+  - levels wont be consumed
+  - levels unlock abilities
+- Enchantments Rework 
+  - rework mending → lowers the number of necessary materials for repairing tools
+  - no enchanting books, books are found and need to be inserted into chiseled bookshelves at the enchanting table to appear in it (Enchantery)
+  - different Tool Material Types interact with specific Enchantments → Buffs & Nerfs
+  - no more "base" enchantments → no sharpness, protection, efficiency
+  - **?** tools can be sharpened on a grindstone
+    - sharpness/efficiency for limited durability on the tool
+- End Platform spawns in Outer End
+- Sprinting stops after ~5 seconds, you need to take a breath
+- Food system overhaul
+- Farming Overhaul like in Jaiz' Video
+- Cobweb burning
+- remove Creeper griefing
 - banners as capes
   - applied at smithing table or put into chestplate?
 
@@ -57,3 +77,4 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - ~~one-hit attacks leave you at 1 hp~~
 - ~~rework turtle helmet, more than 10 secs of water breathing~~
 - ~~Campfire effects~~
+- **!!** rework crucible

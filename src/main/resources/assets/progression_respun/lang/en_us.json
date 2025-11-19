@@ -6,6 +6,12 @@
 
   "tag.item.progression_respun.incorrect_for_flint_tool": "Incorrect for Flint Tool",
   "tag.item.progression_respun.needs_under_armor": "Needs corresponding Under Armor to be equipped.",
+  "tag.item.progression_respun.under_armor": "Can be worn as Under Armor.",
+
+  "util.progression_respun.with": " with ",
+  "util.durability.underarmor": "Durability of Under Armor: %s / %s",
+  "util.progression_respun.chainmail": "Chainmail",
+  "util.progression_respun.leather": "Leather",
 
   "item.progression_respun.tooltip.broken": "Broken! Repair to use it again!",
 
@@ -39,5 +45,9 @@
   "trinkets.slot.legs.under_armor_legs":  "Chausses",
   "trinkets.slot.feet.under_armor_feet":  "Booties",
   "pack.progression_respun.orngstone_copper": "ORNGstone Torches",
-  "pack.progression_respun.redstone_copper": "REDstone Torches"
+  "pack.progression_respun.redstone_copper": "REDstone Torches",
+  "tag.item.progression_respun.equip_armor": "Equip Armor by right-clicking another Armor piece.",
+  "tag.item.progression_respun.equip_under_armor": "Equip Armor by right-clicking an Under-Armor piece.",
+  "tag.item.progression_respun.unequip_under_armor": "Unequip Armor by right-clicking the Armor piece.",
+  "util.progression_respun.plus": "+"
 }

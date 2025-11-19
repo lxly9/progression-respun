@@ -27,10 +27,7 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
     public static final TagKey<Item> POLISHABLE_GEM = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "polishable_gems"));
     public static final TagKey<Item> BYPASSES_UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "bypasses_under_armor"));
     public static final TagKey<Item> UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "under_armor"));
-    public static final TagKey<Item> UNDER_ARMOR_HEAD = TagKey.of(RegistryKeys.ITEM, Identifier.of("trinkets", "head/under_armor_head"));
-    public static final TagKey<Item> UNDER_ARMOR_CHEST = TagKey.of(RegistryKeys.ITEM, Identifier.of("trinkets", "chest/under_armor_chest"));
-    public static final TagKey<Item> UNDER_ARMOR_LEGS = TagKey.of(RegistryKeys.ITEM, Identifier.of("trinkets", "legs/under_armor_legs"));
-    public static final TagKey<Item> UNDER_ARMOR_FEET = TagKey.of(RegistryKeys.ITEM, Identifier.of("trinkets", "feet/under_armor_feet"));
+    public static final TagKey<Item> CAN_BURN_COBWEBS = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "can_burn_cobwebs"));
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
@@ -66,39 +63,29 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                         Items.ELYTRA
                 );
 
-        getOrCreateTagBuilder(UNDER_ARMOR_HEAD)
+        getOrCreateTagBuilder(UNDER_ARMOR)
                 .add(
                         Items.LEATHER_HELMET,
-                        Items.CHAINMAIL_HELMET
-                );
-
-        getOrCreateTagBuilder(UNDER_ARMOR_CHEST)
-                .add(
+                        Items.CHAINMAIL_HELMET,
                         Items.LEATHER_CHESTPLATE,
-                        Items.CHAINMAIL_CHESTPLATE
-                );
-
-        getOrCreateTagBuilder(UNDER_ARMOR_LEGS)
-                .add(
+                        Items.CHAINMAIL_CHESTPLATE,
                         Items.LEATHER_LEGGINGS,
-                        Items.CHAINMAIL_LEGGINGS
-                );
-
-        getOrCreateTagBuilder(UNDER_ARMOR_FEET)
-                .add(
+                        Items.CHAINMAIL_LEGGINGS ,
                         Items.LEATHER_BOOTS,
                         Items.CHAINMAIL_BOOTS
                 );
 
-        getOrCreateTagBuilder(UNDER_ARMOR)
-                .forceAddTag(UNDER_ARMOR_HEAD)
-                .forceAddTag(UNDER_ARMOR_CHEST)
-                .forceAddTag(UNDER_ARMOR_LEGS)
-                .forceAddTag(UNDER_ARMOR_FEET);
-
         getOrCreateTagBuilder(POLISHABLE_GEM)
                 .add(
                         Items.DIAMOND
+                );
+
+        getOrCreateTagBuilder(CAN_BURN_COBWEBS)
+                .add(
+                        Items.FLINT_AND_STEEL,
+                        Items.TORCH,
+                        Items.SOUL_TORCH,
+                        ModItems.FIRESTARTER
                 );
 
         if (GALOSPHERE) {

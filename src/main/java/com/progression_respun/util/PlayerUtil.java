@@ -1,15 +1,21 @@
 package com.progression_respun.util;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.DamageTypeTags;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -17,9 +23,13 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Objects;
 
+import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
 import static com.progression_respun.compat.CompatMods.FARMERSDELIGHT;
+import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
 import static com.progression_respun.util.ArmorUtil.*;
+import static net.minecraft.data.DataProvider.LOGGER;
 
 public class PlayerUtil {
 
@@ -78,12 +88,18 @@ public class PlayerUtil {
             if (mobList.isEmpty()) {
                 if (FARMERSDELIGHT) effect = comfort_effect;
 
-                for (PlayerEntity playerEntity : list) {
-                    playerEntity.addStatusEffect(new StatusEffectInstance(effect, 100, 0, false, false, false));
+                for (PlayerEntity player : list) {
+                    if (player.hasStatusEffect(effect)) {
+                        if (Objects.requireNonNull(player.getStatusEffect(effect)).getDuration() <= 20) {
+                            player.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, false, false));
+                        }
+                    } else {
+                        player.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, false, false));
+                    }
                 }
 
                 for (TameableEntity tameableEntity : petList) {
-                    tameableEntity.addStatusEffect(new StatusEffectInstance(effect, 100, 0, false, true, false));
+                    tameableEntity.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, true, false));
                 }
             }
         }

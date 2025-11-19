@@ -1,130 +1,35 @@
 package com.progression_respun.mixin.client;
 
-import dev.emi.trinkets.api.SlotReference;
-import dev.emi.trinkets.api.TrinketsApi;
-import net.minecraft.client.render.VertexConsumerProvider;
+import com.progression_respun.component.ModDataComponentTypes;
+import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
-import java.util.Optional;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class UnderArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
 
-    @Final
-    @Shadow
-    private SpriteAtlasTexture armorTrimsAtlas;
+    @Redirect(method = "renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getEquippedStack(Lnet/minecraft/entity/EquipmentSlot;)Lnet/minecraft/item/ItemStack;"))
+    private ItemStack redirectGetEquippedStack(LivingEntity entity, EquipmentSlot slot) {
+        ItemStack originalStack = entity.getEquippedStack(slot);
 
-    @Inject(method = "renderArmor", at = @At("HEAD"), cancellable = true)
-    private void renderUnderArmor(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot slot, int light, A model, CallbackInfo ci) {
+        if (originalStack.getItem() instanceof ArmorItem armorItem) {
+            if (!UnderArmorContentsComponent.hasArmorSlot(originalStack)) return originalStack;
 
-        ItemStack vanillaStack = entity.getEquippedStack(slot);
-        if (!vanillaStack.isEmpty() && !vanillaStack.isOf(Items.ELYTRA)) return;
+            UnderArmorContentsComponent component = originalStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component == null || component.isEmpty()) return originalStack;
 
-        Optional<ItemStack> underArmor = Optional.empty();
-
-        if (TrinketsApi.getTrinketComponent(entity).isPresent()) {
-            var component = TrinketsApi.getTrinketComponent(entity).get();
-            Identifier tagId = Identifier.of("trinkets", slot.name().toLowerCase() + "/under_armor_" + slot.name().toLowerCase());
-
-            List<Pair<SlotReference, ItemStack>> equipped = component.getEquipped(
-                    stack -> stack.isIn(TagKey.of(RegistryKeys.ITEM, tagId))
-            );
-
-            underArmor = equipped.stream()
-                    .map(Pair::getRight)
-                    .findFirst();
+            ItemStack armorInside = component.get(0);
+            if (armorInside.isEmpty() || !(armorInside.getItem() instanceof ArmorItem)) return originalStack;
+            return armorInside;
         }
 
-        underArmor.ifPresent(stack -> {
-            if (!(stack.getItem() instanceof ArmorItem armorItem)) return;
-            if (armorItem.getSlotType() != slot) return;
-
-            ((ArmorFeatureRenderer<T, M, A>) (Object) this).getContextModel()
-                    .copyBipedStateTo(model);
-
-            switch (slot) {
-                case HEAD -> {
-                    model.setVisible(false);
-                    model.head.visible = true;
-                    model.hat.visible = true;
-                }
-                case CHEST -> {
-                    model.setVisible(false);
-                    model.body.visible = true;
-                    model.rightArm.visible = true;
-                    model.leftArm.visible = true;
-                }
-                case LEGS -> {
-                    model.setVisible(false);
-                    model.body.visible = true;
-                    model.rightLeg.visible = true;
-                    model.leftLeg.visible = true;
-                }
-                case FEET -> {
-                    model.setVisible(false);
-                    model.rightLeg.visible = true;
-                    model.leftLeg.visible = true;
-                }
-            }
-
-            boolean inner = slot == EquipmentSlot.LEGS;
-
-            var material = armorItem.getMaterial();
-            var material1 = material.value();
-            for (var layer : material1.layers()) {
-                int color = layer.isDyeable() && stack.isIn(net.minecraft.registry.tag.ItemTags.DYEABLE)
-                        ? net.minecraft.util.math.ColorHelper.Argb.fullAlpha(
-                        net.minecraft.component.type.DyedColorComponent.getColor(stack, -6265536))
-                        : -1;
-
-                Identifier texture = layer.getTexture(inner);
-                model.render(matrices,
-                        vertexConsumers.getBuffer(net.minecraft.client.render.RenderLayer.getArmorCutoutNoCull(texture)),
-                        light,
-                        net.minecraft.client.render.OverlayTexture.DEFAULT_UV,
-                        color);
-            }
-
-            var armorTrim = stack.get(net.minecraft.component.DataComponentTypes.TRIM);
-            if (armorTrim != null) {
-                var sprite = armorTrimsAtlas.getSprite(inner ? armorTrim.getLeggingsModelId(material) : armorTrim.getGenericModelId(material));
-                var vertexConsumer = sprite.getTextureSpecificVertexConsumer(
-                        vertexConsumers.getBuffer(
-                                net.minecraft.client.render.TexturedRenderLayers.getArmorTrims(
-                                        armorTrim.getPattern().value().decal()
-                                )
-                        )
-                );
-                model.render(matrices, vertexConsumer, light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV);
-            }
-
-            if (stack.hasGlint()) {
-                model.render(matrices,
-                        vertexConsumers.getBuffer(net.minecraft.client.render.RenderLayer.getArmorEntityGlint()),
-                        light,
-                        net.minecraft.client.render.OverlayTexture.DEFAULT_UV);
-            }
-        });
-
-        ci.cancel();
+        return originalStack;
     }
 }

@@ -1,8 +1,0 @@
-{
-  "amount": 1,
-  "order": 0,
-  "icon": "progression_respun:gui/slots/head",
-  "validator_predicates": ["trinkets:tag","progression_respun:equippable_if_not_broken"],
-  "quick_move_predicates": ["trinkets:tag"],
-  "tooltip_predicates": ["trinkets:all"]
-}

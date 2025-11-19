@@ -101,7 +101,7 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
                 crucibleBlockEntity.setActiveRecipe(null);
                 crucibleBlockEntity.markDirty();
                 world.updateListeners(pos, state, state, 0);
-                world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.4f, 0.4f + player.getWorld().getRandom().nextFloat() * 0.4f);
                 return ItemActionResult.SUCCESS;
             }
 
@@ -109,7 +109,7 @@ public class CrucibleBlock extends BlockWithEntity implements BlockEntityProvide
                 if (inputStack.isEmpty()) crucibleBlockEntity.setStack(0, stack.copy().split(1));
                 if (inputStack.itemMatches(stack.getRegistryEntry())) inputStack.increment(1);
 
-                world.playSound(null, pos, SoundEvents.BLOCK_COPPER_BULB_HIT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                world.playSound(null, pos, SoundEvents.BLOCK_COPPER_BULB_HIT, SoundCategory.PLAYERS, 0.4f, 0.4f + player.getWorld().getRandom().nextFloat() * 0.4f);
                 stack.decrementUnlessCreative(1, player);
                 world.updateListeners(pos, state, state, 0);
                 crucibleBlockEntity.markDirty();

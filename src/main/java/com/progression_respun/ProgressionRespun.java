@@ -3,10 +3,16 @@ package com.progression_respun;
 import com.progression_respun.block.ModBlocks;
 import com.progression_respun.block.entity.ModBlockEntities;
 import com.progression_respun.compat.CompatMods;
+import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.ModRecipes;
+import com.progression_respun.util.ArmorUtil;
+import com.progression_respun.util.MobUtil;
+import com.progression_respun.util.PlayerUtil;
+import com.progression_respun.util.RecipeUtil;
 import com.progression_respun.worldgen.ModFeatures;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -18,11 +24,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.progression_respun.util.ArmorUtil.*;
-import static com.progression_respun.util.MobUtil.*;
-import static com.progression_respun.util.PlayerUtil.*;
-import static com.progression_respun.util.RecipeUtil.*;
 
 
 public class ProgressionRespun implements ModInitializer {
@@ -39,13 +40,14 @@ public class ProgressionRespun implements ModInitializer {
 		CompatMods.initialize();
 		ModRecipes.register();
 		ModBlocks.registerModBlocks();
-		registerTrinketPredicates();
-		changeMobAttributes();
-		despawnMobsOnWakeup();
+		MobUtil.changeMobAttributes();
+		MobUtil.despawnMobsOnWakeup();
+//		PlayerUtil.oneHitToOneHp();
+		RecipeUtil.registerRecipeDisabler();
+		RecipeUtil.grindingRecipe();
+		ModDataComponentTypes.registerModDataComponentTypes();
+		ArmorUtil.registerComponent();
 		registerResourcePacks();
-		oneHitToOneHp();
-		registerRecipeDisabler();
-		grindingRecipe();
 	}
 
 	public static Identifier id(String name) {

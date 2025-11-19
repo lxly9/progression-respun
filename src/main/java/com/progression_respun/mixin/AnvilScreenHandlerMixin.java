@@ -27,8 +27,6 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 
     @Shadow @Final private Property levelCost;
 
-    @Shadow @Final private static Logger LOGGER;
-
     public AnvilScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(type, syncId, playerInventory, context);
     }
