@@ -66,10 +66,13 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - Farming Overhaul like in Jaiz' Video
 - Cobweb burning
 - remove Creeper griefing
+- banners as capes
+  - applied at smithing table or put into chestplate?
 
 ### Done
 - ~~**!!** Under Armor rendering~~
 - ~~**!!** actually nerf armor across the board~~
+- **!!** rework crucible
 - ~~custom ORNGstone virtual resource pack~~
 - ~~one-hit attacks leave you at 1 hp~~
 - ~~rework turtle helmet, more than 10 secs of water breathing~~
