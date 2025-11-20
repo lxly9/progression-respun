@@ -6,11 +6,15 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.ProgressionRespun;
+import com.progression_respun.block.ModBlocks;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.util.ArmorUtil;
+import com.progression_respun.util.Pebbles;
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.component.*;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
@@ -23,17 +27,23 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -50,6 +60,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
+import static com.progression_respun.block.PebblesBlock.PEBBLES;
+import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 @Mixin(ItemStack.class)
@@ -94,8 +107,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @Inject(method = "damage(ILnet/minecraft/server/world/ServerWorld;Lnet/minecraft/server/network/ServerPlayerEntity;Ljava/util/function/Consumer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", shift = At.Shift.BEFORE), cancellable = true)
     private void damageRestrictDecrement(int amount, ServerWorld world, @Nullable ServerPlayerEntity player, Consumer<Item> breakCallback, CallbackInfo ci, @Local(ordinal = 1) int i) {
         Item item = getItem();
-        ItemStack stack = item.getDefaultStack();
-        boolean noDestroy = item instanceof ToolItem || item instanceof ArmorItem || item instanceof ShieldItem;
+        boolean noDestroy = item instanceof ToolItem || item instanceof ArmorItem || item instanceof ShieldItem || item instanceof PotionItem;
 
         if (!noDestroy) {
             decrement(amount);
@@ -234,9 +246,55 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
     private void useOnBlockIfNotBroken(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
+        ItemStack stack = (ItemStack) (Object) this;
+        World world = context.getWorld();
+        BlockPos pos = context.getBlockPos();
+        BlockState state = world.getBlockState(pos);
+        PlayerEntity player = context.getPlayer();
+        Hand hand = context.getHand();
+        Direction side = context.getSide();
+        EquipmentSlot slot = hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+
         if (isBroken()) {
             cir.setReturnValue(ActionResult.PASS);
         }
+        if (stack.isIn(CAN_BURN_COBWEBS) && state.isIn(BURNABLE_COBWEBS)) {
+            if (!world.isClient && player != null) {
+                world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                if (stack.isDamageable()) stack.damage(1, player, slot);
+                player.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 0.8f, 0.8f + world.getRandom().nextFloat() * 0.4f);
+                ((ServerWorld) world).spawnParticles(ParticleTypes.FLAME, pos.getX() + 0.3, pos.getY() + 0.3, pos.getZ() + 0.3, 15, 0.2, 0.2, 0.2, 0.01);
+            }
+            cir.setReturnValue(ActionResult.SUCCESS);
+            cir.cancel();
+        }
+//        if (stack.isOf(Items.FLINT)) {
+//            BlockItem blockItem = (BlockItem) ModBlocks.FLINT_PEBBLES.asItem();
+//
+//            ItemPlacementContext placementContext = new ItemPlacementContext(world, player, context.getHand(), blockItem.getDefaultStack(), new BlockHitResult(context.getHitPos(), side, pos, context.hitsInsideBlock()));
+//
+//            if (state.isOf(ModBlocks.FLINT_PEBBLES)) {
+//                Pebbles pebbles = state.get(PEBBLES);
+//                if (pebbles == Pebbles.ONE) {
+//                    world.setBlockState(pos, state.with(PEBBLES, Pebbles.TWO));
+//                    stack.decrementUnlessCreative(1, player);
+//                    cir.setReturnValue(ActionResult.SUCCESS);
+//                    cir.cancel();
+//                }
+//                if (pebbles == Pebbles.TWO) {
+//                    world.setBlockState(pos, state.with(PEBBLES, Pebbles.THREE));
+//                    stack.decrementUnlessCreative(1, player);
+//                    cir.setReturnValue(ActionResult.SUCCESS);
+//                    cir.cancel();
+//                }
+//            }
+//            if (placementContext.canPlace()) {
+//                blockItem.place(placementContext);
+//                stack.decrementUnlessCreative(1, player);
+//                cir.setReturnValue(ActionResult.SUCCESS);
+//                cir.cancel();
+//            }
+//        }
     }
 
     @Inject(method = "getMiningSpeedMultiplier", at = @At("HEAD"), cancellable = true)

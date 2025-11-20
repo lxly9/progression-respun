@@ -1,9 +1,0 @@
-{
-	"parent": "progression_respun:block/flint_pebbles_flat",
-	"format_version": "1.9.0",
-	"credit": "Made by gayasslily",
-	"textures": {
-		"lower": "progression_respun:block/flint_pebbles_2",
-		"upper": "progression_respun:block/no_pebbles"
-	}
-}

@@ -5,8 +5,7 @@ import net.minecraft.util.StringIdentifiable;
 public enum Pebbles implements StringIdentifiable {
     ONE("1"),
     TWO("2"),
-    THREE("3"),
-    FOUR("4");
+    THREE("3");
 
 
     private final String name;

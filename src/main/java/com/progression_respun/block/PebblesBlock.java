@@ -22,7 +22,7 @@ public class PebblesBlock extends Block implements Waterloggable {
     public static final EnumProperty<Pebbles> PEBBLES = EnumProperty.of("pebbles", Pebbles.class);
     public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 
-    private static final VoxelShape PEBBLE_SHAPE = VoxelShapes.cuboid(0, 0, 0, 1, 0.0625, 1);
+    private static final VoxelShape PEBBLE_SHAPE = VoxelShapes.cuboid(0.125, 0.0, 0.125, 0.875, 0.125, 0.875);
 
     public PebblesBlock(Settings settings) {
         super(settings);

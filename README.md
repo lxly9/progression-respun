@@ -27,6 +27,9 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 ## To Do
 
 - **!!** loot table manipulation for balancing
+- Flint pebbles blockstates
+  - fix drops
+  - fix placement state
 
 
 - **?** Brewing stand can only brew one potion
@@ -40,7 +43,6 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 
 
 - Oven for Farmer's Delight
-- Flint pebbles blockstates
 - Seed pouch, Bouquet of Flowers, Dye pouch
 - **?** No Elytra rocket boosting
 - Remove potions and tipped arrows
@@ -60,8 +62,8 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - End Platform spawns in Outer End
 - Sprinting stops after ~5 seconds, you need to take a breath
 - Food system overhaul
-- Farming Overhaul like in Jaiz' Video
-- Cobweb burning
+- **?** Farming Overhaul like in Jaiz' Video
+  - rather have a chance for crops to decay; when not removed, the decay spreads to neighboring crops
 - remove Creeper griefing
 - Iron Golems don't drop Ingots, except when spawned by Players
 - Endermen won't attack Endermites
@@ -84,3 +86,4 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - ~~one-hit attacks leave you at 1 hp~~
 - ~~rework turtle helmet, more than 10 secs of water breathing~~
 - ~~Campfire effects~~
+- ~~Cobweb burning~~
