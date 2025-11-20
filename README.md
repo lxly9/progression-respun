@@ -66,6 +66,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - Iron Golems don't drop Ingots, except when spawned by Players
 - Endermen won't attack Endermites
 - Biome-based mob spawns
+- lowered mob cap
 - Smithing templates only break upon use, can be repaired in anvil
 - Per-weapon crit chance
 - Right-click Totems of Undying to not die
