@@ -1,0 +1,23 @@
+{
+  "type": "progression_respun:grinding",
+  "input": {
+    "item": "minecraft:diamond"
+  },
+  "result": [
+    {
+      "experience": 0.2,
+      "item": {
+        "count": 1,
+        "id": "progression_respun:polished_diamond"
+      }
+    },
+    {
+      "chance": 0.3,
+      "item": {
+        "count": 1,
+        "id": "progression_respun:diamond_shard"
+      },
+      "shardMaxCount": 4
+    }
+  ]
+}

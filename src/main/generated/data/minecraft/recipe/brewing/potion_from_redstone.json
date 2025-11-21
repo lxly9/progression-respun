@@ -1,0 +1,18 @@
+{
+  "type": "progression_respun:brewing",
+  "input": {
+    "item": "minecraft:redstone"
+  },
+  "input_potion": {
+    "item": "minecraft:potion"
+  },
+  "result": [
+    {
+      "experience": 0.2,
+      "item": {
+        "count": 1,
+        "id": "minecraft:potion"
+      }
+    }
+  ]
+}
