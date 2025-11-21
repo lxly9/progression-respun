@@ -18,6 +18,9 @@ public class ModItems {
     public static final Item DIAMOND_SHARD = register(new Item(new Item.Settings()), "diamond_shard");
     public static final FlintAndSteelItem FIRESTARTER = (FlintAndSteelItem) register(new FlintAndSteelItem(new FlintAndSteelItem.Settings().maxDamage(16)), "firestarter");
 
+    // Horse Armor
+    public static final Item NETHERITE_HORSE_ARMOR = register(new AnimalArmorItem(ArmorMaterials.NETHERITE, AnimalArmorItem.Type.EQUESTRIAN, false, new Item.Settings().maxCount(1).fireproof()), "netherite_horse_armor") ;
+    public static final Item CHAINMAIL_HORSE_ARMOR = register(new AnimalArmorItem(ArmorMaterials.CHAIN, AnimalArmorItem.Type.EQUESTRIAN, false, new Item.Settings().maxCount(1)), "chainmail_horse_armor");
 
     // Flint Tools
     public static final Item FLINT_SWORD = register(new SwordItem(ModToolMaterials.FLINT, new Item.Settings()
@@ -64,6 +67,8 @@ public class ModItems {
                     group.addAfter(Items.WOODEN_AXE, FLINT_AXE);
                     group.addAfter(Items.STONE_SWORD, COPPER_SWORD);
                     group.addAfter(Items.STONE_AXE, COPPER_AXE);
+                    group.addAfter(Items.LEATHER_HORSE_ARMOR, CHAINMAIL_HORSE_ARMOR);
+                    group.addAfter(Items.DIAMOND_HORSE_ARMOR, NETHERITE_HORSE_ARMOR);
                 });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(group -> {

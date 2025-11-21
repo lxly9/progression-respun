@@ -12,6 +12,8 @@ public class ModRecipes {
     public static RecipeType<CrucibleRecipe> CRUCIBLE_RECIPE_TYPE;
     public static GrindingRecipe.Serializer GRINDING_RECIPE_SERIALIZER;
     public static RecipeType<GrindingRecipe> GRINDING_RECIPE_TYPE;
+    public static BrewingRecipe.Serializer BREWING_RECIPE_SERIALIZER;
+    public static RecipeType<BrewingRecipe> BREWING_RECIPE_TYPE;
 
     public static void register() {
         CRUCIBLE_RECIPE_TYPE = Registry.register(
@@ -47,5 +49,22 @@ public class ModRecipes {
                 Identifier.of(ProgressionRespun.MOD_ID, "grinding"),
                 new GrindingRecipe.Serializer()
         );
+
+//        BREWING_RECIPE_TYPE = Registry.register(
+//                Registries.RECIPE_TYPE,
+//                Identifier.of(ProgressionRespun.MOD_ID, "brewing"),
+//                new RecipeType<BrewingRecipe>() {
+//                    @Override
+//                    public String toString() {
+//                        return "grinding";
+//                    }
+//                }
+//        );
+//
+//        BREWING_RECIPE_SERIALIZER = Registry.register(
+//                Registries.RECIPE_SERIALIZER,
+//                Identifier.of(ProgressionRespun.MOD_ID, "brewing"),
+//                new BrewingRecipe.Serializer()
+//        );
     }
 }

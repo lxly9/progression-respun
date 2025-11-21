@@ -3,16 +3,22 @@ package com.progression_respun.data;
 import com.progression_respun.block.ModBlocks;
 import com.progression_respun.compat.VanillaItems;
 import com.progression_respun.item.ModItems;
+import com.progression_respun.recipe.BrewingRecipeBuilder;
 import com.progression_respun.recipe.CrucibleRecipeBuilder;
 import com.progression_respun.recipe.GrindingRecipeBuilder;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Blocks;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.potion.Potions;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryWrapper;
 
@@ -37,6 +43,9 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
         //Grinding
         offerGrindingRecipe(exporter, Items.DIAMOND, ModItems.POLISHED_DIAMOND, ModItems.DIAMOND_SHARD, 0.2F, 4, 0.3F);
+
+        //Brewing
+//        offerBrewingRecipe(exporter, Items.REDSTONE, Ingredient.ofStacks(Items.POTION.getDefaultStack()), Items.POTION, 0.2F);
 
         // Bars
         offerBarRecipe(exporter, Items.FLINT, ModItems.FLINT_BAR);
@@ -215,4 +224,10 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(input), conditionsFromItem(input))
                 .offerTo(exporter);
     }
+
+//    private void offerBrewingRecipe(RecipeExporter exporter, Item input, Ingredient inputPotion, Item output, float experience) {
+//        BrewingRecipeBuilder.create(input, inputPotion, output.getDefaultStack(), experience)
+//                .criterion(hasItem(input), conditionsFromItem(input))
+//                .offerTo(exporter);
+//    }
 }

@@ -1,20 +1,23 @@
 package com.progression_respun.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.PotionItem;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
 import net.minecraft.registry.entry.RegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Potions.class)
 public class PotionsMixin {
 
-    @Inject(method = "register", at = @At("HEAD"), cancellable = true)
-    private static void blockPotions(String name, Potion potion, CallbackInfoReturnable<RegistryEntry<Potion>> cir) {
-        if (name.endsWith("_long")) {
-            cir.cancel();
-        }
-    }
+//    @ModifyReturnValue(method = "register", at = @At("RETURN"))
+//    private static RegistryEntry<Potion> blockPotions(RegistryEntry<Potion> original) {
+//        String name = original.getIdAsString();
+//        if (original == Potions.WATER_BREATHING) {
+//            return Potions.WATER;
+//        }
+//        return original;
+//    }
 }

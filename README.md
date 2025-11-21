@@ -40,18 +40,22 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - water in cold biome freezes you
   - heatstroke mechanic in hot biomes (requires a helmet)
 - **?** properly sort Ingredients tab
-
-
-- Oven for Farmer's Delight
-- Seed pouch, Bouquet of Flowers, Dye pouch
 - **?** No Elytra rocket boosting
-- Remove potions and tipped arrows
+- **?** Trim material changes glint color
+- **?** Seed pouch, Bouquet of Flowers, Dye pouch (maybe move to Thumb and Thicket)
+
+
+- Remove some potions and tipped arrows
   - water breathing
+
+
 - Level system revamp
   - linear levels
   - no level loss on death
   - levels wont be consumed
   - levels unlock abilities
+
+
 - Enchantments Rework 
   - rework mending → lowers the number of necessary materials for repairing tools
   - no enchanting books, books are found and need to be inserted into chiseled bookshelves at the enchanting table to appear in it (Enchantery)
@@ -59,23 +63,37 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - no more "base" enchantments → no sharpness, protection, efficiency
   - **?** tools can be sharpened on a grindstone
     - sharpness/efficiency for limited durability on the tool
+
+
+- Farming & Food Overhaul
+  - have a chance for crops to decay; when not removed, the decay spreads to neighboring crops
+  - Oven for Farmer's Delight
+
+
+- Mob Overhaul
+  - Biome-based mob spawns
+  - lowered mob cap
+  - remove Creeper griefing
+  - Endermen won't attack Endermites
+  - Iron Golems don't drop Ingots, except when spawned by Players
+  - Increase horse step height
+
+
+- Combat Overhaul
+  - Per-weapon crit chance
+  - Combat snapshot changes
+  - Netherite and Chainmail Horse Armor
+  - Sprinting stops after ~5 seconds, you need to take a breath
+  - Right-click Totems of Undying to not die
+
+
 - End Platform spawns in Outer End
-- Sprinting stops after ~5 seconds, you need to take a breath
-- Food system overhaul
-- **?** Farming Overhaul like in Jaiz' Video
-  - rather have a chance for crops to decay; when not removed, the decay spreads to neighboring crops
-- remove Creeper griefing
-- Iron Golems don't drop Ingots, except when spawned by Players
-- Endermen won't attack Endermites
-- Biome-based mob spawns
-- lowered mob cap
 - Smithing templates only break upon use, can be repaired in anvil
-- Per-weapon crit chance
-- Right-click Totems of Undying to not die
 - All ice blocks melt in the Nether
 - Grindstone damages Items when removing enchants
 - Banners as capes
   - applied at smithing table or put into chestplate?
+
 
 ### Done
 - ~~**!!** Under Armor rendering~~

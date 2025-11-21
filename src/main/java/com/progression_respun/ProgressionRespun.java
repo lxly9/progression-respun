@@ -8,11 +8,9 @@ import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.ModRecipes;
 import com.progression_respun.util.ArmorUtil;
 import com.progression_respun.util.MobUtil;
-import com.progression_respun.util.PlayerUtil;
 import com.progression_respun.util.RecipeUtil;
 import com.progression_respun.worldgen.ModFeatures;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -29,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class ProgressionRespun implements ModInitializer {
 	public static final String MOD_ID = "progression_respun";
 	public static final String MC_ID = "minecraft";
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Logger PR_LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitialize() {

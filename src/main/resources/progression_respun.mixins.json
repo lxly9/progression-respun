@@ -5,6 +5,7 @@
   "mixins": [
     "AnvilScreenHandlerMixin",
     "ArmorMaterialMixin",
+    "BrewingStandBlockEntityAccessor",
     "CampfireBlockEntityMixin",
     "CampfireBlockMixin",
     "ComponentHolderMixin",

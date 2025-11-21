@@ -11,4 +11,8 @@ public class RecipeFactory<T> {
     public GrindingRecipe create(Ingredient ingredient, ItemStack itemStack, ItemStack shard, float experience, int maxShardCount, float chance) {
         return new GrindingRecipe(ingredient, new ItemStack(itemStack.getItem()), new ItemStack(shard.getItem()), maxShardCount, experience, chance);
     }
+
+    public BrewingRecipe create(Ingredient ingredient, Ingredient inputPotion, ItemStack itemStack, float experience) {
+        return new BrewingRecipe(ingredient, inputPotion, new ItemStack(itemStack.getItem()), experience);
+    }
 }
