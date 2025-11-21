@@ -1,7 +1,6 @@
 package com.progression_respun.worldgen;
 
 import com.progression_respun.ProgressionRespun;
-import com.progression_respun.ProgressionRespun;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.registry.RegistryKey;
@@ -14,5 +13,6 @@ public class ModFeatures {
 
     public static void initialize() {
         BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.VEGETAL_DECORATION, FLINT_PEBBLES_KEY);
+        BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_DECORATION, FLINT_PEBBLES_KEY);
     }
 }
