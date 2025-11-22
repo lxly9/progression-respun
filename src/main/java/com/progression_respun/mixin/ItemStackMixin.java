@@ -118,16 +118,16 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         ci.cancel();
     }
 
-    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;appendTooltip(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/Item$TooltipContext;Ljava/util/List;Lnet/minecraft/item/tooltip/TooltipType;)V", ordinal = 0, shift = At.Shift.BEFORE))
-    private void getBrokenTooltip(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type,
-                                  CallbackInfoReturnable<List<Text>> cir, @Local Consumer<Text> tooltip) {
-        if (isBroken()) {
-            tooltip.accept(BROKEN_TEXT);
-        }
-    }
+//    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;appendTooltip(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/Item$TooltipContext;Ljava/util/List;Lnet/minecraft/item/tooltip/TooltipType;)V", ordinal = 0, shift = At.Shift.BEFORE))
+//    private void getBrokenTooltip(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type,
+//                                  CallbackInfoReturnable<List<Text>> cir, @Local Consumer<Text> tooltip) {
+//        if (isBroken()) {
+//            tooltip.accept(BROKEN_TEXT);
+//        }
+//    }
 
     @ModifyReturnValue(method = "getName", at = @At("RETURN"))
-    private Text MaterialWithArmorName(Text original) {
+    private Text modifyName(Text original) {
         ItemStack stack = (ItemStack)(Object) this;
         if (stack.getItem() instanceof ArmorItem underArmorItem && stack.isIn(UNDER_ARMOR)) {
             UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
@@ -136,11 +136,12 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
                 String[] material = underArmorItem.getMaterial().getIdAsString().split("[/:_]");
                 String materialTranslation = "util.progression_respun." + material[1];
                 String with = "util.progression_respun.with";
-                return Text.translatable(materialTranslation).append(Text.translatable(with)).append(Text.translatable(armorItem.getTranslationKey()));
+                if (isBroken()) return Text.translatable("item.progression_respun.tooltip.broken").append(" ").append(Text.translatable(with, original, armorItem.getName())).formatted(Formatting.RED);
+                return Text.translatable(with, original, armorItem.getName());
             }
-            return this.getItem().getName(stack);
         }
-        return this.getItem().getName(stack);
+        if (isBroken()) return Text.translatable("item.progression_respun.tooltip.broken").append(" ").append(original).formatted(Formatting.RED);
+        return original;
     }
 
     @WrapMethod(method = "appendAttributeModifiersTooltip")

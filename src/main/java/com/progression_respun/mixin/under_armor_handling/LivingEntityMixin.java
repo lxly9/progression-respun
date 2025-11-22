@@ -59,9 +59,11 @@ public abstract class LivingEntityMixin {
                             }
                         }
                     }
+                    underArmor.call(item, amount, entity, slot);
                 }
             }
         }
+        underArmor.call(item, amount, entity, slot);
     }
 
     @Inject(method = "getPreferredEquipmentSlot", at = @At("HEAD"), cancellable = true)
