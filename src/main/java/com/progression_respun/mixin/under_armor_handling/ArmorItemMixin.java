@@ -116,13 +116,13 @@ public abstract class ArmorItemMixin extends Item {
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
 
-        if (clickType != ClickType.RIGHT || !slot.canTakePartial(player)) return false;
+        if (!slot.canTakePartial(player)) return false;
         if (!UnderArmorContentsComponent.hasArmorSlot(stack)) return false;
 
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
         if (component == null) return false;
         UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(component);
-        if (otherStack.isEmpty()) {
+        if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
             ItemStack itemStack = builder.removeFirst();
             if (itemStack != null) {
                 SoundUtil.playRemoveOneSound(player);
@@ -133,7 +133,7 @@ public abstract class ArmorItemMixin extends Item {
             ArmorItem armorItem = (ArmorItem) stack.getItem();
             EquipmentSlot armorSlot = armorItem.getSlotType();
             EquipmentSlot otherSlot = otherArmor.getSlotType();
-            if (!UnderArmorContentsComponent.isAllowedInUnderArmor(otherStack) || !(armorSlot == otherSlot)) return false;
+            if (!UnderArmorContentsComponent.isAllowedInUnderArmor(otherStack) || !(armorSlot == otherSlot) || clickType != ClickType.LEFT) return false;
             int i = builder.add(otherStack);
             if (i > 0) {
                 SoundUtil.playInsertSound(player);

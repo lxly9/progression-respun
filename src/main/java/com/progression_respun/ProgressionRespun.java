@@ -8,6 +8,7 @@ import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.ModRecipes;
 import com.progression_respun.util.ArmorUtil;
 import com.progression_respun.util.MobUtil;
+import com.progression_respun.util.PlayerUtil;
 import com.progression_respun.util.RecipeUtil;
 import com.progression_respun.worldgen.ModFeatures;
 import net.fabricmc.api.ModInitializer;
@@ -28,6 +29,7 @@ public class ProgressionRespun implements ModInitializer {
 	public static final String MOD_ID = "progression_respun";
 	public static final String MC_ID = "minecraft";
 	public static final Logger PR_LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static boolean isModLoaded;
 
 	@Override
 	public void onInitialize() {
@@ -40,7 +42,7 @@ public class ProgressionRespun implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		MobUtil.changeMobAttributes();
 		MobUtil.despawnMobsOnWakeup();
-//		PlayerUtil.oneHitToOneHp();
+		PlayerUtil.oneHitToOneHp();
 		RecipeUtil.registerRecipeDisabler();
 		RecipeUtil.grindingRecipe();
 		ModDataComponentTypes.registerModDataComponentTypes();
@@ -51,6 +53,14 @@ public class ProgressionRespun implements ModInitializer {
 	public static Identifier id(String name) {
 		return Identifier.of(MOD_ID, name);
 	}
+
+    public static boolean isModLoaded(String modId) {
+        return FabricLoader.getInstance().isModLoaded(modId);
+    }
+
+    public static Item getExternalItem(String modid, String path) {
+        return Registries.ITEM.getOrEmpty(Identifier.of(modid, path)).orElse(null);
+    }
 
 	public static void registerResourcePacks() {
 		ModContainer modContainer = FabricLoader.getInstance()

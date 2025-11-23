@@ -75,14 +75,13 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - lowered mob cap
   - remove Creeper griefing
   - Endermen won't attack Endermites
-  - Iron Golems don't drop Ingots, except when spawned by Players
-  - Increase horse step height
+  - ~~Iron Golems don't drop Ingots, except when spawned by Players~~
 
 
 - Combat Overhaul
   - Per-weapon crit chance
   - Combat snapshot changes
-  - Netherite and Chainmail Horse Armor
+  - Netherite and ~~Chainmail~~ Horse Armor
   - Sprinting stops after ~5 seconds, you need to take a breath
   - Right-click Totems of Undying to not die
 

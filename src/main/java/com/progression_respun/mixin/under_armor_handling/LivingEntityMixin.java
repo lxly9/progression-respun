@@ -14,6 +14,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.*;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
@@ -174,5 +175,13 @@ public abstract class LivingEntityMixin {
             }
         }
         return map;
+    }
+
+    @WrapMethod(method = "dropLoot")
+    private void ironGolemsDontDrop(DamageSource damageSource, boolean causedByPlayer, Operation<Void> original) {
+        if ((LivingEntity) (Object) this instanceof IronGolemEntity ironGolemEntity && !ironGolemEntity.isPlayerCreated()) {
+            return;
+        }
+        original.call(damageSource, causedByPlayer);
     }
 }

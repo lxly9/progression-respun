@@ -1,5 +1,6 @@
 package com.progression_respun.mixin.client;
 
+import com.progression_respun.ProgressionRespun;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
@@ -7,10 +8,16 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import static com.progression_respun.ProgressionRespun.getExternalItem;
+import static com.progression_respun.ProgressionRespun.isModLoaded;
 
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class UnderArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
