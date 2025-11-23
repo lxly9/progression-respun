@@ -16,7 +16,6 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
 
     @Override
     public void generate() {
-        addDrop(ModBlocks.FLINT_PEBBLES, drops(Items.FLINT, UniformLootNumberProvider.create(1.0f, 4.0f)));
         addDrop(ModBlocks.CRUCIBLE_BLOCK, drops(ModBlocks.CRUCIBLE_BLOCK));
     }
 }
