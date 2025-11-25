@@ -13,7 +13,7 @@
   "util.progression_respun.chainmail": "Chainmail",
   "util.progression_respun.leather": "Leather",
 
-  "item.progression_respun.tooltip.broken": "Broken",
+  "item.progression_respun.tooltip.broken": "Broken %s",
 
   "item.progression_respun.flint_bar": "Flint Bar",
   "item.progression_respun.copper_bar": "Copper Bar",
@@ -47,7 +47,7 @@
   "pack.progression_respun.orngstone_copper": "ORNGstone Torches",
   "pack.progression_respun.redstone_copper": "REDstone Torches",
   "tag.item.progression_respun.equip_armor": "Equip Armor by right-clicking another Armor piece.",
-  "tag.item.progression_respun.equip_under_armor": "Equip Armor by right-clicking an Under-Armor piece.",
+  "tag.item.progression_respun.equip_under_armor": "Equip Armor by clicking on an Under-Armor piece.",
   "tag.item.progression_respun.unequip_under_armor": "Unequip Armor by right-clicking the Armor piece.",
   "util.progression_respun.plus": "+"
 }

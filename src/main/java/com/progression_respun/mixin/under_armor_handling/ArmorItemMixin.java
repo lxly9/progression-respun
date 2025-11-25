@@ -130,10 +130,12 @@ public abstract class ArmorItemMixin extends Item {
             }
         } else {
             if (!(otherStack.getItem() instanceof ArmorItem otherArmor)) return false;
+            UnderArmorContentsComponent component1 = otherStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
             ArmorItem armorItem = (ArmorItem) stack.getItem();
             EquipmentSlot armorSlot = armorItem.getSlotType();
             EquipmentSlot otherSlot = otherArmor.getSlotType();
             if (!UnderArmorContentsComponent.isAllowedInUnderArmor(otherStack) || !(armorSlot == otherSlot) || clickType != ClickType.LEFT) return false;
+            if (component1 != null && (!component.isEmpty() || !component1.isEmpty())) return false;
             int i = builder.add(otherStack);
             if (i > 0) {
                 SoundUtil.playInsertSound(player);
