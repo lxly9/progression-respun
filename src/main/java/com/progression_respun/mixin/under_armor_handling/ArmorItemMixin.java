@@ -5,6 +5,7 @@ import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.util.SoundUtil;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
