@@ -3,7 +3,6 @@ package com.progression_respun.mixin;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
@@ -15,9 +14,6 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Arrays;
-import java.util.Random;
 
 import static com.progression_respun.ProgressionRespun.getItemByName;
 import static com.progression_respun.ProgressionRespun.hasMending;
@@ -93,7 +89,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 
             if (itemStack3.isOf(nugget.getItem()) && nugget != ItemStack.EMPTY){
                 int m;
-                for (m = 0; k >= 0 && m < itemStack3.getCount(); m++) {
+                for (m = 0; k > 0 && m < itemStack3.getCount(); m++) {
                     int n = itemStack2.getDamage() - k;
                     itemStack2.setDamage(n);
                     i++;
@@ -106,6 +102,31 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
                 output.setStack(0, itemStack2);
                 this.sendContentUpdates();
                 ci.cancel();
+            }
+        }
+    }
+
+    @Inject(method = "updateResult", at = @At("HEAD"), cancellable = true)
+    private void disableCombining(CallbackInfo ci) {
+        ItemStack stack2 = this.input.getStack(1);
+
+        if (!stack2.isEmpty()) {
+            if (stack2.contains(DataComponentTypes.STORED_ENCHANTMENTS)) {
+                ItemEnchantmentsComponent enchantmentsComponent = stack2.getComponents().get(DataComponentTypes.STORED_ENCHANTMENTS);
+                if (enchantmentsComponent != null && !enchantmentsComponent.isEmpty()) {
+                    this.output.setStack(0, ItemStack.EMPTY);
+                    this.levelCost.set(0);
+                    this.repairItemUsage = 0;
+                    ci.cancel();
+                }
+            } else if (stack2.contains(DataComponentTypes.ENCHANTMENTS)) {
+                ItemEnchantmentsComponent enchantmentsComponent = stack2.getComponents().get(DataComponentTypes.ENCHANTMENTS);
+                if (enchantmentsComponent != null && !enchantmentsComponent.isEmpty()) {
+                    this.output.setStack(0, ItemStack.EMPTY);
+                    this.levelCost.set(0);
+                    this.repairItemUsage = 0;
+                    ci.cancel();
+                }
             }
         }
     }

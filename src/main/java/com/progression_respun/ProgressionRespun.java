@@ -104,4 +104,10 @@ public class ProgressionRespun implements ModInitializer {
         if (enchants != null) return enchants.getEnchantments().stream().anyMatch(entry -> entry.matchesKey(Enchantments.MENDING));
         return false;
     }
+
+    public static boolean hasBinding(ItemStack stack) {
+        ItemEnchantmentsComponent enchants = stack.get(DataComponentTypes.ENCHANTMENTS);
+        if (enchants != null) return enchants.getEnchantments().stream().anyMatch(entry -> entry.matchesKey(Enchantments.BINDING_CURSE));
+        return false;
+    }
 }

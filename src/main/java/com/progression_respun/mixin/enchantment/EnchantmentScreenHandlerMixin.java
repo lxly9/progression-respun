@@ -1,4 +1,4 @@
-package com.progression_respun.mixin;
+package com.progression_respun.mixin.enchantment;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

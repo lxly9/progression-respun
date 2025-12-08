@@ -5,17 +5,14 @@ import net.minecraft.component.ComponentMap;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static com.progression_respun.ProgressionRespun.hasMending;
 import static com.progression_respun.item.ComponentHolderState.*;
 
 @Mixin(ComponentHolder.class)
@@ -34,6 +31,21 @@ public interface ComponentHolderMixin {
             }
             cir.setReturnValue(null);
         }
+//        boolean isStoredEnchantments = type == DataComponentTypes.STORED_ENCHANTMENTS;
+//        if (itemStack.getItem() instanceof EnchantedBookItem && isStoredEnchantments && getComponents().contains(DataComponentTypes.STORED_ENCHANTMENTS)) {
+//            var opt = itemStack.getEnchantments().getEnchantmentEntries().stream().findFirst();
+//
+//            if (opt.isPresent()) {
+//                var entry = opt.get();
+//
+//                ItemEnchantmentsComponent enchantmentsComponent = itemStack.getComponents().get(DataComponentTypes.STORED_ENCHANTMENTS);
+//                ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(enchantmentsComponent);
+//                builder.add(entry.getKey(), entry.getIntValue());
+//                ItemEnchantmentsComponent builtComponent = builder.build();
+//
+//                cir.setReturnValue((T) builtComponent);
+//            }
+//        }
     }
 
     @SuppressWarnings("ConstantValue")

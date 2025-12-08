@@ -1,4 +1,4 @@
-package com.progression_respun.mixin;
+package com.progression_respun.mixin.under_armor_handling;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.item.ArmorMaterial;
