@@ -27,6 +27,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 ## To Do
 
 - **!!** loot table manipulation for balancing
+- **!!** rewrite tooltip logic
 - Flint pebbles blockstates
   - fix drops
   - fix placement state
@@ -56,8 +57,9 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - levels unlock abilities
 
 
-- Enchantments Rework 
-  - rework mending → changes ingots to nuggets for repairing tools
+- Enchantments Rework
+  - ~~rework mending → changes ingots to nuggets for repairing tools~~
+    - CORRECT DECREMENTING!!!
   - no enchanting books, books are found and need to be inserted into chiseled bookshelves at the enchanting table to appear in it (Enchantery)
   - different Tool Material Types interact with specific Enchantments → Buffs & Nerfs
   - no more "base" enchantments → no sharpness, protection, efficiency
@@ -75,13 +77,12 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - lowered mob cap
   - remove Creeper griefing
   - Endermen won't attack Endermites
-  - ~~Iron Golems don't drop Ingots, except when spawned by Players~~
 
 
 - Combat Overhaul
   - Per-weapon crit chance
   - Combat snapshot changes
-  - Netherite and ~~Chainmail~~ Horse Armor
+  - ~~Netherite~~ and ~~Chainmail~~ Horse Armor
   - Sprinting stops after ~5 seconds, you need to take a breath
   - Right-click Totems of Undying to not die
 
@@ -103,3 +104,4 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - ~~rework turtle helmet, more than 10 secs of water breathing~~
 - ~~Campfire effects~~
 - ~~Cobweb burning~~
+- ~~Iron Golems don't drop Ingots, except when spawned by Players~~

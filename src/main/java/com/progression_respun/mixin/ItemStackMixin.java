@@ -2,23 +2,23 @@ package com.progression_respun.mixin;
 
 import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.ProgressionRespun;
-import com.progression_respun.block.ModBlocks;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.util.ArmorUtil;
-import com.progression_respun.util.Pebbles;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.component.*;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.component.type.MapIdComponent;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -27,7 +27,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -39,12 +38,9 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
-import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -61,7 +57,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
-import static com.progression_respun.block.PebblesBlock.PEBBLES;
 import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
@@ -129,13 +124,21 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @ModifyReturnValue(method = "getName", at = @At("RETURN"))
     private Text modifyName(Text original) {
         ItemStack stack = (ItemStack)(Object) this;
+        String with = "util.progression_respun.with";
         if (stack.getItem() instanceof ArmorItem underArmorItem && stack.isIn(UNDER_ARMOR)) {
             UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
             if (component != null && !component.isEmpty()) {
                 ItemStack armorItem = component.get(0);
-                String with = "util.progression_respun.with";
                 if (isBroken()) return Text.translatable("item.progression_respun.tooltip.broken", Text.translatable(with, original, armorItem.getName())).formatted(Formatting.RED);
                 return Text.translatable(with, original, armorItem.getName());
+            }
+        }
+        if (stack.getItem() instanceof EnchantedBookItem) {
+            ItemEnchantmentsComponent storedEnchants = stack.get(DataComponentTypes.STORED_ENCHANTMENTS);
+            if (storedEnchants != null && !storedEnchants.isEmpty()) {
+                Object2IntMap.Entry<RegistryEntry<Enchantment>> enchantment = storedEnchants.getEnchantmentEntries().stream().findFirst().get();
+                Text enchantmentName = enchantment.getKey().value().description();
+                return Text.translatable(with, original, enchantmentName);
             }
         }
         if (isBroken()) return Text.translatable("item.progression_respun.tooltip.broken", original).formatted(Formatting.RED);
@@ -239,6 +242,12 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         }
         return original;
     }
+
+//    @WrapWithCondition(method = "getTooltip", at = @At(value = "INVOKE", target = ""))
+//    private boolean gay() {
+//
+//        return false;
+//    }
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
     private void useOnBlockIfNotBroken(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
