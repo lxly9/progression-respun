@@ -1,21 +1,14 @@
 package com.progression_respun.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import com.progression_respun.data.ModItemTagProvider;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
-import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.*;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.*;
@@ -23,7 +16,11 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Arrays;
+import java.util.Random;
+
 import static com.progression_respun.ProgressionRespun.getItemByName;
+import static com.progression_respun.ProgressionRespun.hasMending;
 
 @Debug()
 @Mixin(AnvilScreenHandler.class)
@@ -31,6 +28,13 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     @Unique private final Property isRepairing = Property.create();
 
     @Shadow @Final private Property levelCost;
+
+    @Shadow
+    @Final
+    private static Logger LOGGER;
+
+    @Shadow
+    private int repairItemUsage;
 
     public AnvilScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(type, syncId, playerInventory, context);
@@ -87,15 +91,16 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
                 nugget = getNugget(armorMaterial.repairIngredient().get());
             }
 
-            if (itemStack3.isOf(nugget.getItem())){
+            if (itemStack3.isOf(nugget.getItem()) && nugget != ItemStack.EMPTY){
                 int m;
-                for (m = 0; k > 0 && m < itemStack3.getCount(); m++) {
+                for (m = 0; k >= 0 && m < itemStack3.getCount(); m++) {
                     int n = itemStack2.getDamage() - k;
                     itemStack2.setDamage(n);
                     i++;
                     k = Math.min(itemStack2.getDamage(), itemStack2.getMaxDamage() / 4);
                 }
 
+                repairItemUsage = m;
                 isRepairing.set(1);
                 levelCost.set(0);
                 output.setStack(0, itemStack2);
@@ -106,23 +111,27 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     }
 
     @Unique
-    private ItemStack getNugget(Ingredient stack) {
-        String[] ingot = stack.toString().split(":");
-        String material = ingot[1].replace("_ingot", "");
-        Item nugget = getItemByName(material + "_nugget");
-        Item shard = getItemByName(material + "_shard");
-        if (ingot[1].equals("netherite_ingot")) return Items.NETHERITE_SCRAP.getDefaultStack();
-        if (nugget != Items.AIR) return nugget.getDefaultStack();
-        if (shard != Items.AIR) return shard.getDefaultStack();
+    private ItemStack getNugget(Ingredient ingredient) {
+        ItemStack stack = ingredientToStack(ingredient);
 
+        if (!stack.isEmpty()){
+            String[] ingot = stack.toString().split(":");
+            String material = ingot[1].replace("_ingot", "");
+            Item nugget = getItemByName(material + "_nugget");
+            Item shard = getItemByName(material + "_shard");
+            if (ingot[1].equals("netherite_ingot")) return Items.NETHERITE_SCRAP.getDefaultStack();
+            if (nugget != Items.AIR) return nugget.getDefaultStack();
+            if (shard != Items.AIR) return shard.getDefaultStack();
+
+            return ItemStack.EMPTY;
+        }
         return ItemStack.EMPTY;
     }
 
     @Unique
-    private static boolean hasMending(ItemStack stack) {
-        ItemEnchantmentsComponent enchants = stack.get(DataComponentTypes.ENCHANTMENTS);
-        if (enchants == null) return false;
-
-        return enchants.getEnchantments().contains(Enchantments.MENDING);
+    private static ItemStack ingredientToStack(Ingredient ingredient) {
+        ItemStack[] stacks = ingredient.getMatchingStacks();
+        if (stacks.length == 0) return ItemStack.EMPTY;
+        return stacks[0].copy();
     }
 }

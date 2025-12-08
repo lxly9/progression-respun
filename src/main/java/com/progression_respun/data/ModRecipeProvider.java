@@ -77,6 +77,15 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.BELL)
+                .input('#', Items.STICK)
+                .input('X', Items.GOLD_INGOT)
+                .pattern("#X#")
+                .pattern("X X")
+                .pattern("X X")
+                .criterion(hasItem(Items.GOLD_INGOT), conditionsFromItem(Items.GOLD_INGOT))
+                .offerTo(exporter);
+
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.CAMPFIRE)
                 .input('#', Items.STICK)
                 .input('X', Items.RAW_COPPER)

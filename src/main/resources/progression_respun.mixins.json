@@ -10,6 +10,8 @@
     "CampfireBlockMixin",
     "ComponentHolderMixin",
     "EnchantmentHelperMixin",
+    "EnchantmentScreenHandlerMixin",
+    "ExperienceOrbEntityMixin",
     "ItemMixin",
     "ItemStackMixin",
     "LivingEntityAccessor",

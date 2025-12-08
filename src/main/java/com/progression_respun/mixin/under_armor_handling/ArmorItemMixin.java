@@ -3,9 +3,6 @@ package com.progression_respun.mixin.under_armor_handling;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.util.SoundUtil;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BundleContentsComponent;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +10,8 @@ import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -97,7 +96,7 @@ public abstract class ArmorItemMixin extends Item {
         ArmorItem armorItem = (ArmorItem) stack.getItem();
 
         if (itemStack.isEmpty()) {
-            SoundUtil.playRemoveOneSound(player);
+            SoundUtil.playRemoveArmorSound(player);
             ItemStack itemStack2 = builder.removeFirst();
             if (itemStack2 != null) {
                 ItemStack itemStack3 = slot.insertStack(itemStack2);
@@ -108,7 +107,7 @@ public abstract class ArmorItemMixin extends Item {
         } else if (itemStack.getItem() instanceof ElytraItem) {
             return false;
         } else if (UnderArmorContentsComponent.isAllowedInUnderArmor(itemStack) && itemStack.getItem().canBeNested() && (i = builder.add(slot, player)) > 0) {
-            SoundUtil.playInsertSound(player);
+            SoundUtil.playInsertArmorSound(player);
         }
         stack.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
         return true;
@@ -126,7 +125,7 @@ public abstract class ArmorItemMixin extends Item {
         if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
             ItemStack itemStack = builder.removeFirst();
             if (itemStack != null) {
-                SoundUtil.playRemoveOneSound(player);
+                SoundUtil.playRemoveArmorSound(player);
                 cursorStackReference.set(itemStack);
             }
         } else {
@@ -139,7 +138,7 @@ public abstract class ArmorItemMixin extends Item {
             if (component1 != null && (!component.isEmpty() || !component1.isEmpty())) return false;
             int i = builder.add(otherStack);
             if (i > 0) {
-                SoundUtil.playInsertSound(player);
+                SoundUtil.playInsertArmorSound(player);
             }
         }
         stack.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());

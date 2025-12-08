@@ -1,4 +1,4 @@
-// 1.21.1	2025-11-21T20:59:41.4350981	Progression Respun/Model Definitions
+// 1.21.1	2025-12-07T18:10:40.0610595	Progression Respun/Model Definitions
 f09a79dfa445543428b76c0879343733254c2569 assets\progression_respun\models\item\copper_sword.json
 79825422887871a3e94070feae49a6080ccf7ba1 assets\progression_respun\models\item\flint_pickaxe.json
 26f98fd92829e1249c3a03937652100893682e00 assets\progression_respun\models\item\enderscape\raw_shadoline_bar.json
@@ -19,5 +19,5 @@ d203eaa85e006f4180f7e0e7aff412e54b4688c3 assets\progression_respun\models\item\c
 aba6e9a284aa5a08f42993bb7a82c25c7b70f412 assets\progression_respun\models\item\raw_iron_bar.json
 c692b005a2e816d1631aeed60babc345648dbbbb assets\progression_respun\models\item\raw_gold_bar.json
 359b9629069e2500dfb713b493e56c38b81542ed assets\minecraft\models\item\copper_nugget.json
-2a6874408239b1cc717aa2b9b29e4d6580047e39 assets\progression_respun\models\item\flint_sword.json
 73dff5bc171d59f26f0558877d41ac779817cdc4 assets\progression_respun\models\item\firestarter.json
+2a6874408239b1cc717aa2b9b29e4d6580047e39 assets\progression_respun\models\item\flint_sword.json
