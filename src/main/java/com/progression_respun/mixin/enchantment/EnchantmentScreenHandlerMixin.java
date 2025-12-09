@@ -61,8 +61,8 @@ public class EnchantmentScreenHandlerMixin {
                     Set<EnchantmentLevelEntry> possibleEnchantments = EnchantmentHelper.getEnchantments(bookshelf.getStack(i)).getEnchantmentEntries().stream().map(entry -> new EnchantmentLevelEntry(entry.getKey(), entry.getIntValue())).collect(Collectors.toSet());
                     this.possibleEnchantments.addAll(possibleEnchantments);
                 }
-                if (possibleEnchantments.isEmpty()) ci.cancel();
             }
+            if (possibleEnchantments.isEmpty()) ci.cancel();
         }
     }
 
@@ -70,6 +70,7 @@ public class EnchantmentScreenHandlerMixin {
     private void progressionrespun$checkForValidEnchants(Inventory inventory, Operation<Void> original) {
         ItemStack itemStack = inventory.getStack(0);
         context.run((world, tablePos) -> {
+            original.call(inventory);
             this.possibleEnchantments.clear();
             this.usableEnchantments.clear();
             this.bookAmount = 0;
@@ -96,18 +97,18 @@ public class EnchantmentScreenHandlerMixin {
     }
 
 
-    @WrapOperation(method = "method_17411", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/EnchantingTableBlock;canAccessPowerProvider(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
-    private boolean progression_respun$chiseledBookshelfProvidesPower(World world, BlockPos tablePos, BlockPos providerOffset, Operation<Boolean> original) {
-        if (!original.call(world, tablePos, providerOffset)) return false;
-        if (!(world.getBlockEntity(tablePos.add(providerOffset)) instanceof ChiseledBookshelfBlockEntity bookshelf)) return true;
-
-        int bookCount = 0;
-        for (int i = 0; i < bookshelf.size(); ++i) {
-            ItemStack itemStack = bookshelf.getStack(i);
-            if (!itemStack.isEmpty()) ++bookCount;
-        }
-        return bookCount >= 3;
-    }
+//    @WrapOperation(method = "method_17411", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/EnchantingTableBlock;canAccessPowerProvider(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
+//    private boolean progression_respun$chiseledBookshelfProvidesPower(World world, BlockPos tablePos, BlockPos providerOffset, Operation<Boolean> original) {
+//        if (!original.call(world, tablePos, providerOffset)) return false;
+//        if (!(world.getBlockEntity(tablePos.add(providerOffset)) instanceof ChiseledBookshelfBlockEntity bookshelf)) return true;
+//
+//        int bookCount = 0;
+//        for (int i = 0; i < bookshelf.size(); ++i) {
+//            ItemStack itemStack = bookshelf.getStack(i);
+//            if (!itemStack.isEmpty()) ++bookCount;
+//        }
+//        return bookCount >= 3;
+//    }
 
     @Unique
     private int progressionrespun$getEnchantmentsPerButton(int buttonIndex) {
@@ -130,7 +131,7 @@ public class EnchantmentScreenHandlerMixin {
             this.enchantmentPower[1] = 0;
             return List.of();
         }
-        if (buttonId == 2 && (enchantmentPower[2] <= 2 || entries.size() <= 2)) {
+        if (buttonId == 2 && (enchantmentPower[2] <= 2 || usable <= 2)) {
             this.enchantmentPower[2] = 0;
             return List.of();
         }
