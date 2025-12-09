@@ -34,5 +34,9 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
 
         getOrCreateTagBuilder(ModBlockTags.BURNABLE_COBWEBS)
                 .add(Blocks.COBWEB);
+
+        getOrCreateTagBuilder(BlockTags.ENCHANTMENT_POWER_PROVIDER)
+//                .add(Blocks.CHISELED_BOOKSHELF)
+        ;
     }
 }

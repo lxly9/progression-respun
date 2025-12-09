@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.Unique;
 public class ProgressionRespun implements ModInitializer {
 	public static final String MOD_ID = "progression_respun";
 	public static final String MC_ID = "minecraft";
-	public static final Logger PR_LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static boolean isModLoaded;
 
 	@Override

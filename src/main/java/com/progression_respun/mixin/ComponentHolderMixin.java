@@ -31,21 +31,6 @@ public interface ComponentHolderMixin {
             }
             cir.setReturnValue(null);
         }
-//        boolean isStoredEnchantments = type == DataComponentTypes.STORED_ENCHANTMENTS;
-//        if (itemStack.getItem() instanceof EnchantedBookItem && isStoredEnchantments && getComponents().contains(DataComponentTypes.STORED_ENCHANTMENTS)) {
-//            var opt = itemStack.getEnchantments().getEnchantmentEntries().stream().findFirst();
-//
-//            if (opt.isPresent()) {
-//                var entry = opt.get();
-//
-//                ItemEnchantmentsComponent enchantmentsComponent = itemStack.getComponents().get(DataComponentTypes.STORED_ENCHANTMENTS);
-//                ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(enchantmentsComponent);
-//                builder.add(entry.getKey(), entry.getIntValue());
-//                ItemEnchantmentsComponent builtComponent = builder.build();
-//
-//                cir.setReturnValue((T) builtComponent);
-//            }
-//        }
     }
 
     @SuppressWarnings("ConstantValue")
