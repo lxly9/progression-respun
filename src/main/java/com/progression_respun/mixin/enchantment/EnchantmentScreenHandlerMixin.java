@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@Debug(export = true)
 @Mixin(EnchantmentScreenHandler.class)
 public class EnchantmentScreenHandlerMixin {
     @Shadow @Final private Random random;
@@ -62,7 +62,6 @@ public class EnchantmentScreenHandlerMixin {
                     this.possibleEnchantments.addAll(possibleEnchantments);
                 }
             }
-            if (possibleEnchantments.isEmpty()) ci.cancel();
         }
     }
 
@@ -70,7 +69,6 @@ public class EnchantmentScreenHandlerMixin {
     private void progressionrespun$checkForValidEnchants(Inventory inventory, Operation<Void> original) {
         ItemStack itemStack = inventory.getStack(0);
         context.run((world, tablePos) -> {
-            original.call(inventory);
             this.possibleEnchantments.clear();
             this.usableEnchantments.clear();
             this.bookAmount = 0;
@@ -89,26 +87,28 @@ public class EnchantmentScreenHandlerMixin {
                 }
             }
         });
-        if (usableEnchantments.isEmpty() || itemStack.getItem() instanceof BookItem) {
+        if (usableEnchantments.isEmpty() && (itemStack.isEmpty() || itemStack.getItem() instanceof BookItem)) {
+            this.enchantmentPower[0] = 0;
+            this.enchantmentPower[1] = 0;
+            this.enchantmentPower[2] = 0;
             original.call(new SimpleInventory(2));
         } else {
             original.call(inventory);
         }
     }
 
+    @WrapOperation(method = "method_17411", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/EnchantingTableBlock;canAccessPowerProvider(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
+    private boolean progression_respun$chiseledBookshelfProvidesPower(World world, BlockPos tablePos, BlockPos providerOffset, Operation<Boolean> original) {
+        if (!original.call(world, tablePos, providerOffset)) return false;
+        if (!(world.getBlockEntity(tablePos.add(providerOffset)) instanceof ChiseledBookshelfBlockEntity bookshelf)) return true;
 
-//    @WrapOperation(method = "method_17411", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/EnchantingTableBlock;canAccessPowerProvider(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
-//    private boolean progression_respun$chiseledBookshelfProvidesPower(World world, BlockPos tablePos, BlockPos providerOffset, Operation<Boolean> original) {
-//        if (!original.call(world, tablePos, providerOffset)) return false;
-//        if (!(world.getBlockEntity(tablePos.add(providerOffset)) instanceof ChiseledBookshelfBlockEntity bookshelf)) return true;
-//
-//        int bookCount = 0;
-//        for (int i = 0; i < bookshelf.size(); ++i) {
-//            ItemStack itemStack = bookshelf.getStack(i);
-//            if (!itemStack.isEmpty()) ++bookCount;
-//        }
-//        return bookCount >= 3;
-//    }
+        int bookCount = 0;
+        for (int i = 0; i < bookshelf.size(); ++i) {
+            ItemStack itemStack = bookshelf.getStack(i);
+            if (!itemStack.isEmpty()) ++bookCount;
+        }
+        return bookCount >= 3;
+    }
 
     @Unique
     private int progressionrespun$getEnchantmentsPerButton(int buttonIndex) {
@@ -121,7 +121,12 @@ public class EnchantmentScreenHandlerMixin {
 
     @ModifyReturnValue(method = "generateEnchantments", at = @At("RETURN"))
     private List<EnchantmentLevelEntry> progression_respun$addEnchantments(List<EnchantmentLevelEntry> original, @Local(name = "stack", ordinal = 0, argsOnly = true) ItemStack stack, @Local(name = "buttonId", ordinal = 0, argsOnly = true) int buttonId) {
-        if (this.possibleEnchantments.isEmpty()) return List.of();
+        if (this.usableEnchantments.isEmpty()) {
+            this.enchantmentPower[0] = 0;
+            this.enchantmentPower[1] = 0;
+            this.enchantmentPower[2] = 0;
+            return List.of();
+        }
 
         List<EnchantmentLevelEntry> entries = this.possibleEnchantments.stream().filter(e -> e.enchantment.value().isAcceptableItem(stack)).toList();
         int usable = entries.size();
@@ -131,7 +136,7 @@ public class EnchantmentScreenHandlerMixin {
             this.enchantmentPower[1] = 0;
             return List.of();
         }
-        if (buttonId == 2 && (enchantmentPower[2] <= 2 || usable <= 2)) {
+        if (buttonId == 2 && (enchantmentPower[2] <= 2 || entries.size() <= 2)) {
             this.enchantmentPower[2] = 0;
             return List.of();
         }
