@@ -120,7 +120,7 @@ public class EnchantmentScreenHandlerMixin {
     }
 
     @ModifyReturnValue(method = "generateEnchantments", at = @At("RETURN"))
-    private List<EnchantmentLevelEntry> progression_respun$addEnchantments(List<EnchantmentLevelEntry> original, @Local(name = "stack", ordinal = 0, argsOnly = true) ItemStack stack, @Local(name = "buttonId", ordinal = 0, argsOnly = true) int buttonId) {
+    private List<EnchantmentLevelEntry> progression_respun$addEnchantments(List<EnchantmentLevelEntry> original, @Local(name = "stack", ordinal = 0, argsOnly = true) ItemStack stack, @Local(name = "buttonId", ordinal = 0, argsOnly = true) int slot) {
         if (this.usableEnchantments.isEmpty()) {
             this.enchantmentPower[0] = 0;
             this.enchantmentPower[1] = 0;
@@ -132,16 +132,23 @@ public class EnchantmentScreenHandlerMixin {
         int usable = entries.size();
 
         if (entries.isEmpty()) return List.of();
-        if (buttonId == 1 && (enchantmentPower[1] <= 1 || usable <= 1)) {
+        if (slot == 0) {
+            this.enchantmentPower[0] = 7;
+        }
+        if (slot == 1 && usable <= 1) {
             this.enchantmentPower[1] = 0;
             return List.of();
+        } else if (slot == 1) {
+            this.enchantmentPower[1] = 15;
         }
-        if (buttonId == 2 && (enchantmentPower[2] <= 2 || entries.size() <= 2)) {
+        if (slot == 2 && entries.size() <= 2) {
             this.enchantmentPower[2] = 0;
             return List.of();
+        } else if (slot == 2) {
+            this.enchantmentPower[2] = 30;
         }
 
-        int desiredCount = progressionrespun$getEnchantmentsPerButton(buttonId);
+        int desiredCount = progressionrespun$getEnchantmentsPerButton(slot);
 //        if (enchantmentPower.length < 2 && (buttonId == 1 || buttonId == 2)) desiredCount = desiredCount -1;
         List<EnchantmentLevelEntry> result = new ArrayList<>();
 
@@ -150,8 +157,10 @@ public class EnchantmentScreenHandlerMixin {
 
         while (result.size() < desiredCount && !enchantmentLevelEntries.isEmpty()) {
             int index = random.nextInt(enchantmentLevelEntries.size());
-            result.add(enchantmentLevelEntries.get(index));
-            enchantmentLevelEntries.remove(index);
+            EnchantmentLevelEntry entry = enchantmentLevelEntries.get(index);
+            result.add(entry);
+            enchantmentLevelEntries.remove(entry);
+            EnchantmentHelper.removeConflicts(enchantmentLevelEntries, entry);
         }
         return result;
     }
