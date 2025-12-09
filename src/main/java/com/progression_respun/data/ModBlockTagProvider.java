@@ -36,7 +36,16 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.COBWEB);
 
         getOrCreateTagBuilder(BlockTags.ENCHANTMENT_POWER_PROVIDER)
-//                .add(Blocks.CHISELED_BOOKSHELF)
-        ;
+                .add(Blocks.CHISELED_BOOKSHELF);
+
+        getOrCreateTagBuilder(ModBlockTags.DECREASES_CURSE)
+                .forceAddTag(BlockTags.CANDLES);
+
+        getOrCreateTagBuilder(ModBlockTags.INCREASES_CURSE)
+                .add(Blocks.SOUL_FIRE)
+                .add(Blocks.SOUL_LANTERN)
+                .add(Blocks.SOUL_TORCH)
+                .add(Blocks.SOUL_WALL_TORCH)
+                .add(Blocks.SOUL_CAMPFIRE);
     }
 }

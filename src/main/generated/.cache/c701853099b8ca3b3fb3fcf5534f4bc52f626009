@@ -1,5 +1,7 @@
-// 1.21.1	2025-12-09T04:08:14.3195862	Progression Respun/Tags for minecraft:block
+// 1.21.1	2025-12-09T18:54:15.9080489	Progression Respun/Tags for minecraft:block
 25af5670b771a2c68c94ce03d938ec1f3edc17bf data\minecraft\tags\block\mineable\pickaxe.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data\minecraft\tags\block\enchantment_power_provider.json
+9f673b58326c2ff8e20b7ee9e96a5dafb3a117d1 data\progression_respun\tags\block\decreases_curse.json
+5e10fd7c8a9d685e4c762184ef2b091ce5f7afc6 data\minecraft\tags\block\enchantment_power_provider.json
 0a567f4191f0c24cd0cc661a202ea1e99ea70dba data\progression_respun\tags\block\incorrect_for_flint_tool.json
 e7a8c631b3ba3bd9a98d2bb83f927b25fe348d37 data\progression_respun\tags\block\burnable_cobwebs.json
+def6d2a5d0a2019c986611578e69d036fac9d678 data\progression_respun\tags\block\increases_curse.json

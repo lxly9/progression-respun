@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.progression_respun.ProgressionRespun.POWER_PROVIDER_OFFSETS;
+
 @Debug(export = true)
 @Mixin(EnchantmentScreenHandler.class)
 public class EnchantmentScreenHandlerMixin {
@@ -47,11 +49,11 @@ public class EnchantmentScreenHandlerMixin {
     @Unique
     private int bookAmount = 0;
 
-    @Inject(method = "method_17411", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "method_17411", at = @At(value = "HEAD"))
     private void progression_respun$getEnchantments(ItemStack itemStack, World world, BlockPos tablePos, CallbackInfo ci) {
         this.possibleEnchantments.clear();
         this.bookAmount = 0;
-        for (BlockPos blockPos : EnchantingTableBlock.POWER_PROVIDER_OFFSETS) {
+        for (BlockPos blockPos : POWER_PROVIDER_OFFSETS) {
             if (!(world.getBlockEntity(tablePos.add(blockPos)) instanceof ChiseledBookshelfBlockEntity bookshelf)) {
                 continue;
             }
@@ -72,7 +74,7 @@ public class EnchantmentScreenHandlerMixin {
             this.possibleEnchantments.clear();
             this.usableEnchantments.clear();
             this.bookAmount = 0;
-            for (BlockPos blockPos : EnchantingTableBlock.POWER_PROVIDER_OFFSETS) {
+            for (BlockPos blockPos : POWER_PROVIDER_OFFSETS) {
                 if (!(world.getBlockEntity(tablePos.add(blockPos)) instanceof ChiseledBookshelfBlockEntity bookshelf)) {
                     continue;
                 }
@@ -97,18 +99,18 @@ public class EnchantmentScreenHandlerMixin {
         }
     }
 
-    @WrapOperation(method = "method_17411", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/EnchantingTableBlock;canAccessPowerProvider(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
-    private boolean progression_respun$chiseledBookshelfProvidesPower(World world, BlockPos tablePos, BlockPos providerOffset, Operation<Boolean> original) {
-        if (!original.call(world, tablePos, providerOffset)) return false;
-        if (!(world.getBlockEntity(tablePos.add(providerOffset)) instanceof ChiseledBookshelfBlockEntity bookshelf)) return true;
-
-        int bookCount = 0;
-        for (int i = 0; i < bookshelf.size(); ++i) {
-            ItemStack itemStack = bookshelf.getStack(i);
-            if (!itemStack.isEmpty()) ++bookCount;
-        }
-        return bookCount >= 3;
-    }
+//    @WrapOperation(method = "method_17411", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/EnchantingTableBlock;canAccessPowerProvider(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
+//    private boolean progression_respun$chiseledBookshelfProvidesPower(World world, BlockPos tablePos, BlockPos providerOffset, Operation<Boolean> original) {
+//        if (!original.call(world, tablePos, providerOffset)) return false;
+//        if (!(world.getBlockEntity(tablePos.add(providerOffset)) instanceof ChiseledBookshelfBlockEntity bookshelf)) return true;
+//
+//        int bookCount = 0;
+//        for (int i = 0; i < bookshelf.size(); ++i) {
+//            ItemStack itemStack = bookshelf.getStack(i);
+//            if (!itemStack.isEmpty()) ++bookCount;
+//        }
+//        return bookCount >= 3;
+//    }
 
     @Unique
     private int progressionrespun$getEnchantmentsPerButton(int buttonIndex) {
@@ -149,15 +151,14 @@ public class EnchantmentScreenHandlerMixin {
         }
 
         int desiredCount = progressionrespun$getEnchantmentsPerButton(slot);
-//        if (enchantmentPower.length < 2 && (buttonId == 1 || buttonId == 2)) desiredCount = desiredCount -1;
         List<EnchantmentLevelEntry> result = new ArrayList<>();
 
         List<EnchantmentLevelEntry> enchantmentLevelEntries = new ArrayList<>(entries);
         enchantmentLevelEntries.removeAll(result);
+        java.util.Collections.shuffle(enchantmentLevelEntries, new java.util.Random(this.random.nextLong()));
 
         while (result.size() < desiredCount && !enchantmentLevelEntries.isEmpty()) {
-            int index = random.nextInt(enchantmentLevelEntries.size());
-            EnchantmentLevelEntry entry = enchantmentLevelEntries.get(index);
+            EnchantmentLevelEntry entry = enchantmentLevelEntries.getFirst();
             result.add(entry);
             enchantmentLevelEntries.remove(entry);
             EnchantmentHelper.removeConflicts(enchantmentLevelEntries, entry);

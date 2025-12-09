@@ -25,9 +25,13 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Unique;
+
+import java.util.List;
 
 
 public class ProgressionRespun implements ModInitializer {
@@ -110,4 +114,6 @@ public class ProgressionRespun implements ModInitializer {
         if (enchants != null) return enchants.getEnchantments().stream().anyMatch(entry -> entry.matchesKey(Enchantments.BINDING_CURSE));
         return false;
     }
+
+    public static final List<BlockPos> POWER_PROVIDER_OFFSETS = BlockPos.stream(-3, 0, -3, 3, 2, 3).map(BlockPos::toImmutable).toList();
 }
