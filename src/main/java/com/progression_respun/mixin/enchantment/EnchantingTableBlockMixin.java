@@ -1,6 +1,7 @@
 package com.progression_respun.mixin.enchantment;
 
 import com.progression_respun.block.ModBlockTags;
+import com.progression_respun.util.ParticleUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.particle.ParticleTypes;
@@ -38,7 +39,7 @@ public class EnchantingTableBlockMixin{
 
             if (random.nextInt(16) == 0 && shelf.isIn(ModBlockTags.INCREASES_CURSE)) {
                 world.addParticle(
-                        ParticleTypes.SOUL_FIRE_FLAME,
+                        ParticleUtil.CURSE,
                         pos.getX() + 0.5,
                         pos.getY() + 2.0,
                         pos.getZ() + 0.5,

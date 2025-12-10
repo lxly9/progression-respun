@@ -3,10 +3,11 @@ package com.progression_respun.mixin.enchantment;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.block.EnchantingTableBlock;
+import com.progression_respun.block.ModBlockTags;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalEnchantmentTags;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.inventory.Inventory;
@@ -14,6 +15,13 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.screen.EnchantmentScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.util.math.BlockPos;
@@ -29,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.progression_respun.ProgressionRespun.LOGGER;
 import static com.progression_respun.ProgressionRespun.POWER_PROVIDER_OFFSETS;
 
 @Debug(export = true)
@@ -48,12 +57,21 @@ public class EnchantmentScreenHandlerMixin {
     private final List<EnchantmentLevelEntry> usableEnchantments = new ArrayList<>();
     @Unique
     private int bookAmount = 0;
+    @Unique
+    private float curseChance = 0.5f;
 
     @Inject(method = "method_17411", at = @At(value = "HEAD"))
     private void progression_respun$getEnchantments(ItemStack itemStack, World world, BlockPos tablePos, CallbackInfo ci) {
         this.possibleEnchantments.clear();
         this.bookAmount = 0;
+        this.curseChance = 0.5f;
         for (BlockPos blockPos : POWER_PROVIDER_OFFSETS) {
+            if (world.getBlockState(blockPos).isIn(ModBlockTags.DECREASES_CURSE)) {
+                curseChance = curseChance - 0.02f;
+            }
+            if (world.getBlockState(blockPos).isIn(ModBlockTags.INCREASES_CURSE)) {
+                curseChance = curseChance + 0.02f;
+            }
             if (!(world.getBlockEntity(tablePos.add(blockPos)) instanceof ChiseledBookshelfBlockEntity bookshelf)) {
                 continue;
             }
@@ -122,7 +140,7 @@ public class EnchantmentScreenHandlerMixin {
     }
 
     @ModifyReturnValue(method = "generateEnchantments", at = @At("RETURN"))
-    private List<EnchantmentLevelEntry> progression_respun$addEnchantments(List<EnchantmentLevelEntry> original, @Local(name = "stack", ordinal = 0, argsOnly = true) ItemStack stack, @Local(name = "buttonId", ordinal = 0, argsOnly = true) int slot) {
+    private List<EnchantmentLevelEntry> progression_respun$addEnchantments(List<EnchantmentLevelEntry> original, @Local(name = "stack", ordinal = 0, argsOnly = true) ItemStack stack, @Local(name = "buttonId", ordinal = 0, argsOnly = true) int slot, @Local(argsOnly = true) DynamicRegistryManager registryManager) {
         if (this.usableEnchantments.isEmpty()) {
             this.enchantmentPower[0] = 0;
             this.enchantmentPower[1] = 0;
@@ -159,7 +177,14 @@ public class EnchantmentScreenHandlerMixin {
 
         while (result.size() < desiredCount && !enchantmentLevelEntries.isEmpty()) {
             EnchantmentLevelEntry entry = enchantmentLevelEntries.getFirst();
-            result.add(entry);
+            if (random.nextFloat() > curseChance) {
+                result.add(entry);
+            } else {
+                Registry<Enchantment> entryList = registryManager.get(EnchantmentTags.CURSE.registry());
+                RegistryEntry<Enchantment> curse = entryList.getRandom(random).get();
+                result.add(new EnchantmentLevelEntry(curse, 1));
+                LOGGER.info(String.valueOf(curse));
+            }
             enchantmentLevelEntries.remove(entry);
             EnchantmentHelper.removeConflicts(enchantmentLevelEntries, entry);
         }
