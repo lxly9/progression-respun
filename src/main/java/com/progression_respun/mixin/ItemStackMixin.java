@@ -31,6 +31,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -42,13 +43,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -62,6 +59,7 @@ import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
+@Debug(export = true)
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack {
     @Unique private static final Text BROKEN_TEXT = Text.translatable(Util.createTranslationKey(
@@ -180,81 +178,16 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         }
     }
 
-    @ModifyReturnValue(method = "getTooltip", at = @At("RETURN"))
-    private List<Text> isUnderArmor(List<Text> original, @Local(argsOnly = true) Item.TooltipContext context, @Local(argsOnly = true) PlayerEntity player, @Local(argsOnly = true) TooltipType type) {
-        ItemStack stack = (ItemStack)(Object)this;
-
-        if (stack.getItem() instanceof ArmorItem && stack.isIn(UNDER_ARMOR)) {
-            var component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-            if (component != null && !component.isEmpty()) {
-                ItemStack stack1 = component.get(0);
-                BlockPredicatesChecker blockPredicatesChecker2;
-
-                if (!type.isCreative() && this.contains(DataComponentTypes.HIDE_TOOLTIP)) {
-                    return List.of();
-                }
-                ArrayList<Text> list = Lists.newArrayList();
-                MutableText mutableText = Text.empty().append(stack.getName()).formatted(stack1.getRarity().getFormatting());
-
-                if (stack1.contains(DataComponentTypes.CUSTOM_NAME)) {
-                    mutableText.formatted(Formatting.ITALIC);
-                }
-                list.add(mutableText);
-
-                Consumer<Text> consumer = list::add;
-                if (!stack1.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)) {
-                    stack1.getItem().appendTooltip(stack, context, list, type);
-                }
-
-                appendTooltip(DataComponentTypes.TRIM, context, consumer, type);
-                appendTooltip(DataComponentTypes.STORED_ENCHANTMENTS, context, consumer, type);
-                appendTooltip(DataComponentTypes.ENCHANTMENTS, context, consumer, type);
-                appendTooltip(DataComponentTypes.DYED_COLOR, context, consumer, type);
-                appendTooltip(DataComponentTypes.LORE, context, consumer, type);
-                appendAttributeModifiersTooltip(consumer, player);
-                appendTooltip(DataComponentTypes.UNBREAKABLE, context, consumer, type);
-                BlockPredicatesChecker blockPredicatesChecker = stack1.get(DataComponentTypes.CAN_BREAK);
-                if (blockPredicatesChecker != null && blockPredicatesChecker.showInTooltip()) {
-                    consumer.accept(ScreenTexts.EMPTY);
-                    consumer.accept(BlockPredicatesChecker.CAN_BREAK_TEXT);
-                    blockPredicatesChecker.addTooltips(consumer);
-                }
-                if ((blockPredicatesChecker2 = stack1.get(DataComponentTypes.CAN_PLACE_ON)) != null && blockPredicatesChecker2.showInTooltip()) {
-                    consumer.accept(ScreenTexts.EMPTY);
-                    consumer.accept(BlockPredicatesChecker.CAN_PLACE_TEXT);
-                    blockPredicatesChecker2.addTooltips(consumer);
-                }
-                if (type.isAdvanced()) {
-                    if (stack1.isDamaged()) {
-                        list.add(Text.translatable("item.durability", stack1.getMaxDamage() - stack1.getDamage(), stack1.getMaxDamage()));
-                        list.add(Text.translatable("util.durability.underarmor", stack.getMaxDamage() - stack.getDamage(), stack.getMaxDamage()));
-                    }
-                    list.add(Text.literal(Registries.ITEM.getId(stack1.getItem()).toString()).formatted(Formatting.DARK_GRAY));
-                    list.add(Text.literal(Registries.ITEM.getId(stack.getItem()).toString()).formatted(Formatting.DARK_GRAY));
-                    int i = stack1.getComponents().size();
-                    if (i > 0) {
-                        list.add(Text.translatable("item.components", i).formatted(Formatting.DARK_GRAY));
-                    }
-                }
-                if (player != null && !stack1.getItem().isEnabled(player.getWorld().getEnabledFeatures())) {
-                    list.add(DISABLED_TEXT);
-                }
-                return list;
-            }
-        }
-        return original;
-    }
-
-    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getName()Lnet/minecraft/text/Text;"))
-    private Text progressionrespun$getTooltip(ItemStack instance, Operation<Text> original) {
+    @Redirect(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getRarity()Lnet/minecraft/util/Rarity;"))
+    private Rarity progressionrespun$getTooltip(ItemStack instance) {
         ItemStack armorStack = getUnderArmor(instance);
         if (armorStack != ItemStack.EMPTY) {
-            return original.call(armorStack);
+            return armorStack.getRarity();
         }
-        return original.call(instance);
+        return instance.getRarity();
     }
 
-    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;contains(Lnet/minecraft/component/ComponentType;)Z"))
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;contains(Lnet/minecraft/component/ComponentType;)Z", ordinal = 3))
     private <T> boolean progressionrespun$getTooltip1(ItemStack instance, ComponentType<? extends T> componentType, Operation<Boolean> original) {
         ItemStack armorStack = getUnderArmor(instance);
         if (armorStack != ItemStack.EMPTY) {
@@ -263,7 +196,16 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         return original.call(instance, componentType);
     }
 
-    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"))
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;appendTooltip(Lnet/minecraft/component/ComponentType;Lnet/minecraft/item/Item$TooltipContext;Ljava/util/function/Consumer;Lnet/minecraft/item/tooltip/TooltipType;)V"))
+    private <T> void progressionrespun$getTooltip2(ItemStack instance, ComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type, Operation<Void> original) {
+        ItemStack armorStack = getUnderArmor(instance);
+        if (armorStack != ItemStack.EMPTY) {
+            original.call(armorStack, componentType, context, textConsumer, type);
+        }
+        original.call(instance, componentType, context, textConsumer, type);
+    }
+
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;", ordinal = 0))
     private Item progressionrespun$getTooltip3(ItemStack instance, Operation<Item> original) {
         ItemStack armorStack = getUnderArmor(instance);
         if (armorStack != ItemStack.EMPTY) {
@@ -272,46 +214,46 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         return original.call(instance);
     }
 
-    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;get(Lnet/minecraft/component/ComponentType;)Ljava/lang/Object;"))
-    private <T> Object progressionrespun$getTooltip4(ItemStack instance, ComponentType<? extends T> componentType, Operation<Object> original) {
-        ItemStack armorStack = getUnderArmor(instance);
-        if (armorStack != ItemStack.EMPTY) {
-            return original.call(armorStack, componentType);
+    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/tooltip/TooltipType;isAdvanced()Z", shift = At.Shift.BEFORE))
+    private void gay(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> cir, @Local(ordinal = 0) List<Text> list) {
+        ItemStack stack = (ItemStack) (Object) this;
+        ItemStack armorStack = getUnderArmor(stack);
+        if (armorStack != ItemStack.EMPTY && armorStack.isDamaged() && type.isAdvanced()) {
+            list.add(Text.translatable("item.durability", armorStack.getMaxDamage() - armorStack.getDamage(), armorStack.getMaxDamage()));
         }
-        return original.call(instance, componentType);
+
     }
 
-    @Redirect(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
-    private <E> boolean progressionrespun$getTooltip5(List<Text> instance, E e) {
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2))
+    private <E> boolean progressionrespun$getTooltip5(List<Text> instance, E e, Operation<Boolean> original) {
         ItemStack stack = (ItemStack) (Object) this;
         ItemStack armorStack = getUnderArmor(stack);
         if (armorStack != ItemStack.EMPTY) {
-            instance.add(Text.translatable("item.durability", armorStack.getMaxDamage() - armorStack.getDamage(), armorStack.getMaxDamage()));
-            instance.add(Text.translatable("util.durability.underarmor", stack.getMaxDamage() - stack.getDamage(), stack.getMaxDamage()));
+            original.call(instance, Text.translatable("util.durability.underarmor", stack.getMaxDamage() - stack.getDamage(), stack.getMaxDamage()));
             return false;
         }
-        return true;
+        return original.call(instance, e);
     }
 
-    @Redirect(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
-    private <E> boolean progressionrespun$getTooltip6(List<Text> instance, E e) {
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 3))
+    private <E> boolean progressionrespun$getTooltip6(List<Text> instance, E e, Operation<Boolean> original) {
         ItemStack stack = (ItemStack) (Object) this;
         ItemStack armorStack = getUnderArmor(stack);
         if (armorStack != ItemStack.EMPTY) {
-            instance.add(Text.literal(Registries.ITEM.getId(armorStack.getItem()).toString()).formatted(Formatting.DARK_GRAY));
-            instance.add(Text.literal(Registries.ITEM.getId(stack.getItem()).toString()).formatted(Formatting.DARK_GRAY));
+            original.call(instance, Text.literal(Registries.ITEM.getId(armorStack.getItem()).toString()).formatted(Formatting.DARK_GRAY));
+            original.call(instance, Text.literal(Registries.ITEM.getId(stack.getItem()).toString()).formatted(Formatting.DARK_GRAY));
             return false;
         }
-        return true;
+        return original.call(instance, e);
     }
 
-    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"))
-    private Item progressionrespun$getTooltip7(ItemStack instance, Operation<Item> original) {
-        ItemStack armorStack = getUnderArmor(instance);
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;isEnabled(Lnet/minecraft/resource/featuretoggle/FeatureSet;)Z"))
+    private boolean progressionrespun$getTooltip7(Item instance, FeatureSet featureSet, Operation<Boolean> original) {
+        ItemStack armorStack = getUnderArmor(instance.getDefaultStack());
         if (armorStack != ItemStack.EMPTY) {
-            return original.call(armorStack);
+            return original.call(armorStack.getItem(), featureSet);
         }
-        return original.call(instance);
+        return original.call(instance, featureSet);
     }
 
     @Unique
