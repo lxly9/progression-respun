@@ -2,9 +2,9 @@ package com.progression_respun.mixin;
 
 import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.ProgressionRespun;
 import com.progression_respun.component.ModDataComponentTypes;
@@ -48,6 +48,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -243,11 +245,85 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         return original;
     }
 
-//    @WrapWithCondition(method = "getTooltip", at = @At(value = "INVOKE", target = ""))
-//    private boolean gay() {
-//
-//        return false;
-//    }
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getName()Lnet/minecraft/text/Text;"))
+    private Text progressionrespun$getTooltip(ItemStack instance, Operation<Text> original) {
+        ItemStack armorStack = getUnderArmor(instance);
+        if (armorStack != ItemStack.EMPTY) {
+            return original.call(armorStack);
+        }
+        return original.call(instance);
+    }
+
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;contains(Lnet/minecraft/component/ComponentType;)Z"))
+    private <T> boolean progressionrespun$getTooltip1(ItemStack instance, ComponentType<? extends T> componentType, Operation<Boolean> original) {
+        ItemStack armorStack = getUnderArmor(instance);
+        if (armorStack != ItemStack.EMPTY) {
+            return original.call(armorStack, componentType);
+        }
+        return original.call(instance, componentType);
+    }
+
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"))
+    private Item progressionrespun$getTooltip3(ItemStack instance, Operation<Item> original) {
+        ItemStack armorStack = getUnderArmor(instance);
+        if (armorStack != ItemStack.EMPTY) {
+            return original.call(armorStack);
+        }
+        return original.call(instance);
+    }
+
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;get(Lnet/minecraft/component/ComponentType;)Ljava/lang/Object;"))
+    private <T> Object progressionrespun$getTooltip4(ItemStack instance, ComponentType<? extends T> componentType, Operation<Object> original) {
+        ItemStack armorStack = getUnderArmor(instance);
+        if (armorStack != ItemStack.EMPTY) {
+            return original.call(armorStack, componentType);
+        }
+        return original.call(instance, componentType);
+    }
+
+    @Redirect(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
+    private <E> boolean progressionrespun$getTooltip5(List<Text> instance, E e) {
+        ItemStack stack = (ItemStack) (Object) this;
+        ItemStack armorStack = getUnderArmor(stack);
+        if (armorStack != ItemStack.EMPTY) {
+            instance.add(Text.translatable("item.durability", armorStack.getMaxDamage() - armorStack.getDamage(), armorStack.getMaxDamage()));
+            instance.add(Text.translatable("util.durability.underarmor", stack.getMaxDamage() - stack.getDamage(), stack.getMaxDamage()));
+            return false;
+        }
+        return true;
+    }
+
+    @Redirect(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
+    private <E> boolean progressionrespun$getTooltip6(List<Text> instance, E e) {
+        ItemStack stack = (ItemStack) (Object) this;
+        ItemStack armorStack = getUnderArmor(stack);
+        if (armorStack != ItemStack.EMPTY) {
+            instance.add(Text.literal(Registries.ITEM.getId(armorStack.getItem()).toString()).formatted(Formatting.DARK_GRAY));
+            instance.add(Text.literal(Registries.ITEM.getId(stack.getItem()).toString()).formatted(Formatting.DARK_GRAY));
+            return false;
+        }
+        return true;
+    }
+
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"))
+    private Item progressionrespun$getTooltip7(ItemStack instance, Operation<Item> original) {
+        ItemStack armorStack = getUnderArmor(instance);
+        if (armorStack != ItemStack.EMPTY) {
+            return original.call(armorStack);
+        }
+        return original.call(instance);
+    }
+
+    @Unique
+    private ItemStack getUnderArmor(ItemStack stack) {
+        if (stack.getItem() instanceof ArmorItem && stack.isIn(UNDER_ARMOR)) {
+            var component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component != null && !component.isEmpty()) {
+                return component.get(0);
+            }
+        }
+        return ItemStack.EMPTY;
+    }
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
     private void useOnBlockIfNotBroken(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
