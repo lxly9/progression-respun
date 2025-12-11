@@ -67,10 +67,11 @@ public class EnchantmentScreenHandlerMixin {
         this.curseChance = 0.5f;
         for (BlockPos blockPos : POWER_PROVIDER_OFFSETS) {
             if (world.getBlockState(blockPos).isIn(ModBlockTags.DECREASES_CURSE)) {
-                curseChance = curseChance - 0.02f;
+                curseChance = curseChance - 0.1f;
             }
             if (world.getBlockState(blockPos).isIn(ModBlockTags.INCREASES_CURSE)) {
-                curseChance = curseChance + 0.02f;
+                curseChance = curseChance + 0.1f;
+                LOGGER.info(String.valueOf(curseChance));
             }
             if (!(world.getBlockEntity(tablePos.add(blockPos)) instanceof ChiseledBookshelfBlockEntity bookshelf)) {
                 continue;
@@ -116,19 +117,6 @@ public class EnchantmentScreenHandlerMixin {
             original.call(inventory);
         }
     }
-
-//    @WrapOperation(method = "method_17411", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/EnchantingTableBlock;canAccessPowerProvider(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
-//    private boolean progression_respun$chiseledBookshelfProvidesPower(World world, BlockPos tablePos, BlockPos providerOffset, Operation<Boolean> original) {
-//        if (!original.call(world, tablePos, providerOffset)) return false;
-//        if (!(world.getBlockEntity(tablePos.add(providerOffset)) instanceof ChiseledBookshelfBlockEntity bookshelf)) return true;
-//
-//        int bookCount = 0;
-//        for (int i = 0; i < bookshelf.size(); ++i) {
-//            ItemStack itemStack = bookshelf.getStack(i);
-//            if (!itemStack.isEmpty()) ++bookCount;
-//        }
-//        return bookCount >= 3;
-//    }
 
     @Unique
     private int progressionrespun$getEnchantmentsPerButton(int buttonIndex) {
@@ -176,15 +164,18 @@ public class EnchantmentScreenHandlerMixin {
         java.util.Collections.shuffle(enchantmentLevelEntries, new java.util.Random(this.random.nextLong()));
 
         while (result.size() < desiredCount && !enchantmentLevelEntries.isEmpty()) {
+            java.util.Collections.shuffle(enchantmentLevelEntries, new java.util.Random(this.random.nextLong()));
             EnchantmentLevelEntry entry = enchantmentLevelEntries.getFirst();
-            if (random.nextFloat() > curseChance) {
-                result.add(entry);
-            } else {
-                Registry<Enchantment> entryList = registryManager.get(EnchantmentTags.CURSE.registry());
-                RegistryEntry<Enchantment> curse = entryList.getRandom(random).get();
-                result.add(new EnchantmentLevelEntry(curse, 1));
-                LOGGER.info(String.valueOf(curse));
-            }
+            result.add(entry);
+//            if (random.nextFloat() > curseChance) {
+//                result.add(entry);
+//            } else {
+//                Registry<Enchantment> entryList = registryManager.get(EnchantmentTags.CURSE.registry());
+//                RegistryEntry<Enchantment> curse = entryList.getRandom(random).get();
+//                result.add(new EnchantmentLevelEntry(curse, 1));
+//                LOGGER.info(String.valueOf(curse));
+//                LOGGER.info(String.valueOf(curseChance));
+//            }
             enchantmentLevelEntries.remove(entry);
             EnchantmentHelper.removeConflicts(enchantmentLevelEntries, entry);
         }
