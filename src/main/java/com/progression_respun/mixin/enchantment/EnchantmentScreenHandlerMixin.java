@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.block.ModBlockTags;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalEnchantmentTags;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -17,10 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.screen.EnchantmentScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -58,7 +55,7 @@ public class EnchantmentScreenHandlerMixin {
     @Unique
     private int bookAmount = 0;
     @Unique
-    private float curseChance = 0.5f;
+    private float curseChance = 0.25f;
 
     @Inject(method = "method_17411", at = @At(value = "HEAD"))
     private void progression_respun$getEnchantments(ItemStack itemStack, World world, BlockPos tablePos, CallbackInfo ci) {
@@ -66,10 +63,12 @@ public class EnchantmentScreenHandlerMixin {
         this.bookAmount = 0;
         this.curseChance = 0.5f;
         for (BlockPos blockPos : POWER_PROVIDER_OFFSETS) {
-            if (world.getBlockState(blockPos).isIn(ModBlockTags.DECREASES_CURSE)) {
+            BlockPos realPos = tablePos.add(blockPos);
+            BlockState state = world.getBlockState(realPos);
+            if (state.isIn(ModBlockTags.DECREASES_CURSE)) {
                 curseChance = curseChance - 0.1f;
             }
-            if (world.getBlockState(blockPos).isIn(ModBlockTags.INCREASES_CURSE)) {
+            if (state.isIn(ModBlockTags.INCREASES_CURSE)) {
                 curseChance = curseChance + 0.1f;
                 LOGGER.info(String.valueOf(curseChance));
             }
@@ -170,14 +169,23 @@ public class EnchantmentScreenHandlerMixin {
 //            if (random.nextFloat() > curseChance) {
 //                result.add(entry);
 //            } else {
-//                Registry<Enchantment> entryList = registryManager.get(EnchantmentTags.CURSE.registry());
-//                RegistryEntry<Enchantment> curse = entryList.getRandom(random).get();
+//                Registry<Enchantment> curseList = registryManager.get(EnchantmentTags.CURSE.registry());
+//                RegistryEntry<Enchantment> curse = curseList.getRandom(random).get();
 //                result.add(new EnchantmentLevelEntry(curse, 1));
 //                LOGGER.info(String.valueOf(curse));
 //                LOGGER.info(String.valueOf(curseChance));
 //            }
             enchantmentLevelEntries.remove(entry);
             EnchantmentHelper.removeConflicts(enchantmentLevelEntries, entry);
+        }
+        if ((float) random.nextInt() < curseChance) {
+            Registry<Enchantment> curseList = registryManager.get(EnchantmentTags.CURSE.registry());
+            RegistryEntry<Enchantment> curse = curseList.getRandom(random).get();
+            EnchantmentLevelEntry curseEntry = new EnchantmentLevelEntry(curse, 1);
+            if (curseEntry.enchantment.value().isAcceptableItem(stack)) {
+                result.remove(random.nextInt());
+                result.add(curseEntry);
+            }
         }
         return result;
     }
