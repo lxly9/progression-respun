@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.Mixin;
 public class PotionItemMixin {
 
     @WrapMethod(method = "finishUsing")
-    private ItemStack finishUsing(ItemStack stack, World world, LivingEntity user, Operation<ItemStack> original) {
+    private ItemStack progressionrespun$finishUsing(ItemStack stack, World world, LivingEntity user, Operation<ItemStack> original) {
         if (user instanceof PlayerEntity player) {
 
             if (player instanceof ServerPlayerEntity) {

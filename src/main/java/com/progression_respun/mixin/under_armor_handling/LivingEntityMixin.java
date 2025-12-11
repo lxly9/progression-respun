@@ -1,13 +1,10 @@
 package com.progression_respun.mixin.under_armor_handling;
 
 import com.google.common.collect.Maps;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.progression_respun.component.ModDataComponentTypes;
-import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.mixin.LivingEntityAccessor;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
@@ -19,9 +16,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -34,6 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 import java.util.Random;
 
+import static com.progression_respun.ProgressionRespun.getArmor;
 import static com.progression_respun.data.ModItemTagProvider.BYPASSES_UNDER_ARMOR;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
@@ -45,16 +41,15 @@ public abstract class LivingEntityMixin {
     @Shadow public abstract double getAttributeValue(RegistryEntry<EntityAttribute> attribute);
 
     @WrapOperation(method = "damageEquipment", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;)V"))
-    private void damageUnderArmor(ItemStack item, int amount, LivingEntity entity, EquipmentSlot slot, Operation<Void> underArmor, @Local(argsOnly = true) DamageSource source) {
+    private void progressionrespun$damageUnderArmor(ItemStack item, int amount, LivingEntity entity, EquipmentSlot slot, Operation<Void> underArmor, @Local(argsOnly = true) DamageSource source) {
         if (((Object) this) instanceof PlayerEntity player) {
             if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
                 if (!item.isEmpty() && item.getItem() instanceof ArmorItem) {
-                    var component = item.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                    if (component != null && !component.isEmpty()) {
-                        ItemStack armor = component.get(0);
+                    ItemStack armorStack = getArmor(item);
+                    if (armorStack != ItemStack.EMPTY) {
                         Random random = new Random();
-                        if (armor.takesDamageFrom(source)) {
-                            armor.damage(amount, player, slot);
+                        if (armorStack.takesDamageFrom(source)) {
+                            armorStack.damage(amount, player, slot);
                             if (random.nextDouble() < 0.25) {
                                 underArmor.call(item, amount, entity, slot);
                             }
@@ -68,7 +63,7 @@ public abstract class LivingEntityMixin {
     }
 
     @Inject(method = "getPreferredEquipmentSlot", at = @At("HEAD"), cancellable = true)
-    private void redirectArmorIfNoUnderArmor(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> ci) {
+    private void progressionrespun$redirectArmorIfNoUnderArmor(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> ci) {
         if (stack.getItem() instanceof ArmorItem) {
 
             if ((Object) this instanceof PlayerEntity) {
@@ -79,7 +74,7 @@ public abstract class LivingEntityMixin {
     }
 
     @WrapMethod(method = "getEquipmentChanges")
-    private @Nullable Map<EquipmentSlot, ItemStack> getArmorChanges(Operation<Map<EquipmentSlot, ItemStack>> original) {
+    private @Nullable Map<EquipmentSlot, ItemStack> progressionrespun$getArmorChanges(Operation<Map<EquipmentSlot, ItemStack>> original) {
         Map<EquipmentSlot, ItemStack> map = null;
         LivingEntity livingEntity = (LivingEntity) (Object) this;
 
@@ -111,20 +106,16 @@ public abstract class LivingEntityMixin {
                         EnchantmentHelper.removeLocationBasedEffects(itemStack, livingEntity, equipmentSlot);
                     });
                     if (itemStack.getItem() instanceof ArmorItem && itemStack.isIn(UNDER_ARMOR)) {
+                        ItemStack armorStack = getArmor(itemStack);
+                        if (armorStack == ItemStack.EMPTY) continue;
 
-                        UnderArmorContentsComponent component = itemStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                        if (component == null || component.isEmpty()) continue;
-
-                        ItemStack armor = component.get(0);
-                        if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) continue;
-
-                        armor.applyAttributeModifiers(equipmentSlot, (attribute, modifier) -> {
+                        armorStack.applyAttributeModifiers(equipmentSlot, (attribute, modifier) -> {
                             EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance(attribute);
                             EntityAttributeModifier modifier1 = new EntityAttributeModifier(modifier.id().withSuffixedPath("_under_armor"), modifier.value(), modifier.operation());
                             if (entityAttributeInstance != null) {
                                 entityAttributeInstance.removeModifier(modifier1);
                             }
-                            EnchantmentHelper.removeLocationBasedEffects(armor, livingEntity, equipmentSlot);
+                            EnchantmentHelper.removeLocationBasedEffects(armorStack, livingEntity, equipmentSlot);
                         });
                     }
                 }
@@ -133,8 +124,8 @@ public abstract class LivingEntityMixin {
 
         if (map != null) {
             for(Map.Entry<EquipmentSlot, ItemStack> entry : map.entrySet()) {
-                EquipmentSlot equipmentSlot2 = (EquipmentSlot)entry.getKey();
-                ItemStack itemStack3 = (ItemStack)entry.getValue();
+                EquipmentSlot equipmentSlot2 = entry.getKey();
+                ItemStack itemStack3 = entry.getValue();
                 if (!itemStack3.isEmpty()) {
                     itemStack3.applyAttributeModifiers(equipmentSlot2, (registryEntry, entityAttributeModifier) -> {
                         EntityAttributeInstance entityAttributeInstance = livingEntity.getAttributes().getCustomInstance(registryEntry);
@@ -150,14 +141,10 @@ public abstract class LivingEntityMixin {
 
                     });
                     if (itemStack3.getItem() instanceof ArmorItem && itemStack3.isIn(UNDER_ARMOR)) {
+                        ItemStack armorStack = getArmor(itemStack3);
+                        if (armorStack == ItemStack.EMPTY) continue;
 
-                        UnderArmorContentsComponent component = itemStack3.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                        if (component == null || component.isEmpty()) continue;
-
-                        ItemStack armor = component.get(0);
-                        if (armor.isEmpty() || !(armor.getItem() instanceof ArmorItem)) continue;
-
-                        armor.applyAttributeModifiers(equipmentSlot2, (registryEntry, entityAttributeModifier) -> {
+                        armorStack.applyAttributeModifiers(equipmentSlot2, (registryEntry, entityAttributeModifier) -> {
                             World world;
                             EntityAttributeInstance entityAttributeInstance = this.attributes.getCustomInstance(registryEntry);
                             EntityAttributeModifier entityAttributeModifier1 = new EntityAttributeModifier(entityAttributeModifier.id().withSuffixedPath("_under_armor"), entityAttributeModifier.value(), entityAttributeModifier.operation());
@@ -167,7 +154,7 @@ public abstract class LivingEntityMixin {
                             }
                             if ((world = livingEntity.getWorld()) instanceof ServerWorld) {
                                 ServerWorld serverWorld = (ServerWorld) world;
-                                EnchantmentHelper.applyLocationBasedEffects(serverWorld, armor, livingEntity, equipmentSlot2);
+                                EnchantmentHelper.applyLocationBasedEffects(serverWorld, armorStack, livingEntity, equipmentSlot2);
                             }
                         });
                     }
@@ -178,7 +165,7 @@ public abstract class LivingEntityMixin {
     }
 
     @WrapMethod(method = "dropLoot")
-    private void ironGolemsDontDrop(DamageSource damageSource, boolean causedByPlayer, Operation<Void> original) {
+    private void progressionrespun$ironGolemsDontDrop(DamageSource damageSource, boolean causedByPlayer, Operation<Void> original) {
         if ((LivingEntity) (Object) this instanceof IronGolemEntity ironGolemEntity && !ironGolemEntity.isPlayerCreated()) {
             return;
         }

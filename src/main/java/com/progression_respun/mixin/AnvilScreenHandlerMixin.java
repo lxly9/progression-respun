@@ -37,27 +37,27 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     }
 
     @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/AnvilScreenHandler;addProperty(Lnet/minecraft/screen/Property;)Lnet/minecraft/screen/Property;"))
-    private void addRepairProperty(int syncId, PlayerInventory inventory, ScreenHandlerContext context, CallbackInfo ci) {
+    private void progressionrespun$addRepairProperty(int syncId, PlayerInventory inventory, ScreenHandlerContext context, CallbackInfo ci) {
         addProperty(isRepairing);
     }
 
     @Inject(method = "canTakeOutput", at = @At("HEAD"), cancellable = true)
-    private void canTakeFreeRepair(PlayerEntity player, boolean present, CallbackInfoReturnable<Boolean> cir) {
+    private void progressionrespun$canTakeFreeRepair(PlayerEntity player, boolean present, CallbackInfoReturnable<Boolean> cir) {
         if (isRepairing.get() != 0) cir.setReturnValue(true);
     }
 
     @ModifyConstant(method = "method_24922", constant = @Constant(floatValue = 0.12f))
-    private static float reduceBreakChance(float constant) {
+    private static float progressionrespun$reduceBreakChance(float constant) {
         return 0.1f;
     }
 
     @Inject(method = "updateResult", at = @At(value = "HEAD"))
-    private void resetRepair(CallbackInfo ci) {
+    private void progressionrespun$resetRepair(CallbackInfo ci) {
         isRepairing.set(0);
     }
 
     @Inject(method = "updateResult", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/AnvilScreenHandler;repairItemUsage:I", ordinal = 1, shift = At.Shift.AFTER), cancellable = true)
-    private void freeRepairs(CallbackInfo ci, @Local(ordinal = 1) ItemStack itemStack2) {
+    private void progressionrespun$freeRepairs(CallbackInfo ci, @Local(ordinal = 1) ItemStack itemStack2) {
         isRepairing.set(1);
         levelCost.set(0);
         output.setStack(0, itemStack2);
@@ -66,7 +66,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     }
 
     @Inject(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;contains(Lnet/minecraft/component/ComponentType;)Z", shift = At.Shift.AFTER), cancellable = true)
-    private void mendingRepairs(CallbackInfo ci, @Local(name = "itemStack") ItemStack itemStack, @Local(name = "itemStack2") ItemStack itemStack2, @Local(name = "itemStack3") ItemStack itemStack3, @Local(name = "i") int i) {
+    private void progressionrespun$mendingRepairs(CallbackInfo ci, @Local(name = "itemStack") ItemStack itemStack, @Local(name = "itemStack2") ItemStack itemStack2, @Local(name = "itemStack3") ItemStack itemStack3, @Local(name = "i") int i) {
         int k = Math.min(itemStack2.getDamage(), itemStack2.getMaxDamage() / 4);
 
         if (itemStack.contains(DataComponentTypes.ENCHANTMENTS) && hasMending(itemStack)) {
@@ -107,7 +107,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     }
 
     @Inject(method = "updateResult", at = @At("HEAD"), cancellable = true)
-    private void disableCombining(CallbackInfo ci) {
+    private void progressionrespun$disableCombining(CallbackInfo ci) {
         ItemStack stack2 = this.input.getStack(1);
 
         if (!stack2.isEmpty()) {

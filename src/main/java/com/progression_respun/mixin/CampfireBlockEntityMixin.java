@@ -16,7 +16,7 @@ import static com.progression_respun.util.PlayerUtil.applyEffects;
 public class CampfireBlockEntityMixin {
 
     @Inject(method = "litServerTick", at = @At("HEAD"))
-    private static void applyEffect(World world, BlockPos pos, BlockState state, CampfireBlockEntity campfire, CallbackInfo ci) {
+    private static void progressionrespun$applyEffect(World world, BlockPos pos, BlockState state, CampfireBlockEntity campfire, CallbackInfo ci) {
         int radius = 16;
         if (state.get(Properties.SIGNAL_FIRE)) {
             radius = radius + radius/2;

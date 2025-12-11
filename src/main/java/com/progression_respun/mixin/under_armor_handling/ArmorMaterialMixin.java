@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class ArmorMaterialMixin {
 
     @ModifyReturnValue(method = "getProtection", at = @At("RETURN"))
-    private int nerfArmorToughness(int original) {
+    private int progressionrespun$nerfArmorToughness(int original) {
         int value = original;
 
         if (value == 2 || value == 3) value = value - 1;

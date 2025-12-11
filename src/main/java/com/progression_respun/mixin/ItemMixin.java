@@ -30,7 +30,7 @@ public class ItemMixin {
     private ComponentMap components;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void changeStackSize(Item.Settings settings, CallbackInfo ci) {
+    private void progressionrespun$changeStackSize(Item.Settings settings, CallbackInfo ci) {
         Item item = (Item) (Object) this;
         int newStackSize = -1;
         int newMaxDamage = -1;
@@ -50,7 +50,7 @@ public class ItemMixin {
     }
 
     @Inject(method = "appendTooltip", at = @At("HEAD"))
-    private void UnderArmorTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type, CallbackInfo ci) {
+    private void progressionrespun$underArmorTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type, CallbackInfo ci) {
         if (stack.getItem() instanceof ArmorItem && !stack.isIn(UNDER_ARMOR)) {
             if (!(stack.getDamage() >= stack.getMaxDamage()) && !stack.isIn(BYPASSES_UNDER_ARMOR)) {
                 tooltip.add(Text.translatable("tag.item.progression_respun.needs_under_armor").formatted(Formatting.GRAY));
@@ -59,7 +59,7 @@ public class ItemMixin {
     }
 
     @ModifyReturnValue(method = "isEnchantable", at = @At("RETURN"))
-    public boolean isEnchantable(boolean original) {
+    public boolean progressionrespun$isEnchantable(boolean original) {
         ItemStack item = ((Item) (Object) this).getDefaultStack();
         return !item.isIn(ModItemTagProvider.UNDER_ARMOR);
     }

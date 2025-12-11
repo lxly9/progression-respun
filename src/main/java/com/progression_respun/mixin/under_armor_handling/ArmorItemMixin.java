@@ -10,8 +10,6 @@ import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -24,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.progression_respun.ProgressionRespun.getArmor;
 import static com.progression_respun.ProgressionRespun.hasBinding;
 import static com.progression_respun.data.ModItemTagProvider.BYPASSES_UNDER_ARMOR;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
@@ -32,17 +31,17 @@ import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 public abstract class ArmorItemMixin extends Item {
 
     @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ArmorItem;equipAndSwap(Lnet/minecraft/item/Item;Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/TypedActionResult;"), cancellable = true)
-    private void equipAndSwap(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+    private void progressionrespun$equipAndSwap(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() instanceof ArmorItem armorItem) {
             EquipmentSlot slot = armorItem.getSlotType();
             ItemStack underArmor = player.getEquippedStack(slot);
+            ItemStack underStack = getArmor(underArmor);
+            ItemStack armorStack = getArmor(stack);
             if (stack.isIn(UNDER_ARMOR)) {
                 if (!underArmor.isEmpty()) {
-                    float armorOccupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
-                    if (armorOccupancy <= 0) {
-                        float stackOccupancy = UnderArmorContentsComponent.getAmountFilled(stack);
-                        if (stackOccupancy <= 0) {
+                    if (underStack == ItemStack.EMPTY) {
+                        if (armorStack == ItemStack.EMPTY) {
                             UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
                             if (stackComponent != null) {
                                 UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
@@ -55,8 +54,7 @@ public abstract class ArmorItemMixin extends Item {
                 }
             } else if (!stack.isIn(BYPASSES_UNDER_ARMOR)) {
                 if (!underArmor.isEmpty()) {
-                    float armorOccupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
-                    if (armorOccupancy <= 0) {
+                    if (underStack == ItemStack.EMPTY) {
                         UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
                         if (stackComponent != null) {
                             UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
@@ -151,8 +149,8 @@ public abstract class ArmorItemMixin extends Item {
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
         if (component != null) {
             if (stack.isIn(UNDER_ARMOR)) {
-                boolean hasArmor = UnderArmorContentsComponent.getAmountFilled(stack) > 0;
-                if (!hasArmor) {
+                ItemStack armorStack = getArmor(stack);
+                if (armorStack != ItemStack.EMPTY) {
                     tooltip.add(Text.translatable("tag.item.progression_respun.under_armor").formatted(Formatting.GRAY));
                     tooltip.add(Text.translatable("tag.item.progression_respun.equip_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
                 } else {

@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.progression_respun.component.ModDataComponentTypes;
-import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
@@ -16,7 +14,6 @@ import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Util;
 import net.minecraft.util.collection.Weighting;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
@@ -29,9 +26,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.progression_respun.ProgressionRespun.getArmor;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 import static net.minecraft.enchantment.EnchantmentHelper.getPossibleEntries;
-import static net.minecraft.enchantment.EnchantmentHelper.removeConflicts;
 
 @Mixin(EnchantmentHelper.class)
 public abstract class EnchantmentHelperMixin {
@@ -50,12 +47,9 @@ public abstract class EnchantmentHelperMixin {
         for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             ItemStack stack = entity.getEquippedStack(equipmentSlot);
             if (stack.getItem() instanceof ArmorItem && stack.isIn(UNDER_ARMOR)) {
-                UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-                if (component != null && !component.isEmpty()) {
-                    ItemStack armor = component.get(0);
-                    if (!armor.isEmpty() && armor.getItem() instanceof ArmorItem) {
-                        forEachEnchantment(armor, equipmentSlot, entity, contextAwareConsumer);
-                    }
+                ItemStack armorStack = getArmor(stack);
+                if (armorStack != ItemStack.EMPTY) {
+                    forEachEnchantment(armorStack, equipmentSlot, entity, contextAwareConsumer);
                 }
                 forEachEnchantment(stack, equipmentSlot, entity, contextAwareConsumer);
             }

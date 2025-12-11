@@ -1,6 +1,5 @@
 package com.progression_respun.mixin;
 
-import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -36,7 +35,6 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -50,16 +48,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.progression_respun.ProgressionRespun.getArmor;
 import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
-@Debug(export = true)
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack {
     @Unique private static final Text BROKEN_TEXT = Text.translatable(Util.createTranslationKey(
@@ -100,7 +97,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     }
 
     @Inject(method = "damage(ILnet/minecraft/server/world/ServerWorld;Lnet/minecraft/server/network/ServerPlayerEntity;Ljava/util/function/Consumer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", shift = At.Shift.BEFORE), cancellable = true)
-    private void damageRestrictDecrement(int amount, ServerWorld world, @Nullable ServerPlayerEntity player, Consumer<Item> breakCallback, CallbackInfo ci, @Local(ordinal = 1) int i) {
+    private void progressionrespun$damageRestrictDecrement(int amount, ServerWorld world, @Nullable ServerPlayerEntity player, Consumer<Item> breakCallback, CallbackInfo ci, @Local(ordinal = 1) int i) {
         Item item = getItem();
         boolean noDestroy = item instanceof ToolItem || item instanceof ArmorItem || item instanceof ShieldItem || item instanceof PotionItem;
 
@@ -122,7 +119,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 //    }
 
     @ModifyReturnValue(method = "getName", at = @At("RETURN"))
-    private Text modifyName(Text original) {
+    private Text progressionrespun$modifyName(Text original) {
         ItemStack stack = (ItemStack)(Object) this;
         String with = "util.progression_respun.with";
         if (stack.getItem() instanceof ArmorItem underArmorItem && stack.isIn(UNDER_ARMOR)) {
@@ -146,7 +143,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     }
 
     @WrapMethod(method = "appendAttributeModifiersTooltip")
-    private void appendArmorToUnderArmorAttributesTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player, Operation<Void> original) {
+    private void progressionrespun$appendArmorToUnderArmorAttributesTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player, Operation<Void> original) {
         AttributeModifiersComponent attributeModifiersComponent = this.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
         if (!attributeModifiersComponent.showInTooltip()) {
             return;
@@ -180,7 +177,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 
     @Redirect(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getRarity()Lnet/minecraft/util/Rarity;"))
     private Rarity progressionrespun$getTooltip(ItemStack instance) {
-        ItemStack armorStack = getUnderArmor(instance);
+        ItemStack armorStack = getArmor(instance);
         if (armorStack != ItemStack.EMPTY) {
             return armorStack.getRarity();
         }
@@ -189,7 +186,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;contains(Lnet/minecraft/component/ComponentType;)Z", ordinal = 3))
     private <T> boolean progressionrespun$getTooltip1(ItemStack instance, ComponentType<? extends T> componentType, Operation<Boolean> original) {
-        ItemStack armorStack = getUnderArmor(instance);
+        ItemStack armorStack = getArmor(instance);
         if (armorStack != ItemStack.EMPTY) {
             return original.call(armorStack, componentType);
         }
@@ -198,7 +195,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;appendTooltip(Lnet/minecraft/component/ComponentType;Lnet/minecraft/item/Item$TooltipContext;Ljava/util/function/Consumer;Lnet/minecraft/item/tooltip/TooltipType;)V"))
     private <T> void progressionrespun$getTooltip2(ItemStack instance, ComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type, Operation<Void> original) {
-        ItemStack armorStack = getUnderArmor(instance);
+        ItemStack armorStack = getArmor(instance);
         if (armorStack != ItemStack.EMPTY) {
             original.call(armorStack, componentType, context, textConsumer, type);
         }
@@ -207,7 +204,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;", ordinal = 0))
     private Item progressionrespun$getTooltip3(ItemStack instance, Operation<Item> original) {
-        ItemStack armorStack = getUnderArmor(instance);
+        ItemStack armorStack = getArmor(instance);
         if (armorStack != ItemStack.EMPTY) {
             return original.call(armorStack);
         }
@@ -215,9 +212,9 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     }
 
     @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/tooltip/TooltipType;isAdvanced()Z", shift = At.Shift.BEFORE))
-    private void gay(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> cir, @Local(ordinal = 0) List<Text> list) {
+    private void progressionrespun$getTooltip4(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> cir, @Local(ordinal = 0) List<Text> list) {
         ItemStack stack = (ItemStack) (Object) this;
-        ItemStack armorStack = getUnderArmor(stack);
+        ItemStack armorStack = getArmor(stack);
         if (armorStack != ItemStack.EMPTY && armorStack.isDamaged() && type.isAdvanced()) {
             list.add(Text.translatable("item.durability", armorStack.getMaxDamage() - armorStack.getDamage(), armorStack.getMaxDamage()));
         }
@@ -227,7 +224,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2))
     private <E> boolean progressionrespun$getTooltip5(List<Text> instance, E e, Operation<Boolean> original) {
         ItemStack stack = (ItemStack) (Object) this;
-        ItemStack armorStack = getUnderArmor(stack);
+        ItemStack armorStack = getArmor(stack);
         if (armorStack != ItemStack.EMPTY) {
             original.call(instance, Text.translatable("util.durability.underarmor", stack.getMaxDamage() - stack.getDamage(), stack.getMaxDamage()));
             return false;
@@ -238,7 +235,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 3))
     private <E> boolean progressionrespun$getTooltip6(List<Text> instance, E e, Operation<Boolean> original) {
         ItemStack stack = (ItemStack) (Object) this;
-        ItemStack armorStack = getUnderArmor(stack);
+        ItemStack armorStack = getArmor(stack);
         if (armorStack != ItemStack.EMPTY) {
             original.call(instance, Text.literal(Registries.ITEM.getId(armorStack.getItem()).toString()).formatted(Formatting.DARK_GRAY));
             original.call(instance, Text.literal(Registries.ITEM.getId(stack.getItem()).toString()).formatted(Formatting.DARK_GRAY));
@@ -249,26 +246,15 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;isEnabled(Lnet/minecraft/resource/featuretoggle/FeatureSet;)Z"))
     private boolean progressionrespun$getTooltip7(Item instance, FeatureSet featureSet, Operation<Boolean> original) {
-        ItemStack armorStack = getUnderArmor(instance.getDefaultStack());
+        ItemStack armorStack = getArmor(instance.getDefaultStack());
         if (armorStack != ItemStack.EMPTY) {
             return original.call(armorStack.getItem(), featureSet);
         }
         return original.call(instance, featureSet);
     }
 
-    @Unique
-    private ItemStack getUnderArmor(ItemStack stack) {
-        if (stack.getItem() instanceof ArmorItem && stack.isIn(UNDER_ARMOR)) {
-            var component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-            if (component != null && !component.isEmpty()) {
-                return component.get(0);
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
-    private void useOnBlockIfNotBroken(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
+    private void progressionrespun$useOnBlockIfNotBroken(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack stack = (ItemStack) (Object) this;
         World world = context.getWorld();
         BlockPos pos = context.getBlockPos();
@@ -321,77 +307,77 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     }
 
     @Inject(method = "getMiningSpeedMultiplier", at = @At("HEAD"), cancellable = true)
-    private void getMiningSpeedMultiplierIfNotBroken(BlockState state, CallbackInfoReturnable<Float> cir) {
+    private void progressionrespun$getMiningSpeedMultiplierIfNotBroken(BlockState state, CallbackInfoReturnable<Float> cir) {
         if (isBroken()) {
             cir.setReturnValue(1.0f);
         }
     }
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
-    private void useIfNotBroken(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+    private void progressionrespun$useIfNotBroken(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         if (isBroken()) {
             cir.setReturnValue(TypedActionResult.fail((ItemStack) (Object) this));
         }
     }
 
     @Inject(method = "finishUsing", at = @At("HEAD"), cancellable = true)
-    private void finishUsingIfNotBroken(World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
+    private void progressionrespun$finishUsingIfNotBroken(World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
         if (isBroken()) {
             cir.setReturnValue((ItemStack) (Object) this);
         }
     }
 
     @Inject(method = "postHit", at = @At("HEAD"), cancellable = true)
-    private void postHitIfNotBroken(LivingEntity target, PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
+    private void progressionrespun$postHitIfNotBroken(LivingEntity target, PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
         if (isBroken()) {
             cir.setReturnValue(false);
         }
     }
 
     @Inject(method = "postDamageEntity", at = @At("HEAD"), cancellable = true)
-    private void postDamageEntityIfNotBroken(LivingEntity target, PlayerEntity player, CallbackInfo ci) {
+    private void progressionrespun$postDamageEntityIfNotBroken(LivingEntity target, PlayerEntity player, CallbackInfo ci) {
         if (isBroken()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "postMine", at = @At("HEAD"), cancellable = true)
-    private void postMineIfNotBroken(World world, BlockState state, BlockPos pos, PlayerEntity miner, CallbackInfo ci) {
+    private void progressionrespun$postMineIfNotBroken(World world, BlockState state, BlockPos pos, PlayerEntity miner, CallbackInfo ci) {
         if (isBroken()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "isSuitableFor", at = @At("HEAD"), cancellable = true)
-    private void isSuitableForIfNotBroken(BlockState state, CallbackInfoReturnable<Boolean> cir) {
+    private void progressionrespun$isSuitableForIfNotBroken(BlockState state, CallbackInfoReturnable<Boolean> cir) {
         if (isBroken()) {
             cir.setReturnValue(false);
         }
     }
 
     @Inject(method = "getUseAction", at = @At("HEAD"), cancellable = true)
-    private void getUseActionIfNotBroken(CallbackInfoReturnable<UseAction> cir) {
+    private void progressionrespun$getUseActionIfNotBroken(CallbackInfoReturnable<UseAction> cir) {
         if (isBroken()) {
             cir.setReturnValue(UseAction.NONE);
         }
     }
 
     @Inject(method = "onStoppedUsing", at = @At("HEAD"), cancellable = true)
-    private void onStoppedUsingIfNotBroken(World world, LivingEntity user, int remainingUseTicks, CallbackInfo ci) {
+    private void progressionrespun$onStoppedUsingIfNotBroken(World world, LivingEntity user, int remainingUseTicks, CallbackInfo ci) {
         if (isBroken()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "applyAttributeModifiers", at = @At("HEAD"), cancellable = true)
-    private void applyAttributeModifiersIfNotBroken(EquipmentSlot slot, BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer, CallbackInfo ci) {
+    private void progressionrespun$applyAttributeModifiersIfNotBroken(EquipmentSlot slot, BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer, CallbackInfo ci) {
         if (isBroken()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "isEnchantable", at = @At("HEAD"), cancellable = true)
-    private void isEnchantableIfNotBroken(CallbackInfoReturnable<Boolean> cir) {
+    private void progressionrespun$isEnchantableIfNotBroken(CallbackInfoReturnable<Boolean> cir) {
         if (isBroken()) {
             cir.setReturnValue(false);
         }

@@ -16,6 +16,7 @@ import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -23,12 +24,12 @@ import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongepowered.asm.mixin.Unique;
 
 import java.util.List;
+
+import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 
 public class ProgressionRespun implements ModInitializer {
@@ -99,6 +100,16 @@ public class ProgressionRespun implements ModInitializer {
 		}
 		return Items.AIR;
 	}
+
+    public static ItemStack getArmor(ItemStack stack) {
+        if (stack.getItem() instanceof ArmorItem && stack.isIn(UNDER_ARMOR)) {
+            var component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component != null && !component.isEmpty()) {
+                return component.get(0);
+            }
+        }
+        return ItemStack.EMPTY;
+    }
 
     public static boolean hasMending(ItemStack stack) {
         ItemEnchantmentsComponent enchants = stack.get(DataComponentTypes.ENCHANTMENTS);

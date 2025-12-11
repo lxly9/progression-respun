@@ -33,7 +33,7 @@ import static com.progression_respun.ProgressionRespun.isModLoaded;
 public abstract class UnderArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> {
 
     @Redirect(method = "renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getEquippedStack(Lnet/minecraft/entity/EquipmentSlot;)Lnet/minecraft/item/ItemStack;"))
-    private ItemStack redirectGetEquippedStack(LivingEntity entity, EquipmentSlot slot, @Local(argsOnly = true) MatrixStack matrices, @Local(argsOnly = true) VertexConsumerProvider vertexConsumers) throws ClassNotFoundException, NoSuchMethodException {
+    private ItemStack progressionrespun$redirectGetEquippedStack(LivingEntity entity, EquipmentSlot slot, @Local(argsOnly = true) MatrixStack matrices, @Local(argsOnly = true) VertexConsumerProvider vertexConsumers) throws ClassNotFoundException, NoSuchMethodException {
         ItemStack originalStack = entity.getEquippedStack(slot);
 
         if (originalStack.getItem() instanceof ArmorItem armorItem) {

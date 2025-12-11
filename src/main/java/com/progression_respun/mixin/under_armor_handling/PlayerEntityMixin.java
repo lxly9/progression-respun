@@ -1,7 +1,6 @@
 package com.progression_respun.mixin.under_armor_handling;
 
-import com.progression_respun.component.ModDataComponentTypes;
-import com.progression_respun.component.type.UnderArmorContentsComponent;
+import com.progression_respun.ProgressionRespun;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -52,13 +51,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Unique
     private ItemStack getEquippedArmor(ItemStack original, EquipmentSlot slot) {
-        ItemStack underArmor = this.inventory.armor.get(slot.getEntitySlotId());
-        if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && underArmor.isIn(UNDER_ARMOR)) {
-            float occupancy = UnderArmorContentsComponent.getAmountFilled(underArmor);
-            UnderArmorContentsComponent component = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-            if (component != null && !component.isEmpty()) {
-                return component.get(0);
-            }
+        if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && original.isIn(UNDER_ARMOR)) {
+            return ProgressionRespun.getArmor(original);
         }
         return ItemStack.EMPTY;
     }

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class CampfireBlockMixin {
 
     @ModifyReturnValue(method = "getPlacementState", at = @At("RETURN"))
-    private BlockState litWhenPlaced(BlockState state) {
+    private BlockState progressionrespun$litWhenPlaced(BlockState state) {
         return state.with(CampfireBlock.LIT, false);
     }
 }

@@ -21,7 +21,7 @@ public interface ComponentHolderMixin {
 
     @SuppressWarnings({"ConstantValue", "unchecked"})
     @Inject(method = "get", at = @At("HEAD"), cancellable = true)
-    default <T> void getForItemStack(ComponentType<? extends T> type, CallbackInfoReturnable<T> cir) {
+    default <T> void progressionrespun$getForItemStack(ComponentType<? extends T> type, CallbackInfoReturnable<T> cir) {
         if (!((Object) this instanceof ItemStack itemStack)) return;
 
         boolean isEnchantments = type == DataComponentTypes.ENCHANTMENTS;
@@ -35,7 +35,7 @@ public interface ComponentHolderMixin {
 
     @SuppressWarnings("ConstantValue")
     @Inject(method = "getOrDefault", at = @At("HEAD"), cancellable = true)
-    default <T> void getOrDefaultForItemStack(ComponentType<? extends T> type, T fallback, CallbackInfoReturnable<T> cir) {
+    default <T> void progressionrespun$getOrDefaultForItemStack(ComponentType<? extends T> type, T fallback, CallbackInfoReturnable<T> cir) {
         if (!((Object) this instanceof ItemStack itemStack)) return;
 
         if ((getBlockedBrokenComponents().contains(type) || type == DataComponentTypes.ENCHANTMENTS) && isItemStackBroken(itemStack)) {
@@ -45,7 +45,7 @@ public interface ComponentHolderMixin {
 
     @SuppressWarnings("ConstantValue")
     @Inject(method = "contains", at = @At("HEAD"), cancellable = true)
-    default void containsForItemStack(ComponentType<?> type, CallbackInfoReturnable<Boolean> cir) {
+    default void progressionrespun$containsForItemStack(ComponentType<?> type, CallbackInfoReturnable<Boolean> cir) {
         if (!((Object) this instanceof ItemStack itemStack)) return;
 
         if (getBlockedBrokenComponents().contains(type) && isItemStackBroken(itemStack)) {

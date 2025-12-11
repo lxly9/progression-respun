@@ -20,7 +20,7 @@ import static com.progression_respun.ProgressionRespun.POWER_PROVIDER_OFFSETS;
 public class EnchantingTableBlockMixin{
 
     @Inject(method = "randomDisplayTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockWithEntity;randomDisplayTick(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/random/Random;)V", shift = At.Shift.AFTER), cancellable = true)
-    private void gay(BlockState state, World world, BlockPos pos, Random random, CallbackInfo ci) {
+    private void progressionrespun$addCurseParticles(BlockState state, World world, BlockPos pos, Random random, CallbackInfo ci) {
         for (BlockPos blockPos : POWER_PROVIDER_OFFSETS) {
             BlockPos realPos = pos.add(blockPos);
             BlockState shelf = world.getBlockState(realPos);

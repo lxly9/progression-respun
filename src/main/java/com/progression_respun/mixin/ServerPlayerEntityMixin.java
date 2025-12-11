@@ -21,7 +21,7 @@ public abstract class ServerPlayerEntityMixin {
     @Shadow public abstract ServerWorld getServerWorld();
 
     @Inject(method = "trySleep", at = @At("HEAD"), cancellable = true)
-    private void isCovered(BlockPos pos, CallbackInfoReturnable<Either<PlayerEntity.SleepFailureReason, Unit>> cir) {
+    private void progressionrespun$isCovered(BlockPos pos, CallbackInfoReturnable<Either<PlayerEntity.SleepFailureReason, Unit>> cir) {
         ServerWorld serverWorld = this.getServerWorld();
         PlayerEntity player = (PlayerEntity)(Object) this;
         int lightLevel = serverWorld.getChunkManager().getLightingProvider().get(LightType.SKY).getLightLevel(pos);
