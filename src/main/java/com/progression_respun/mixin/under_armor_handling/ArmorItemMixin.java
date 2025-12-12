@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.progression_respun.ProgressionRespun.getArmor;
 import static com.progression_respun.ProgressionRespun.hasBinding;
@@ -94,7 +95,8 @@ public abstract class ArmorItemMixin extends Item {
 
         ArmorItem armorItem = (ArmorItem) stack.getItem();
 
-        if (itemStack.isEmpty() && !hasBinding(itemStack)) {
+        if (itemStack.isEmpty()) {
+            if (hasBinding(itemStack) || hasBinding(stack)) return false;
             SoundUtil.playRemoveArmorSound(player);
             ItemStack itemStack2 = builder.removeFirst();
             if (itemStack2 != null) {
@@ -121,12 +123,11 @@ public abstract class ArmorItemMixin extends Item {
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
         if (component == null) return false;
         UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(component);
-        if (otherStack.isEmpty() && clickType == ClickType.RIGHT && !hasBinding(stack) && !hasBinding(otherStack)) {
+        if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
             ItemStack itemStack = builder.removeFirst();
-            if (itemStack != null) {
-                SoundUtil.playRemoveArmorSound(player);
-                cursorStackReference.set(itemStack);
-            }
+            if (hasBinding(stack) || hasBinding(Objects.requireNonNull(itemStack))) return false;
+            SoundUtil.playRemoveArmorSound(player);
+            cursorStackReference.set(itemStack);
         } else {
             if (!(otherStack.getItem() instanceof ArmorItem otherArmor)) return false;
             UnderArmorContentsComponent component1 = otherStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);

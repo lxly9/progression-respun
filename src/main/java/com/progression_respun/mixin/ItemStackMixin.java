@@ -198,6 +198,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         ItemStack armorStack = getArmor(instance);
         if (armorStack != ItemStack.EMPTY) {
             original.call(armorStack, componentType, context, textConsumer, type);
+            return;
         }
         original.call(instance, componentType, context, textConsumer, type);
     }
