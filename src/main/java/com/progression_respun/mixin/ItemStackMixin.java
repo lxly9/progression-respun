@@ -72,25 +72,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 
     @Shadow public abstract boolean isIn(TagKey<Item> tag);
 
-    @Shadow public abstract void applyAttributeModifier(AttributeModifierSlot slot, BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer);
-
-    @Shadow protected abstract void appendAttributeModifierTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player, RegistryEntry<EntityAttribute> attribute, EntityAttributeModifier modifier);
-
-    @Shadow protected abstract <T extends TooltipAppender> void appendTooltip(ComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type);
-
-    @Shadow protected abstract void appendAttributeModifiersTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player);
-
-    @Shadow public abstract boolean isDamaged();
-
-    @Shadow @Final private ComponentMapImpl components;
-
     @Shadow public abstract Text getName();
-
-    @Shadow public abstract Rarity getRarity();
-
-    @Shadow public abstract boolean isOf(Item item);
-
-    @Shadow @Final private static Text DISABLED_TEXT;
 
     @Unique
     private boolean isBroken() {
