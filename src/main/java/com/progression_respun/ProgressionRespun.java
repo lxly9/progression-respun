@@ -124,4 +124,5 @@ public class ProgressionRespun implements ModInitializer {
     }
 
     public static final List<BlockPos> POWER_PROVIDER_OFFSETS = BlockPos.stream(-3, 0, -3, 3, 2, 3).map(BlockPos::toImmutable).toList();
+    public static final List<BlockPos> WITHERED_CROPS = BlockPos.stream(-1, 0, -1, 1, 1, 1).map(BlockPos::toImmutable).toList();
 }

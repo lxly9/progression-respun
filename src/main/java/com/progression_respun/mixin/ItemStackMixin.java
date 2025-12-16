@@ -219,7 +219,6 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         if (armorStack != ItemStack.EMPTY && armorStack.isDamaged() && type.isAdvanced()) {
             list.add(Text.translatable("item.durability", armorStack.getMaxDamage() - armorStack.getDamage(), armorStack.getMaxDamage()));
         }
-
     }
 
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2))

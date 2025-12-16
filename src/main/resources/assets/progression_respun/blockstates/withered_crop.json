@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "progression_respun:block/withered_crop_big"
+      },
+      {
+        "model": "progression_respun:block/withered_crop_mid"
+      },
+      {
+        "model": "progression_respun:block/withered_crop_short"
+      }
+    ]
+  }
+}

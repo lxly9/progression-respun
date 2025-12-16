@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "progression_respun:block/withered_crop_mid"
+  }
+}

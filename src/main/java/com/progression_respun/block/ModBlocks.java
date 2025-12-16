@@ -13,8 +13,8 @@ import net.minecraft.util.Identifier;
 
 
 public class ModBlocks {
-    public static final Block FLINT_PEBBLES = register(new PebblesBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.STONE).hardness(0.0f).noCollision()), "flint_pebbles", true);
-
+    public static final Block FLINT_PEBBLES = register(new PebblesBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.STONE).hardness(0.0f).noCollision()), "flint_pebbles", false);
+    public static final Block WITHERED_CROP = register(new WitheredCropBlock(AbstractBlock.Settings.create().sounds(BlockSoundGroup.CROP).hardness(0.0f).noCollision()), "withered_crop", false);
     public static final Block CRUCIBLE_BLOCK = register(new CrucibleBlock(AbstractBlock.Settings.create().nonOpaque().hardness(3.0F).sounds(BlockSoundGroup.COPPER_BULB).luminance(CrucibleBlock::getLuminance)), "copper_crucible", true);
 
     private static Block register(Block block, String name, boolean hasItem) {

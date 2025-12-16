@@ -1,6 +1,7 @@
 {
   "block.progression_respun.flint_pebbles": "Flint Pebbles",
   "block.progression_respun.copper_crucible": "Copper Crucible",
+  "block.progression_respun.withered_crop": "Withered Crop",
 
   "block.minecraft.bed.not_possible_here": "You need a Shelter to sleep or set your spawn",
 
@@ -9,9 +10,8 @@
   "tag.item.progression_respun.under_armor": "Can be worn as Under Armor.",
 
   "util.progression_respun.with": "%s with %s",
+  "util.progression_respun.plus": "+",
   "util.durability.underarmor": "Durability of Under Armor: %s / %s",
-  "util.progression_respun.chainmail": "Chainmail",
-  "util.progression_respun.leather": "Leather",
 
   "item.progression_respun.tooltip.broken": "Broken %s",
 
@@ -48,6 +48,5 @@
   "pack.progression_respun.redstone_copper": "REDstone Torches",
   "tag.item.progression_respun.equip_armor": "Equip Armor by right-clicking another Armor piece.",
   "tag.item.progression_respun.equip_under_armor": "Equip Armor by clicking on an Under-Armor piece.",
-  "tag.item.progression_respun.unequip_under_armor": "Unequip Armor by right-clicking the Armor piece.",
-  "util.progression_respun.plus": "+"
+  "tag.item.progression_respun.unequip_under_armor": "Unequip Armor by right-clicking the Armor piece."
 }

@@ -28,9 +28,6 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 
 - **!!** loot table manipulation for balancing
 - **!!** rewrite tooltip logic
-- Flint pebbles blockstates
-  - fix drops
-  - fix placement state
 
 
 - **?** Brewing stand can only brew one potion
@@ -59,17 +56,22 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 
 - Enchantments Rework
   - ~~rework mending → changes ingots to nuggets for repairing tools~~
-    - CORRECT DECREMENTING!!!
-  - no enchanting books, books are found and need to be inserted into chiseled bookshelves at the enchanting table to appear in it (Enchantery)
+    - ~~CORRECT DECREMENTING!!!~~
+  - ~~no enchanting books, books are found and need to be inserted into chiseled bookshelves at the enchanting table to appear in it (Enchantery)~~
   - different Tool Material Types interact with specific Enchantments → Buffs & Nerfs
   - no more "base" enchantments → no sharpness, protection, efficiency
   - **?** tools can be sharpened on a grindstone
     - sharpness/efficiency for limited durability on the tool
+  - Grindstone damages Items when removing enchants
 
 
 - Farming & Food Overhaul
-  - have a chance for crops to decay; when not removed, the decay spreads to neighboring crops
+  - ~~have a chance for crops to decay; when not removed, the decay spreads to neighboring crops~~
   - Oven for Farmer's Delight
+  - Worms can be used to fertilize Farmland
+    - can be found while digging up dirt-like blocks
+    - can be attached to Fishing Rods as Bait
+  - Dynamic Stack sizes for Saturation values
 
 
 - Mob Overhaul
@@ -85,14 +87,17 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - ~~Netherite~~ and ~~Chainmail~~ Horse Armor
   - Sprinting stops after ~5 seconds, you need to take a breath
   - Right-click Totems of Undying to not die
+  - amount of worn Armor slows down sprinting
 
 
 - End Platform spawns in Outer End
 - Smithing templates only break upon use, can be repaired in anvil
 - All ice blocks melt in the Nether
-- Grindstone damages Items when removing enchants
 - Banners as capes
   - applied at smithing table or put into chestplate?
+- More tutorial builds → guide for beacon, wither, etc.
+- no damage to your own pets
+- Horses begin slow, then sprint
 
 ### Done
 - ~~**!!** Under Armor rendering~~
@@ -105,3 +110,6 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - ~~Campfire effects~~
 - ~~Cobweb burning~~
 - ~~Iron Golems don't drop Ingots, except when spawned by Players~~
+- ~~Flint pebbles blockstates~~
+  - ~~fix drops~~
+  - ~~fix placement state~~
