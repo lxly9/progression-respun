@@ -68,10 +68,10 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - Farming & Food Overhaul
   - ~~have a chance for crops to decay; when not removed, the decay spreads to neighboring crops~~
   - Oven for Farmer's Delight
-  - Worms can be used to fertilize Farmland
-    - can be found while digging up dirt-like blocks
+  - ~~Worms can be used to fertilize Farmland~~
+    - ~~can be found while digging up dirt-like blocks~~
     - can be attached to Fishing Rods as Bait
-  - Dynamic Stack sizes for Saturation values
+  - Dynamic Stack sizes based on Saturation values
 
 
 - Mob Overhaul
@@ -90,12 +90,28 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - amount of worn Armor slows down sprinting
 
 
+- Structure Overhaul
+  - Updated and beautified Nether Fortress
+    - No more Blaze spawners -> Trial Spawner-like behavior
+    - No more Wooden Chests -> replaced with special Fortress Chests that cannot be mined
+    - Fortress Omen which spawns Wither Skeletons
+  - Updated and expanded Dungeon Rooms
+    - Trial Spawner-like but only grants rewards upon being lit up with light sources around it
+    - Multiple rooms
+    - Chests are locked and need to be opened using a Dungeon Key 
+      - Chests stay open as long as items are inside and the Spawner is lit up -> can only generate new Loot when the Dungeon is cleared again
+      - Ominous Variant and Dungeon Omen -> obfuscates spawner??
+  - Updated Woodland Mansion
+    - Unlike other Structure Mods no Trial Spawners
+    - Mansion Keys are needed to open locked door to treasury
+  - More tutorial builds → guide for beacon, wither, etc.
+
+
 - End Platform spawns in Outer End
 - Smithing templates only break upon use, can be repaired in anvil
 - All ice blocks melt in the Nether
 - Banners as capes
   - applied at smithing table or put into chestplate?
-- More tutorial builds → guide for beacon, wither, etc.
 - no damage to your own pets
 - Horses begin slow, then sprint
 

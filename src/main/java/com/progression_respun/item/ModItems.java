@@ -2,6 +2,7 @@ package com.progression_respun.item;
 
 import com.progression_respun.ProgressionRespun;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -9,6 +10,13 @@ import net.minecraft.registry.Registry;
 import static com.progression_respun.compat.VanillaItems.COPPER_NUGGET;
 
 public class ModItems {
+
+    //Food
+    public static final FoodComponent WORM_FOOD_COMPONENT = new FoodComponent.Builder()
+            .alwaysEdible()
+            .snack()
+            .build();
+
     // Bars
     public static final Item FLINT_BAR = register(new Item(new Item.Settings()), "flint_bar");
     public static final Item POLISHED_DIAMOND = register(new Item(new Item.Settings()), "polished_diamond");
@@ -17,6 +25,7 @@ public class ModItems {
     public static final Item RAW_GOLD_BAR = register(new Item(new Item.Settings()), "raw_gold_bar");
     public static final Item DIAMOND_SHARD = register(new Item(new Item.Settings()), "diamond_shard");
     public static final FlintAndSteelItem FIRESTARTER = (FlintAndSteelItem) register(new FlintAndSteelItem(new FlintAndSteelItem.Settings().maxDamage(16)), "firestarter");
+    public static final Item WORM = register(new Item(new Item.Settings().maxCount(16).food(WORM_FOOD_COMPONENT)), "earthworm");
 
     // Horse Armor
     public static final Item NETHERITE_HORSE_ARMOR = register(new AnimalArmorItem(ArmorMaterials.NETHERITE, AnimalArmorItem.Type.EQUESTRIAN, false, new Item.Settings().maxCount(1).fireproof()), "netherite_horse_armor") ;
@@ -60,6 +69,7 @@ public class ModItems {
                     group.addAfter(Items.RAW_COPPER, RAW_COPPER_BAR);
                     group.addAfter(Items.RAW_IRON, RAW_IRON_BAR);
                     group.addAfter(Items.RAW_GOLD, RAW_GOLD_BAR);
+                    group.addAfter(Items.BONE_MEAL, WORM);
                 });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
                 .register(group -> {

@@ -13,6 +13,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FarmlandBlock;
 import net.minecraft.component.*;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
@@ -54,8 +55,8 @@ import java.util.function.Consumer;
 
 import static com.progression_respun.ProgressionRespun.getArmor;
 import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
-import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
-import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
+import static com.progression_respun.data.ModItemTagProvider.*;
+import static com.progression_respun.util.PropertyUtil.FERTILIZED;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack {
@@ -253,29 +254,11 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         return original.call(instance, featureSet);
     }
 
-    @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
-    private void progressionrespun$useOnBlockIfNotBroken(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        ItemStack stack = (ItemStack) (Object) this;
-        World world = context.getWorld();
-        BlockPos pos = context.getBlockPos();
-        BlockState state = world.getBlockState(pos);
-        PlayerEntity player = context.getPlayer();
-        Hand hand = context.getHand();
-        Direction side = context.getSide();
-        EquipmentSlot slot = hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+    @WrapMethod(method = "useOnBlock")
+    private ActionResult progressionrespun$useOnBlockIfNotBroken(ItemUsageContext context, Operation<ActionResult> original) {
 
         if (isBroken()) {
-            cir.setReturnValue(ActionResult.PASS);
-        }
-        if (stack.isIn(CAN_BURN_COBWEBS) && state.isIn(BURNABLE_COBWEBS)) {
-            if (!world.isClient && player != null) {
-                world.setBlockState(pos, Blocks.AIR.getDefaultState());
-                if (stack.isDamageable()) stack.damage(1, player, slot);
-                player.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 0.8f, 0.8f + world.getRandom().nextFloat() * 0.4f);
-                ((ServerWorld) world).spawnParticles(ParticleTypes.FLAME, pos.getX() + 0.3, pos.getY() + 0.3, pos.getZ() + 0.3, 15, 0.2, 0.2, 0.2, 0.01);
-            }
-            cir.setReturnValue(ActionResult.SUCCESS);
-            cir.cancel();
+            return ActionResult.PASS;
         }
 //        if (stack.isOf(Items.FLINT)) {
 //            BlockItem blockItem = (BlockItem) ModBlocks.FLINT_PEBBLES.asItem();
@@ -304,6 +287,49 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 //                cir.cancel();
 //            }
 //        }
+        return original.call(context);
+    }
+
+    @WrapMethod(method = "useOnBlock")
+    private ActionResult progressionrespun$burnCobwebs(ItemUsageContext context, Operation<ActionResult> original) {
+        ItemStack stack = (ItemStack) (Object) this;
+        World world = context.getWorld();
+        BlockPos pos = context.getBlockPos();
+        BlockState state = world.getBlockState(pos);
+        PlayerEntity player = context.getPlayer();
+        Hand hand = context.getHand();
+        Direction side = context.getSide();
+        EquipmentSlot slot = hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+
+        if (stack.isIn(CAN_BURN_COBWEBS) && state.isIn(BURNABLE_COBWEBS)) {
+            if (!world.isClient && player != null) {
+                world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                if (stack.isDamageable()) stack.damage(1, player, slot);
+                player.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 0.8f, 0.8f + world.getRandom().nextFloat() * 0.4f);
+                ((ServerWorld) world).spawnParticles(ParticleTypes.FLAME, pos.getX() + 0.3, pos.getY() + 0.3, pos.getZ() + 0.3, 15, 0.2, 0.2, 0.2, 0.01);
+            }
+            return ActionResult.SUCCESS;
+        }
+        return original.call(context);
+    }
+
+    @WrapMethod(method = "useOnBlock")
+    private ActionResult progressionrespun$fertilizeFarmland(ItemUsageContext context, Operation<ActionResult> original) {
+        ItemStack stack = (ItemStack) (Object) this;
+        World world = context.getWorld();
+        BlockPos pos = context.getBlockPos();
+        BlockState state = world.getBlockState(pos);
+        PlayerEntity player = context.getPlayer();
+
+        if (stack.isIn(CAN_FERTILIZE_FARMLAND) && state.getBlock() instanceof FarmlandBlock && !state.get(FERTILIZED)) {
+            if (!world.isClient && player != null) {
+                world.setBlockState(pos, state.with(FERTILIZED, true));
+                stack.decrementUnlessCreative(1, player);
+                player.playSound(SoundEvents.BLOCK_ROOTED_DIRT_HIT, 0.8f, 0.8f + world.getRandom().nextFloat() * 0.4f);
+            }
+            return ActionResult.SUCCESS;
+        }
+        return original.call(context);
     }
 
     @Inject(method = "getMiningSpeedMultiplier", at = @At("HEAD"), cancellable = true)
