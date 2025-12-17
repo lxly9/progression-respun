@@ -29,6 +29,7 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
     public static final TagKey<Item> UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "under_armor"));
     public static final TagKey<Item> CAN_BURN_COBWEBS = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "can_burn_cobwebs"));
     public static final TagKey<Item> CAN_FERTILIZE_FARMLAND = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "can_fertilize_farmland"));
+    public static final TagKey<Item> CAN_BE_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "can_be_bait"));
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
@@ -90,6 +91,11 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                 );
 
         getOrCreateTagBuilder(CAN_FERTILIZE_FARMLAND)
+                .add(
+                        ModItems.WORM
+                );
+
+        getOrCreateTagBuilder(CAN_BE_BAIT)
                 .add(
                         ModItems.WORM
                 );

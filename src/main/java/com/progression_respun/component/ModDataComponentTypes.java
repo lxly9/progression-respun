@@ -1,5 +1,6 @@
 package com.progression_respun.component;
 
+import com.progression_respun.component.type.FishingBaitContentsComponent;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.minecraft.component.ComponentType;
 import net.minecraft.registry.Registries;
@@ -14,6 +15,15 @@ public class ModDataComponentTypes {
                     ComponentType.<UnderArmorContentsComponent>builder()
                             .codec(UnderArmorContentsComponent.CODEC)
                             .packetCodec(UnderArmorContentsComponent.PACKET_CODEC)
+                            .build()
+            );
+    public static final ComponentType<FishingBaitContentsComponent> FISHING_BAIT =
+            Registry.register(
+                    Registries.DATA_COMPONENT_TYPE,
+                    Identifier.of("progression_respun", "fishing_bait"),
+                    ComponentType.<FishingBaitContentsComponent>builder()
+                            .codec(FishingBaitContentsComponent.CODEC)
+                            .packetCodec(FishingBaitContentsComponent.PACKET_CODEC)
                             .build()
             );
 

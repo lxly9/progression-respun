@@ -8,6 +8,7 @@
     "CampfireBlockEntityMixin",
     "CampfireBlockMixin",
     "ComponentHolderMixin",
+    "FishingRodMixin",
     "GrindstoneScreenHandlerMixin",
     "ItemMixin",
     "ItemStackMixin",
