@@ -58,7 +58,7 @@ public abstract class CropBlockMixin {
         WITHER_CHANCE_MULTIPLIER = 1.0f;
         for (BlockPos blockPos : WITHERED_CROPS) {
             if ((world.getBlockState(pos.add(blockPos)).getBlock() instanceof WitheredCropBlock)) {
-                WITHER_CHANCE_MULTIPLIER = WITHER_CHANCE_MULTIPLIER + 0.5f;
+                WITHER_CHANCE_MULTIPLIER = WITHER_CHANCE_MULTIPLIER + 0.25f;
             }
         }
     }

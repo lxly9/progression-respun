@@ -4,14 +4,12 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.progression_respun.data.ModItemTagProvider;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,6 +27,18 @@ public class ItemMixin {
     @Mutable
     private ComponentMap components;
 
+    @Unique
+    private int progressionrespun$getStackSizePerNutrition(int nutrition) {
+        return switch (nutrition) {
+            case 1,2,3 -> 64;
+            case 4 -> 32;
+            case 5,6 -> 16;
+            case 7,8,9,10,11,12,13,14 -> 8;
+            case 15,16,17,18,19,20 -> 4;
+            default -> 1;
+        };
+    }
+
     @Inject(method = "<init>", at = @At("RETURN"))
     private void progressionrespun$changeStackSize(Item.Settings settings, CallbackInfo ci) {
         Item item = (Item) (Object) this;
@@ -37,6 +47,15 @@ public class ItemMixin {
 
         if (item instanceof BedItem) newStackSize = 16;
         if (item instanceof PotionItem) newMaxDamage = 3;
+
+        FoodComponent foodComponent = item.getComponents().get(DataComponentTypes.FOOD);
+        if (foodComponent != null) {
+            int nutrition = foodComponent.nutrition();
+            newStackSize = progressionrespun$getStackSizePerNutrition(nutrition);
+            if (nutrition > 2 && foodComponent.effects().size() > 1) {
+                newStackSize = 1;
+            }
+        }
 
         if (newStackSize > 0) {
             ComponentMap override = ComponentMap.builder().add(DataComponentTypes.MAX_STACK_SIZE, newStackSize).build();

@@ -71,7 +71,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - ~~Worms can be used to fertilize Farmland~~
     - ~~can be found while digging up dirt-like blocks~~
     - can be attached to Fishing Rods as Bait
-  - Dynamic Stack sizes based on Saturation values
+  - ~~Dynamic Stack sizes based on Saturation values~~
 
 
 - Mob Overhaul
