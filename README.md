@@ -48,10 +48,10 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 
 
 - Level system revamp
-  - linear levels
-  - no level loss on death
-  - levels wont be consumed
-  - levels unlock abilities
+  - linear Levels/curved Levels
+  - no Level loss on death
+  - **?** levels wont be consumed
+  - **?** levels unlock abilities
 
 
 - Enchantments Rework
@@ -88,6 +88,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - Sprinting stops after ~5 seconds, you need to take a breath
   - Right-click Totems of Undying to not die
   - amount of worn Armor slows down sprinting
+  - no damage to your own pets
 
 
 - Structure Overhaul
@@ -104,15 +105,14 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - Updated Woodland Mansion
     - Unlike other Structure Mods no Trial Spawners
     - Mansion Keys are needed to open locked door to treasury
-  - More tutorial builds → guide for beacon, wither, etc.
+  - More in-world tutorial builds → guide for beacon, wither, etc.
 
 
 - End Platform spawns in Outer End
-- Smithing templates only break upon use, can be repaired in anvil
+- **?** Smithing templates only break upon use, can be repaired in anvil
 - All ice blocks melt in the Nether
 - Banners as capes
   - applied at smithing table or put into chestplate?
-- no damage to your own pets
 - Horses begin slow, then sprint
 
 ### Done
