@@ -41,6 +41,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - **?** No Elytra rocket boosting
 - **?** Trim material changes glint color
 - **?** Seed pouch, Bouquet of Flowers, Dye pouch (maybe move to Thumb and Thicket)
+- **?** Quicksand
 
 
 - Remove some potions and tipped arrows
@@ -63,6 +64,11 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - **?** tools can be sharpened on a grindstone
     - sharpness/efficiency for limited durability on the tool
   - Grindstone damages Items when removing enchants
+  - anything that can have Enchants can be enchanted in the Enchanting Table
+  - remove Enchants
+    - see google doc
+  - more Curses
+  - scale Level cost based on how many Enchants will be applied
 
 
 - Farming & Food Overhaul
@@ -79,6 +85,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - lowered mob cap
   - remove Creeper griefing
   - Endermen won't attack Endermites
+  - Nautilus Block to transport Mobs
 
 
 - Combat Overhaul
@@ -89,6 +96,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - Right-click Totems of Undying to not die
   - amount of worn Armor slows down sprinting
   - no damage to your own pets
+  - Heavy Lance (inspired by Shyvv's Trickier Trials)
 
 
 - Structure Overhaul
@@ -114,6 +122,10 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - Banners as capes
   - applied at smithing table or put into chestplate?
 - Horses begin slow, then sprint
+- fix Blocks being placed unwaterlogged -> Doors, etc.
+  - Off-state for torches if underwater -> Glow Ink Torch for Underwater?
+- More uses for one-use Items -> Rabbit's Hide, Nautilus Shell, etc. 
+- More Nekoma ideas (just not the slop ones)
 
 ### Done
 - ~~**!!** Under Armor rendering~~
