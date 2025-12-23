@@ -114,6 +114,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
     - Unlike other Structure Mods no Trial Spawners
     - Mansion Keys are needed to open locked door to treasury
   - More in-world tutorial builds → guide for beacon, wither, etc.
+  - Witch Hut beautified
 
 
 - End Platform spawns in Outer End
