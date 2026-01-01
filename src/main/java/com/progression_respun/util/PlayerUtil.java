@@ -99,7 +99,7 @@ public class PlayerUtil {
                 }
 
                 for (TameableEntity tameableEntity : petList) {
-                    tameableEntity.addStatusEffect(new StatusEffectInstance(effect, 200, 0, false, true, false));
+                    tameableEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 200, 0, false, true, false));
                 }
             }
         }

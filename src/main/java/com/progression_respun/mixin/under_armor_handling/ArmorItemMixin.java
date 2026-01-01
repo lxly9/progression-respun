@@ -85,7 +85,7 @@ public abstract class ArmorItemMixin extends Item {
     public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
         int i;
         if (clickType != ClickType.RIGHT) return false;
-        if (!UnderArmorContentsComponent.hasArmorSlot(stack)) return false;
+        if (UnderArmorContentsComponent.doesNotHaveArmorSlot(stack)) return false;
 
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
         if (component == null) return false;
@@ -118,13 +118,14 @@ public abstract class ArmorItemMixin extends Item {
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
 
         if (!slot.canTakePartial(player)) return false;
-        if (!UnderArmorContentsComponent.hasArmorSlot(stack)) return false;
+        if (UnderArmorContentsComponent.doesNotHaveArmorSlot(stack)) return false;
 
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
         if (component == null) return false;
         UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(component);
         if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
             ItemStack itemStack = builder.removeFirst();
+            if (itemStack == null) return false;
             if (hasBinding(stack) || hasBinding(Objects.requireNonNull(itemStack))) return false;
             SoundUtil.playRemoveArmorSound(player);
             cursorStackReference.set(itemStack);

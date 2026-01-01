@@ -58,11 +58,17 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - ~~rework mending → changes ingots to nuggets for repairing tools~~
     - ~~CORRECT DECREMENTING!!!~~
   - ~~no enchanting books, books are found and need to be inserted into chiseled bookshelves at the enchanting table to appear in it (Enchantery)~~
+  - **!!** make anything that supports enchants enchantable in the table.
   - different Tool Material Types interact with specific Enchantments → Buffs & Nerfs
   - no more "base" enchantments → no sharpness, protection, efficiency
   - **?** tools can be sharpened on a grindstone
     - sharpness/efficiency for limited durability on the tool
   - Grindstone damages Items when removing enchants
+  - Worms as bait on Fishing Rods instead of Lure
+    - Fungus and Carrot as bait for riding Entities
+    - Texture override
+  - Tooltip rework for Enchantments
+    - sorted into Enchantments: and Curses: like Trims, Enchantments only show Armor Enchantments, Curses show Armor and Under Armor Curses
 
 
 - Farming & Food Overhaul

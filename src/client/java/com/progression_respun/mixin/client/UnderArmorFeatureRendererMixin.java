@@ -1,30 +1,19 @@
 package com.progression_respun.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import com.progression_respun.ProgressionRespun;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.model.ModelWithHead;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-
-import java.lang.reflect.Method;
 
 import static com.progression_respun.ProgressionRespun.getExternalItem;
 import static com.progression_respun.ProgressionRespun.isModLoaded;
@@ -37,7 +26,7 @@ public abstract class UnderArmorFeatureRendererMixin<T extends LivingEntity, M e
         ItemStack originalStack = entity.getEquippedStack(slot);
 
         if (originalStack.getItem() instanceof ArmorItem armorItem) {
-            if (!UnderArmorContentsComponent.hasArmorSlot(originalStack)) return originalStack;
+            if (UnderArmorContentsComponent.doesNotHaveArmorSlot(originalStack)) return originalStack;
 
             UnderArmorContentsComponent component = originalStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
             if (component == null || component.isEmpty()) return originalStack;

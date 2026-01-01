@@ -48,6 +48,6 @@
   "pack.progression_respun.orngstone_copper": "ORNGstone Torches",
   "pack.progression_respun.redstone_copper": "REDstone Torches",
   "tag.item.progression_respun.equip_armor": "Equip Armor by right-clicking another Armor piece.",
-  "tag.item.progression_respun.equip_under_armor": "Equip Armor by clicking on an Under-Armor piece.",
+  "tag.item.progression_respun.equip_under_armor": "Equip Armor by clicking on an Under Armor piece.",
   "tag.item.progression_respun.unequip_under_armor": "Unequip Armor by right-clicking the Armor piece."
 }

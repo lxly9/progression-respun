@@ -35,7 +35,7 @@ public class ItemMixin {
             case 5,6 -> 16;
             case 7,8,9,10,11,12,13,14 -> 8;
             case 15,16,17,18,19,20 -> 4;
-            default -> 1;
+            default -> 64;
         };
     }
 

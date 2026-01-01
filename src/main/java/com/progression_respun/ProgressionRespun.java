@@ -4,11 +4,13 @@ import com.progression_respun.block.ModBlocks;
 import com.progression_respun.block.entity.ModBlockEntities;
 import com.progression_respun.compat.CompatMods;
 import com.progression_respun.component.ModDataComponentTypes;
+import com.progression_respun.component.type.FishingBaitContentsComponent;
 import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.ModRecipes;
 import com.progression_respun.util.*;
 import com.progression_respun.worldgen.ModFeatures;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -54,6 +56,7 @@ public class ProgressionRespun implements ModInitializer {
 		RecipeUtil.grindingRecipe();
 		ModDataComponentTypes.registerModDataComponentTypes();
 		ArmorUtil.registerComponent();
+        ComponentUtil.registerComponents();
 		registerResourcePacks();
 	}
 

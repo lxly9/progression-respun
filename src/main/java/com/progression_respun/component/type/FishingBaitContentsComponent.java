@@ -5,7 +5,6 @@ import com.mojang.serialization.Codec;
 import com.progression_respun.component.ModDataComponentTypes;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.network.RegistryByteBuf;
@@ -50,12 +49,9 @@ implements TooltipData {
     }
 
     private static Fraction calculateOccupancy(List<ItemStack> stacks) {
-        Fraction fraction = Fraction.ZERO;
-        for (ItemStack itemStack : stacks) {
-            fraction = fraction.add(FishingBaitContentsComponent.getOccupancy(itemStack).multiplyBy(Fraction.getFraction(itemStack.getCount(), 1)));
-        }
-        return fraction;
+        return stacks.isEmpty() ? Fraction.ZERO : Fraction.ONE;
     }
+
 
     public static Fraction getOccupancy(ItemStack stack) {
         FishingBaitContentsComponent fishingBaitContentsComponent = stack.get(ModDataComponentTypes.FISHING_BAIT);
@@ -112,7 +108,7 @@ implements TooltipData {
     }
 
     public String toString() {
-        return "Armor" + String.valueOf(this.stacks);
+        return "Bait" + String.valueOf(this.stacks);
     }
 
     public static class Builder {

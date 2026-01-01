@@ -36,8 +36,8 @@ implements TooltipData {
         return stack.getItem() instanceof ArmorItem;
     }
 
-    public static boolean hasArmorSlot(ItemStack stack) {
-        return stack.getItem() instanceof ArmorItem && stack.isIn(ModItemTagProvider.UNDER_ARMOR);
+    public static boolean doesNotHaveArmorSlot(ItemStack stack) {
+        return !(stack.getItem() instanceof ArmorItem) || !stack.isIn(ModItemTagProvider.UNDER_ARMOR);
     }
 
     UnderArmorContentsComponent(List<ItemStack> stacks, Fraction occupancy) {

@@ -9,15 +9,15 @@ import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.ClickType;
+import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 
-import java.util.ArrayList;
-
+@Debug(export = true)
 @Mixin(FishingRodItem.class)
-public class FishingRodMixin extends Item {
+public class FishingRodItemMixin extends Item {
 
-    public FishingRodMixin(Settings settings) {
-        super(settings.component(ModDataComponentTypes.FISHING_BAIT, new FishingBaitContentsComponent(new ArrayList<>())));
+    public FishingRodItemMixin(Settings settings) {
+        super(settings);
     }
 
     @Override
@@ -56,6 +56,7 @@ public class FishingRodMixin extends Item {
         FishingBaitContentsComponent.Builder builder = new FishingBaitContentsComponent.Builder(component);
         if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
             ItemStack itemStack = builder.removeFirst();
+            if (itemStack == null) return false;
             SoundUtil.playRemoveArmorSound(player);
             cursorStackReference.set(itemStack);
         } else {
