@@ -2,6 +2,7 @@ package com.progression_respun.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.progression_respun.ProgressionRespun;
+import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.data.ModItemTagProvider;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -83,14 +84,16 @@ public class ItemMixin {
         }
     }
 
-//    @ModifyReturnValue(method = "isEnchantable", at = @At("RETURN"))
-//    public boolean progressionrespun$isEnchantable(boolean original) {
-//        ItemStack item = ((Item) (Object) this).getDefaultStack();
-//        if (item.getItem() instanceof ArmorItem && item.isIn(UNDER_ARMOR)){
-//            ItemStack armorStack = ProgressionRespun.getArmor(item);
-//            LOGGER.info(String.valueOf(armorStack));
-//            return armorStack != ItemStack.EMPTY;
-//        }
-//        return original;
-//    }
+    @ModifyReturnValue(method = "isEnchantable", at = @At("RETURN"))
+    public boolean progressionrespun$isEnchantable(boolean original) {
+        Item item = ((Item) (Object) this);
+        if (item instanceof ArmorItem && item.getDefaultStack().isIn(UNDER_ARMOR)){
+            var component = item.getComponents().get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component != null && !component.isEmpty()) {
+                ItemStack armorStack = component.get(0);
+                return armorStack != ItemStack.EMPTY;
+            }
+        }
+        return original;
+    }
 }
