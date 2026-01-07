@@ -1,6 +1,7 @@
 package com.progression_respun.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.progression_respun.ProgressionRespun;
 import com.progression_respun.data.ModItemTagProvider;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -9,6 +10,7 @@ import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,6 +28,10 @@ public class ItemMixin {
     @Final
     @Mutable
     private ComponentMap components;
+
+    @Shadow
+    @Final
+    private static Logger LOGGER;
 
     @Unique
     private int progressionrespun$getStackSizePerNutrition(int nutrition) {
@@ -77,9 +83,14 @@ public class ItemMixin {
         }
     }
 
-    @ModifyReturnValue(method = "isEnchantable", at = @At("RETURN"))
-    public boolean progressionrespun$isEnchantable(boolean original) {
-        ItemStack item = ((Item) (Object) this).getDefaultStack();
-        return !item.isIn(ModItemTagProvider.UNDER_ARMOR);
-    }
+//    @ModifyReturnValue(method = "isEnchantable", at = @At("RETURN"))
+//    public boolean progressionrespun$isEnchantable(boolean original) {
+//        ItemStack item = ((Item) (Object) this).getDefaultStack();
+//        if (item.getItem() instanceof ArmorItem && item.isIn(UNDER_ARMOR)){
+//            ItemStack armorStack = ProgressionRespun.getArmor(item);
+//            LOGGER.info(String.valueOf(armorStack));
+//            return armorStack != ItemStack.EMPTY;
+//        }
+//        return original;
+//    }
 }

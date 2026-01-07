@@ -57,6 +57,7 @@ public class FishingRodItemMixin extends Item {
         if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
             ItemStack itemStack = builder.removeFirst();
             if (itemStack == null) return false;
+            if (itemStack.isDamaged()) return false;
             SoundUtil.playRemoveArmorSound(player);
             cursorStackReference.set(itemStack);
         } else {

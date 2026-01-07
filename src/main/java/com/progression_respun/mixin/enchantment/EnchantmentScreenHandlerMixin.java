@@ -3,8 +3,10 @@ package com.progression_respun.mixin.enchantment;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.block.ModBlockTags;
+import com.progression_respun.data.ModItemTagProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.enchantment.Enchantment;
@@ -36,8 +38,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.progression_respun.ProgressionRespun.LOGGER;
-import static com.progression_respun.ProgressionRespun.POWER_PROVIDER_OFFSETS;
+import static com.progression_respun.ProgressionRespun.*;
 
 @Debug(export = true)
 @Mixin(EnchantmentScreenHandler.class)
@@ -58,6 +59,15 @@ public class EnchantmentScreenHandlerMixin {
     private int bookAmount = 0;
     @Unique
     private float curseChance = 0;
+
+    @WrapOperation(method = "onButtonClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Inventory;getStack(I)Lnet/minecraft/item/ItemStack;"))
+    private ItemStack progression_respun$enchantArmorInsteadOfUnderArmor(Inventory instance, int i, Operation<ItemStack> original) {
+        ItemStack underArmorStack = original.call(instance, i);
+        if (underArmorStack.isIn(ModItemTagProvider.UNDER_ARMOR)) {
+            return getArmor(underArmorStack);
+        }
+        return original.call(instance, i);
+    }
 
     @Inject(method = "method_17411", at = @At(value = "HEAD"))
     private void progression_respun$getEnchantments(ItemStack itemStack, World world, BlockPos tablePos, CallbackInfo ci) {

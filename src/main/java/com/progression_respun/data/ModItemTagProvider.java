@@ -97,7 +97,9 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
 
         getOrCreateTagBuilder(CAN_BE_BAIT)
                 .add(
-                        ModItems.WORM
+                        ModItems.WORM,
+                        Items.CARROT,
+                        Items.WARPED_FUNGUS
                 );
 
         if (GALOSPHERE) {

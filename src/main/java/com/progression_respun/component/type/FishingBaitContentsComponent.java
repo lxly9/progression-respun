@@ -49,7 +49,11 @@ implements TooltipData {
     }
 
     private static Fraction calculateOccupancy(List<ItemStack> stacks) {
-        return stacks.isEmpty() ? Fraction.ZERO : Fraction.ONE;
+        Fraction fraction = Fraction.ZERO;
+        for (ItemStack itemStack : stacks) {
+            fraction = fraction.add(FishingBaitContentsComponent.getOccupancy(itemStack).multiplyBy(Fraction.getFraction(itemStack.getCount(), 1)));
+        }
+        return fraction;
     }
 
 

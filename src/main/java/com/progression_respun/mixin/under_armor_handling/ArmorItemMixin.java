@@ -96,7 +96,7 @@ public abstract class ArmorItemMixin extends Item {
         ArmorItem armorItem = (ArmorItem) stack.getItem();
 
         if (itemStack.isEmpty()) {
-            if (hasBinding(itemStack) || hasBinding(stack)) return false;
+            if ((hasBinding(itemStack) || hasBinding(stack)) && !player.isCreative()) return false;
             SoundUtil.playRemoveArmorSound(player);
             ItemStack itemStack2 = builder.removeFirst();
             if (itemStack2 != null) {
@@ -126,7 +126,7 @@ public abstract class ArmorItemMixin extends Item {
         if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
             ItemStack itemStack = builder.removeFirst();
             if (itemStack == null) return false;
-            if (hasBinding(stack) || hasBinding(Objects.requireNonNull(itemStack))) return false;
+            if ((hasBinding(stack) || hasBinding(Objects.requireNonNull(itemStack))) && !player.isCreative()) return false;
             SoundUtil.playRemoveArmorSound(player);
             cursorStackReference.set(itemStack);
         } else {
@@ -152,7 +152,7 @@ public abstract class ArmorItemMixin extends Item {
         if (component != null) {
             if (stack.isIn(UNDER_ARMOR)) {
                 ItemStack armorStack = getArmor(stack);
-                if (armorStack != ItemStack.EMPTY) {
+                if (armorStack == ItemStack.EMPTY) {
                     tooltip.add(Text.translatable("tag.item.progression_respun.under_armor").formatted(Formatting.GRAY));
                     tooltip.add(Text.translatable("tag.item.progression_respun.equip_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
                 } else {
