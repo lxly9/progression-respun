@@ -2,6 +2,7 @@ package com.progression_respun.data;
 
 import com.progression_respun.compat.EnderscapeItems;
 import com.progression_respun.compat.GalosphereItems;
+import com.progression_respun.compat.VanillaItems;
 import com.progression_respun.item.ModItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
@@ -100,6 +101,11 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                         ModItems.WORM,
                         Items.CARROT,
                         Items.WARPED_FUNGUS
+                );
+
+        getOrCreateTagBuilder(ConventionalItemTags.NUGGETS)
+                .add(
+                        VanillaItems.COPPER_NUGGET
                 );
 
         if (GALOSPHERE) {

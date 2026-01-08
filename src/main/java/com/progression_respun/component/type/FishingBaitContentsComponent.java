@@ -62,10 +62,6 @@ implements TooltipData {
         if (fishingBaitContentsComponent != null) {
             return NESTED_FISHING_BAIT_OCCUPANCY.add(fishingBaitContentsComponent.getOccupancy());
         }
-        List list = stack.getOrDefault(DataComponentTypes.BEES, List.of());
-        if (!list.isEmpty()) {
-            return Fraction.ONE;
-        }
         return Fraction.getFraction(1, stack.getMaxCount());
     }
 

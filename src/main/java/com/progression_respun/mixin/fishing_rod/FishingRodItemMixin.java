@@ -1,23 +1,38 @@
-package com.progression_respun.mixin;
+package com.progression_respun.mixin.fishing_rod;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.progression_respun.ProgressionRespun;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.FishingBaitContentsComponent;
+import com.progression_respun.item.ModItems;
 import com.progression_respun.util.SoundUtil;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.ClickType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 
+import static com.progression_respun.ProgressionRespun.getBait;
+
 @Debug(export = true)
 @Mixin(FishingRodItem.class)
-public class FishingRodItemMixin extends Item {
+public class FishingRodItemMixin<T extends Entity & ItemSteerable> extends Item {
+    private final EntityType<T> target;
+    private final int damagePerUse;
 
-    public FishingRodItemMixin(Settings settings) {
+    public FishingRodItemMixin(Settings settings, EntityType<T> target, int damagePerUse) {
         super(settings);
+        this.target = target;
+        this.damagePerUse = damagePerUse;
     }
 
     @Override
@@ -79,5 +94,34 @@ public class FishingRodItemMixin extends Item {
         if (component == null) return;
         entity.getStack().set(ModDataComponentTypes.FISHING_BAIT, FishingBaitContentsComponent.DEFAULT);
         ItemUsage.spawnItemContents(entity, component.iterateCopy());
+    }
+
+    @WrapMethod(method = "use")
+    private TypedActionResult<ItemStack> progressionrespun$boostWithRod(World world, PlayerEntity user, Hand hand, Operation<TypedActionResult<ItemStack>> original) {
+        ItemStack itemStack = user.getStackInHand(hand);
+        ItemStack baitStack = getBait(itemStack);
+        if (baitStack != ItemStack.EMPTY && baitStack.getItem() != ModItems.WORM) {
+            FishingBaitContentsComponent component = itemStack.get(ModDataComponentTypes.FISHING_BAIT);
+            if (world.isClient) {
+                return TypedActionResult.pass(itemStack);
+            } else {
+                Entity entity = user.getControllingVehicle();
+                if (user.hasVehicle() && entity instanceof ItemSteerable itemSteerable && itemSteerable.consumeOnAStickItem() && component != null) {
+                    FishingBaitContentsComponent.Builder builder = new FishingBaitContentsComponent.Builder(component);
+                    EquipmentSlot equipmentSlot = LivingEntity.getSlotForHand(hand);
+                    builder.removeFirst();
+                    baitStack.set(DataComponentTypes.DAMAGE, baitStack.getDamage() + 1);
+                    int i = builder.add(baitStack);
+                    if (i > 0) {
+                        SoundUtil.playInsertArmorSound(user);
+                    }
+                    return TypedActionResult.success(itemStack);
+                } else {
+                    user.incrementStat(Stats.USED.getOrCreateStat(this));
+                    return TypedActionResult.pass(itemStack);
+                }
+            }
+        }
+        return original.call(world, user, hand);
     }
 }

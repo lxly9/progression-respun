@@ -83,17 +83,4 @@ public class ItemMixin {
             }
         }
     }
-
-    @ModifyReturnValue(method = "isEnchantable", at = @At("RETURN"))
-    public boolean progressionrespun$isEnchantable(boolean original) {
-        Item item = ((Item) (Object) this);
-        if (item instanceof ArmorItem && item.getDefaultStack().isIn(UNDER_ARMOR)){
-            var component = item.getComponents().get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-            if (component != null && !component.isEmpty()) {
-                ItemStack armorStack = component.get(0);
-                return armorStack != ItemStack.EMPTY;
-            }
-        }
-        return original;
-    }
 }

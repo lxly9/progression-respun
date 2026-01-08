@@ -59,9 +59,11 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - ~~rework mending → changes ingots to nuggets for repairing tools~~
     - ~~CORRECT DECREMENTING!!!~~
   - ~~no enchanting books, books are found and need to be inserted into chiseled bookshelves at the enchanting table to appear in it (Enchantery)~~
+    - Moon Phases Curse chance
   - **!!** make anything that supports enchants enchantable in the table.
-  - **!!** When Armor with Armor is in the Table, enchant Armor not Under Armor
+  - ~~**!!** When Armor with Armor is in the Table, enchant Armor not Under Armor~~
   - different Tool Material Types interact with specific Enchantments → Buffs & Nerfs
+  - **!!** ONLY specific materials can use mending!
   - no more "base" enchantments → no sharpness, protection, efficiency
   - **?** tools can be sharpened on a grindstone
     - sharpness/efficiency for limited durability on the tool

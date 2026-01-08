@@ -18,10 +18,7 @@ import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -107,6 +104,16 @@ public class ProgressionRespun implements ModInitializer {
     public static ItemStack getArmor(ItemStack stack) {
         if (stack.getItem() instanceof ArmorItem && stack.isIn(UNDER_ARMOR)) {
             var component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component != null && !component.isEmpty()) {
+                return component.get(0);
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public static ItemStack getBait(ItemStack stack) {
+        if (stack.getItem() instanceof FishingRodItem) {
+            var component = stack.get(ModDataComponentTypes.FISHING_BAIT);
             if (component != null && !component.isEmpty()) {
                 return component.get(0);
             }

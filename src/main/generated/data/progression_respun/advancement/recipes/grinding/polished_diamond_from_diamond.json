@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "progression_respun:grinding/diamond_shard_from_diamond"
+        "recipe": "progression_respun:grinding/polished_diamond_from_diamond"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -15,7 +15,7 @@
   ],
   "rewards": {
     "recipes": [
-      "progression_respun:grinding/diamond_shard_from_diamond"
+      "progression_respun:grinding/polished_diamond_from_diamond"
     ]
   }
 }

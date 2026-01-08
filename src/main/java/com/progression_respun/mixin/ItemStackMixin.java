@@ -384,13 +384,22 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         }
     }
 
-    @Inject(method = "isEnchantable", at = @At("HEAD"), cancellable = true)
-    private void progressionrespun$isEnchantableIfNotBroken(CallbackInfoReturnable<Boolean> cir) {
+    @ModifyReturnValue(method = "isEnchantable", at = @At("RETURN"))
+    public boolean progressionrespun$isEnchantable(boolean original) {
+        ItemStack item = ((ItemStack) (Object) this);
         if (isBroken()) {
-            cir.setReturnValue(false);
+            return false;
         }
-//        if (this.isIn(UNDER_ARMOR)) {
-//            cir.setReturnValue(false);
-//        }
+        if (item.getItem() instanceof ArmorItem && item.isIn(UNDER_ARMOR)){
+            var component = item.getComponents().get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            if (component != null) {
+                if (!component.isEmpty()) {
+                    return !getArmor(item).hasEnchantments();
+                } else {
+                    return false;
+                }
+            }
+        }
+        return original;
     }
 }

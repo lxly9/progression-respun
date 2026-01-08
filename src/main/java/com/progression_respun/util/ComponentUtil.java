@@ -21,5 +21,30 @@ public class ComponentUtil {
                 builder.add(DataComponentTypes.MAX_DAMAGE, 8);
             });
         });
+        DefaultItemComponentEvents.MODIFY.register(context -> {
+            context.modify(Items.CARROT, builder -> {
+                builder.add(DataComponentTypes.MAX_DAMAGE, 8);
+            });
+        });
+        DefaultItemComponentEvents.MODIFY.register(context -> {
+            context.modify(Items.WARPED_FUNGUS, builder -> {
+                builder.add(DataComponentTypes.MAX_DAMAGE, 8);
+            });
+        });
+        DefaultItemComponentEvents.MODIFY.register(context -> {
+            context.modify(ModItems.WORM, builder -> {
+                builder.add(DataComponentTypes.DAMAGE, 0);
+            });
+        });
+        DefaultItemComponentEvents.MODIFY.register(context -> {
+            context.modify(Items.CARROT, builder -> {
+                builder.add(DataComponentTypes.DAMAGE, 0);
+            });
+        });
+        DefaultItemComponentEvents.MODIFY.register(context -> {
+            context.modify(Items.WARPED_FUNGUS, builder -> {
+                builder.add(DataComponentTypes.DAMAGE, 0);
+            });
+        });
     }
 }
