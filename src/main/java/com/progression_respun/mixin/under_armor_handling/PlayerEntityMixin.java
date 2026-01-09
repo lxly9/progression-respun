@@ -1,6 +1,9 @@
 package com.progression_respun.mixin.under_armor_handling;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.progression_respun.ProgressionRespun;
+import net.minecraft.component.ComponentType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -23,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
+import static com.progression_respun.ProgressionRespun.getArmor;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
@@ -55,5 +59,12 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             return ProgressionRespun.getArmor(original);
         }
         return ItemStack.EMPTY;
+    }
+
+    @WrapOperation(method = "vanishCursedItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;hasAnyEnchantmentsWith(Lnet/minecraft/item/ItemStack;Lnet/minecraft/component/ComponentType;)Z"))
+    private boolean gay(ItemStack stack, ComponentType<?> componentType, Operation<Boolean> original) {
+        ItemStack armorStack = ProgressionRespun.getArmor(stack);
+        if (armorStack != ItemStack.EMPTY) return original.call(armorStack, componentType);
+        return original.call(stack, componentType);
     }
 }

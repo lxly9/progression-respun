@@ -20,6 +20,7 @@
     "enchantment.EnchantingTableBlockMixin",
     "enchantment.EnchantmentHelperMixin",
     "enchantment.EnchantmentScreenHandlerMixin",
+    "enchantment.EnchantmentsMixin",
     "enchantment.ExperienceOrbEntityMixin",
     "farming.BlockMixin",
     "farming.CropBlockMixin",
@@ -30,6 +31,7 @@
     "oxidizable.DropperBlockMixin",
     "under_armor_handling.ArmorItemMixin",
     "under_armor_handling.ArmorMaterialMixin",
+    "under_armor_handling.ArmorSlotMixin",
     "under_armor_handling.LivingEntityMixin",
     "under_armor_handling.PlayerEntityMixin"
   ],

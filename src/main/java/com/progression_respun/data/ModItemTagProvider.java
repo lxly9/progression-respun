@@ -34,6 +34,7 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
     public static final TagKey<Item> TIME_REDUCTION_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "fishing_time_reduction_bait"));
     public static final TagKey<Item> LUCK_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "luck_bait"));
     public static final TagKey<Item> ENTITY_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "entity_bait"));
+    public static final TagKey<Item> MENDING_ENCHANTABLE = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "mending_enchantable"));
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
@@ -121,6 +122,17 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                 .add(
                         VanillaItems.COPPER_NUGGET
                 );
+
+        getOrCreateTagBuilder(MENDING_ENCHANTABLE)
+                .forceAddTag(ItemTags.HEAD_ARMOR)
+                .forceAddTag(ItemTags.CHEST_ARMOR)
+                .forceAddTag(ItemTags.LEG_ARMOR)
+                .forceAddTag(ItemTags.FOOT_ARMOR)
+                .forceAddTag(ItemTags.PICKAXES)
+                .forceAddTag(ItemTags.SWORDS)
+                .forceAddTag(ItemTags.SHOVELS)
+                .forceAddTag(ItemTags.AXES)
+                .forceAddTag(ItemTags.HOES);
 
         if (GALOSPHERE) {
             getOrCreateTagBuilder(ConventionalItemTags.RAW_MATERIALS)

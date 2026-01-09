@@ -39,6 +39,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.progression_respun.ProgressionRespun.*;
+import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 @Debug(export = true)
 @Mixin(EnchantmentScreenHandler.class)
@@ -64,7 +65,12 @@ public class EnchantmentScreenHandlerMixin {
     private ItemStack progression_respun$enchantArmorInsteadOfUnderArmor(Inventory instance, int i, Operation<ItemStack> original) {
         ItemStack underArmorStack = original.call(instance, i);
         if (underArmorStack.isIn(ModItemTagProvider.UNDER_ARMOR)) {
-            return getArmor(underArmorStack);
+            ItemStack armorStack = getArmor(underArmorStack);
+            if (!getArmor(underArmorStack).isIn(UNDER_ARMOR)){
+                return armorStack;
+            } else {
+                return ItemStack.EMPTY;
+            }
         }
         return original.call(instance, i);
     }

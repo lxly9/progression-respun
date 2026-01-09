@@ -53,7 +53,7 @@ public abstract class EnchantmentHelperMixin {
             ItemStack stack = entity.getEquippedStack(equipmentSlot);
             if (stack.getItem() instanceof ArmorItem && stack.isIn(UNDER_ARMOR)) {
                 ItemStack armorStack = getArmor(stack);
-                if (armorStack != ItemStack.EMPTY) {
+                if (armorStack != ItemStack.EMPTY && !armorStack.isIn(UNDER_ARMOR)) {
                     forEachEnchantment(armorStack, equipmentSlot, entity, contextAwareConsumer);
                 }
                 forEachEnchantment(stack, equipmentSlot, entity, contextAwareConsumer);
