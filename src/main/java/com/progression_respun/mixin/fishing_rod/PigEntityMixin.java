@@ -2,9 +2,6 @@ package com.progression_respun.mixin.fishing_rod;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.progression_respun.ProgressionRespun;
-import com.progression_respun.component.ModDataComponentTypes;
-import com.progression_respun.component.type.FishingBaitContentsComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.passive.AnimalEntity;

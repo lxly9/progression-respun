@@ -39,7 +39,7 @@ public class StriderEntityMixin extends AnimalEntity {
 
     @Inject(method = "initGoals", at = @At("HEAD"))
     private void progressionrespun$followFungusOnARod(CallbackInfo ci) {
-        this.goalSelector.add(4, new TemptGoal(this, 1.2, stack -> getBait(stack).isOf(Items.WARPED_FUNGUS), false));
+        this.goalSelector.add(4, new TemptGoal(this, 1.2, stack -> stack.isOf(Items.FISHING_ROD) && getBait(stack).isOf(Items.WARPED_FUNGUS), false));
     }
 
     @Override

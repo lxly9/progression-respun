@@ -4,9 +4,11 @@ import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.progression_respun.ProgressionRespun;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
@@ -14,10 +16,13 @@ import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.collection.Weighting;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,8 +31,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.progression_respun.ProgressionRespun.getArmor;
-import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
+import static com.progression_respun.ProgressionRespun.*;
+import static com.progression_respun.data.ModItemTagProvider.*;
 import static net.minecraft.enchantment.EnchantmentHelper.getPossibleEntries;
 
 @Mixin(EnchantmentHelper.class)
@@ -81,5 +86,23 @@ public abstract class EnchantmentHelperMixin {
                 cir.setReturnValue(list);
             }
         }
+    }
+
+    @WrapMethod(method = "getFishingTimeReduction")
+    private static float progressionrespun$lureWithBait(ServerWorld world, ItemStack stack, Entity user, Operation<Float> original) {
+        ItemStack baitStack = getBait(stack);
+        if (baitStack.isIn(TIME_REDUCTION_BAIT)) {
+            return 10;
+        }
+        return 0;
+    }
+
+    @WrapMethod(method = "getFishingLuckBonus")
+    private static int progressionrespun$luckWithBait(ServerWorld world, ItemStack stack, Entity user, Operation<Float> original) {
+        ItemStack baitStack = getBait(stack);
+        if (baitStack.isIn(LUCK_BAIT)) {
+            return 2;
+        }
+        return 0;
     }
 }

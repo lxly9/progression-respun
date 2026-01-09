@@ -30,7 +30,10 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
     public static final TagKey<Item> UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "under_armor"));
     public static final TagKey<Item> CAN_BURN_COBWEBS = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "can_burn_cobwebs"));
     public static final TagKey<Item> CAN_FERTILIZE_FARMLAND = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "can_fertilize_farmland"));
-    public static final TagKey<Item> CAN_BE_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "can_be_bait"));
+    public static final TagKey<Item> BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "bait"));
+    public static final TagKey<Item> TIME_REDUCTION_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "fishing_time_reduction_bait"));
+    public static final TagKey<Item> LUCK_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "luck_bait"));
+    public static final TagKey<Item> ENTITY_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "entity_bait"));
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
@@ -96,7 +99,18 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                         ModItems.WORM
                 );
 
-        getOrCreateTagBuilder(CAN_BE_BAIT)
+        getOrCreateTagBuilder(TIME_REDUCTION_BAIT)
+                .add(
+                        ModItems.WORM
+                );
+
+        getOrCreateTagBuilder(ENTITY_BAIT)
+                .add(
+                        Items.CARROT,
+                        Items.WARPED_FUNGUS
+                );
+
+        getOrCreateTagBuilder(BAIT)
                 .add(
                         ModItems.WORM,
                         Items.CARROT,

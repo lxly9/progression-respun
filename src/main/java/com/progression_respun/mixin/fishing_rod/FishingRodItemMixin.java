@@ -2,7 +2,6 @@ package com.progression_respun.mixin.fishing_rod;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.progression_respun.ProgressionRespun;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.FishingBaitContentsComponent;
 import com.progression_respun.item.ModItems;
@@ -26,13 +25,9 @@ import static com.progression_respun.ProgressionRespun.getBait;
 @Debug(export = true)
 @Mixin(FishingRodItem.class)
 public class FishingRodItemMixin<T extends Entity & ItemSteerable> extends Item {
-    private final EntityType<T> target;
-    private final int damagePerUse;
 
-    public FishingRodItemMixin(Settings settings, EntityType<T> target, int damagePerUse) {
+    public FishingRodItemMixin(Settings settings) {
         super(settings);
-        this.target = target;
-        this.damagePerUse = damagePerUse;
     }
 
     @Override
@@ -72,7 +67,6 @@ public class FishingRodItemMixin<T extends Entity & ItemSteerable> extends Item 
         if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
             ItemStack itemStack = builder.removeFirst();
             if (itemStack == null) return false;
-            if (itemStack.isDamaged()) return false;
             SoundUtil.playRemoveArmorSound(player);
             cursorStackReference.set(itemStack);
         } else {
@@ -101,20 +95,12 @@ public class FishingRodItemMixin<T extends Entity & ItemSteerable> extends Item 
         ItemStack itemStack = user.getStackInHand(hand);
         ItemStack baitStack = getBait(itemStack);
         if (baitStack != ItemStack.EMPTY && baitStack.getItem() != ModItems.WORM) {
-            FishingBaitContentsComponent component = itemStack.get(ModDataComponentTypes.FISHING_BAIT);
             if (world.isClient) {
                 return TypedActionResult.pass(itemStack);
             } else {
                 Entity entity = user.getControllingVehicle();
-                if (user.hasVehicle() && entity instanceof ItemSteerable itemSteerable && itemSteerable.consumeOnAStickItem() && component != null) {
-                    FishingBaitContentsComponent.Builder builder = new FishingBaitContentsComponent.Builder(component);
-                    EquipmentSlot equipmentSlot = LivingEntity.getSlotForHand(hand);
-                    builder.removeFirst();
+                if (user.hasVehicle() && entity instanceof ItemSteerable itemSteerable && itemSteerable.consumeOnAStickItem()) {
                     baitStack.set(DataComponentTypes.DAMAGE, baitStack.getDamage() + 1);
-                    int i = builder.add(baitStack);
-                    if (i > 0) {
-                        SoundUtil.playInsertArmorSound(user);
-                    }
                     return TypedActionResult.success(itemStack);
                 } else {
                     user.incrementStat(Stats.USED.getOrCreateStat(this));

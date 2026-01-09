@@ -73,8 +73,8 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - more Curses
   - scale Level cost based on how many Enchants will be applied
   - Worms as bait on Fishing Rods instead of Lure
-    - Fungus and Carrot as bait for riding Entities
-    - Texture override
+    - ~~Fungus and Carrot as bait for riding Entities~~
+    - ~~Texture override~~
   - Tooltip rework for Enchantments
     - sorted into Enchantments: and Curses: like Trims, Enchantments only show Armor Enchantments, Curses show Armor and Under Armor Curses
 
@@ -86,6 +86,10 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - ~~Worms can be used to fertilize Farmland~~
     - ~~can be found while digging up dirt-like blocks~~
     - can be attached to Fishing Rods as Bait
+      - **!!** TOOLTIPS
+      - ~~**!!** Bait Behavior~~
+      - **!!** Correct mount boosting
+      - **!!** Texture Overrides
   - ~~Dynamic Stack sizes based on Saturation values~~
 
 

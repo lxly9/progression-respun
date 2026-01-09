@@ -96,7 +96,8 @@ public abstract class ArmorItemMixin extends Item {
         ArmorItem armorItem = (ArmorItem) stack.getItem();
 
         if (itemStack.isEmpty()) {
-            if ((hasBinding(itemStack) || hasBinding(stack)) && !player.isCreative()) return false;
+            ItemStack armorStack = getArmor(stack);
+            if ((hasBinding(armorStack) || hasBinding(stack)) && !player.isCreative()) return false;
             SoundUtil.playRemoveArmorSound(player);
             ItemStack itemStack2 = builder.removeFirst();
             if (itemStack2 != null) {

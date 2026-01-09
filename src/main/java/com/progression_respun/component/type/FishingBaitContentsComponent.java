@@ -3,7 +3,6 @@ package com.progression_respun.component.type;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.progression_respun.component.ModDataComponentTypes;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipData;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.progression_respun.data.ModItemTagProvider.CAN_BE_BAIT;
+import static com.progression_respun.data.ModItemTagProvider.BAIT;
 
 public final class FishingBaitContentsComponent
 implements TooltipData {
@@ -31,7 +30,7 @@ implements TooltipData {
     final Fraction occupancy;
 
     public static boolean isAllowedAsBait(ItemStack stack) {
-        return stack.isIn(CAN_BE_BAIT);
+        return stack.isIn(BAIT);
     }
 
     FishingBaitContentsComponent(List<ItemStack> stacks, Fraction occupancy) {
