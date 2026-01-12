@@ -26,19 +26,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
-import static com.progression_respun.ProgressionRespun.getArmor;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
 
-    @Shadow @Final private PlayerInventory inventory;
+    @Shadow @Final
+    PlayerInventory inventory;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
 
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;", ordinal = 1))
-    private Item sweepIfNotBroken(ItemStack itemStack) {
+    private Item progressionrespun$sweepIfNotBroken(ItemStack itemStack) {
         if (itemStack.isDamageable() && itemStack.getDamage() >= itemStack.getMaxDamage()) {
             return null;
         }
@@ -46,7 +46,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     }
 
     @Inject(method = "updateTurtleHelmet", at = @At("HEAD"))
-    private void extendTurtleHelmet(CallbackInfo ci) {
+    private void progressionrespun$extendTurtleHelmet(CallbackInfo ci) {
         ItemStack itemStack = this.getEquippedStack(EquipmentSlot.HEAD);
         if (!this.isSubmergedIn(FluidTags.WATER) && itemStack.isOf(Items.TURTLE_HELMET)) {
             this.addStatusEffect(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 900, 0, false, false, true));
@@ -54,7 +54,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     }
 
     @Unique
-    private ItemStack getEquippedArmor(ItemStack original, EquipmentSlot slot) {
+    private ItemStack progressionrespun$getEquippedArmor(ItemStack original, EquipmentSlot slot) {
         if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && original.isIn(UNDER_ARMOR)) {
             return ProgressionRespun.getArmor(original);
         }
@@ -62,7 +62,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     }
 
     @WrapOperation(method = "vanishCursedItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;hasAnyEnchantmentsWith(Lnet/minecraft/item/ItemStack;Lnet/minecraft/component/ComponentType;)Z"))
-    private boolean gay(ItemStack stack, ComponentType<?> componentType, Operation<Boolean> original) {
+    private boolean progressionrespun$vanishUnderArmor(ItemStack stack, ComponentType<?> componentType, Operation<Boolean> original) {
         ItemStack armorStack = ProgressionRespun.getArmor(stack);
         if (armorStack != ItemStack.EMPTY) return original.call(armorStack, componentType);
         return original.call(stack, componentType);

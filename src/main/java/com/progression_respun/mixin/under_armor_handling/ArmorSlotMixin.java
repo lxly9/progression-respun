@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(targets = "net.minecraft.screen.slot.ArmorSlot")
 public class ArmorSlotMixin {
     @WrapOperation(method = "canTakeItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;hasAnyEnchantmentsWith(Lnet/minecraft/item/ItemStack;Lnet/minecraft/component/ComponentType;)Z"))
-    private boolean gay(ItemStack stack, ComponentType<?> componentType, Operation<Boolean> original) {
+    private boolean progressionrespun$blockUnderArmorUnequip(ItemStack stack, ComponentType<?> componentType, Operation<Boolean> original) {
         ItemStack armorStack = ProgressionRespun.getArmor(stack);
         if (armorStack != ItemStack.EMPTY) return original.call(armorStack, componentType);
         return original.call(stack, componentType);
