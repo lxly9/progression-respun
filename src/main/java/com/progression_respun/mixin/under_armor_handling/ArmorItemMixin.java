@@ -3,6 +3,7 @@ package com.progression_respun.mixin.under_armor_handling;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.util.SoundUtil;
+import net.minecraft.component.Component;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,6 +11,7 @@ import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -151,8 +153,8 @@ public abstract class ArmorItemMixin extends Item {
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
         if (component != null) {
+            ItemStack armorStack = getArmor(stack);
             if (stack.isIn(UNDER_ARMOR)) {
-                ItemStack armorStack = getArmor(stack);
                 if (armorStack == ItemStack.EMPTY) {
                     tooltip.add(Text.translatable("tag.item.progression_respun.under_armor").formatted(Formatting.GRAY));
                     tooltip.add(Text.translatable("tag.item.progression_respun.equip_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
@@ -162,6 +164,11 @@ public abstract class ArmorItemMixin extends Item {
             } else if (!stack.isIn(UNDER_ARMOR) && !(stack.isIn(BYPASSES_UNDER_ARMOR))) {
                 tooltip.add(Text.translatable("tag.item.progression_respun.needs_under_armor").formatted(Formatting.GRAY));
                 tooltip.add(Text.translatable("tag.item.progression_respun.equip_under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+            }
+            if (armorStack != ItemStack.EMPTY) {
+                MutableText name = tooltip.getFirst().copy().append(Text.translatable("util.progression_respun.with").formatted(Formatting.RESET)).append(armorStack.getName());
+                tooltip.removeFirst();
+                tooltip.addFirst(name);
             }
         }
     }

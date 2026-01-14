@@ -1,6 +1,8 @@
 package com.progression_respun.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.progression_respun.component.ModDataComponentTypes;
+import com.progression_respun.component.type.UnderArmorContentsComponent;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,9 +17,10 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
+
 import static com.progression_respun.ProgressionRespun.*;
 
-@Debug()
 @Mixin(AnvilScreenHandler.class)
 public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     @Unique private final Property isRepairing = Property.create();
@@ -64,99 +67,113 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         ci.cancel();
     }
 
-    @Inject(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;contains(Lnet/minecraft/component/ComponentType;)Z", shift = At.Shift.AFTER), cancellable = true)
-    private void progressionrespun$mendingRepairs(CallbackInfo ci, @Local(name = "itemStack") ItemStack itemStack, @Local(name = "itemStack2") ItemStack itemStack2, @Local(name = "itemStack3") ItemStack itemStack3, @Local(name = "i") int i) {
-        ItemStack armorStack = getArmor(itemStack2);
+    @Inject(method = "updateResult", at = @At(value = "HEAD"), cancellable = true)
+    private void progressionrespun$mendingRepairs(CallbackInfo ci) {
+        ItemStack itemStack = this.input.getStack(0);
+        ItemStack itemStack2 = itemStack.copy();
+        ItemStack itemStack3 = this.input.getStack(1);
+        ItemStack armorStack = getArmor(itemStack2).copy();
+        int i = 0;
         boolean armor = armorStack != ItemStack.EMPTY;
         ToolMaterial material;
         ArmorMaterial armorMaterial;
         ItemStack nugget = ItemStack.EMPTY;
         ItemStack armorNugget = ItemStack.EMPTY;
 
-        if (itemStack2.getItem() instanceof ToolItem toolItem) {
-            material = toolItem.getMaterial();
-            nugget = getNugget(material.getRepairIngredient());
-        }
-        if (itemStack2.getItem() instanceof ArmorItem UnderArmorItem) {
-            armorMaterial = UnderArmorItem.getMaterial().value();
-            nugget = getNugget(armorMaterial.repairIngredient().get());
-            if (armor && armorStack.getItem() instanceof ArmorItem armorItem) {
-                armorMaterial = armorItem.getMaterial().value();
-                armorNugget = getNugget(armorMaterial.repairIngredient().get());
-            }
-        }
-
-
-        boolean nuggetValue = itemStack3.isOf(nugget.getItem()) && nugget != ItemStack.EMPTY;
-        boolean armorNuggetValue = itemStack3.isOf(armorNugget.getItem()) && armorNugget != ItemStack.EMPTY;
-
-        boolean hasMending = itemStack2.contains(DataComponentTypes.ENCHANTMENTS) && hasMending(itemStack2);
-        boolean hasArmorMending = armor && armorStack.contains(DataComponentTypes.ENCHANTMENTS) && hasMending(armorStack);
-
         int k = Math.min(itemStack2.getDamage(), itemStack2.getMaxDamage() / 4);
         int j = Math.min(armorStack.getDamage(), armorStack.getMaxDamage() / 4);
 
-        if (k <= 0 && !armor) {
-            this.output.setStack(0, ItemStack.EMPTY);
-            this.levelCost.set(0);
-            return;
-        }
-
-        if (j <= 0 && k <= 0) {
-            this.output.setStack(0, ItemStack.EMPTY);
-            this.levelCost.set(0);
-            return;
-        }
-
-        int m;
-        if (hasMending && nuggetValue && !armor){
-
-            for (m = 0; k > 0 && m < itemStack3.getCount(); m++) {
-                int n = itemStack2.getDamage() - k;
-                itemStack2.setDamage(n);
-                i++;
-                k = Math.min(itemStack2.getDamage(), itemStack2.getMaxDamage() / 4);
+        if (!armor){
+            if (k <= 0) {
+                this.output.setStack(0, ItemStack.EMPTY);
+                this.levelCost.set(0);
+                ci.cancel();
+                return;
             }
-
-            repairItemUsage = m;
-            isRepairing.set(1);
-            levelCost.set(0);
-            output.setStack(0, itemStack2);
-            this.sendContentUpdates();
-            ci.cancel();
+        } else {
+            if (j <= 0) {
+                this.output.setStack(0, ItemStack.EMPTY);
+                this.levelCost.set(0);
+                ci.cancel();
+                return;
+            } else if (k <= 0) {
+                this.output.setStack(0, ItemStack.EMPTY);
+                this.levelCost.set(0);
+                ci.cancel();
+                return;
+            }
         }
 
-        if (hasArmorMending && armorNuggetValue){
-            LOGGER.info(String.valueOf(armorStack));
-
-            for (m = 0; j > 0 && m < itemStack3.getCount(); m++) {
-                int n = armorStack.getDamage() - j;
-                armorStack.setDamage(n);
-                i++;
-                j = Math.min(armorStack.getDamage(), armorStack.getMaxDamage() / 4);
+        if (!armor && hasMending(itemStack2)) {
+            if (itemStack2.getItem() instanceof ToolItem toolItem) {
+                material = toolItem.getMaterial();
+                nugget = getNugget(material.getRepairIngredient());
             }
-
-            repairItemUsage = m;
-            isRepairing.set(1);
-            levelCost.set(0);
-            output.setStack(0, itemStack2);
-            this.sendContentUpdates();
-            ci.cancel();
-        }
-        if (armor && itemStack3.getItem().canRepair(armorStack, itemStack3)){
-            for (m = 0; j > 0 && m < itemStack3.getCount(); m++) {
-                int n = armorStack.getDamage() - j;
-                armorStack.setDamage(n);
-                i++;
-                j = Math.min(armorStack.getDamage(), armorStack.getMaxDamage() / 4);
+            if (itemStack2.getItem() instanceof ArmorItem UnderArmorItem) {
+                armorMaterial = UnderArmorItem.getMaterial().value();
+                nugget = getNugget(armorMaterial.repairIngredient().get());
             }
+            if (itemStack3.isOf(nugget.getItem()) && nugget != ItemStack.EMPTY) {
+                int m;
 
-            repairItemUsage = m;
-            isRepairing.set(1);
-            levelCost.set(0);
-            output.setStack(0, itemStack2);
-            this.sendContentUpdates();
-            ci.cancel();
+                for (m = 0; k > 0 && m < itemStack3.getCount(); m++) {
+                    int n = itemStack2.getDamage() - k;
+                    itemStack2.setDamage(n);
+                    i++;
+                    k = Math.min(itemStack2.getDamage(), itemStack2.getMaxDamage() / 4);
+                }
+
+                repairItemUsage = m;
+                isRepairing.set(1);
+                levelCost.set(0);
+                output.setStack(0, itemStack2);
+                this.sendContentUpdates();
+                ci.cancel();
+                return;
+            }
+        } else if (armor) {
+            if (armorStack.getItem() instanceof ArmorItem armorItem) {
+                armorMaterial = armorItem.getMaterial().value();
+                armorNugget = getNugget(armorMaterial.repairIngredient().get());
+                if (hasMending(armorStack) && itemStack3.isOf(armorNugget.getItem()) && armorNugget != ItemStack.EMPTY) {
+                    int m;
+
+                    for (m = 0; j > 0 && m < itemStack3.getCount(); m++) {
+                        int n = armorStack.getDamage() - j;
+                        armorStack.setDamage(n);
+                        i++;
+                        j = Math.min(armorStack.getDamage(), armorStack.getMaxDamage() / 4);
+                    }
+
+                    itemStack2.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, new UnderArmorContentsComponent(List.of(armorStack)));
+                    repairItemUsage = m;
+                    isRepairing.set(1);
+                    levelCost.set(0);
+                    output.setStack(0, itemStack2);
+                    this.sendContentUpdates();
+                    ci.cancel();
+                    return;
+                }
+                if (armorMaterial.repairIngredient().get().test(itemStack3)){
+                    int m;
+
+                    for (m = 0; j > 0 && m < itemStack3.getCount(); m++) {
+                        int n = armorStack.getDamage() - j;
+                        armorStack.setDamage(n);
+                        i++;
+                        j = Math.min(armorStack.getDamage(), armorStack.getMaxDamage() / 4);
+                    }
+
+                    itemStack2.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, new UnderArmorContentsComponent(List.of(armorStack)));
+                    repairItemUsage = m;
+                    isRepairing.set(1);
+                    levelCost.set(0);
+                    output.setStack(0, itemStack2);
+                    this.sendContentUpdates();
+                    ci.cancel();
+                    return;
+                }
+            }
         }
     }
 

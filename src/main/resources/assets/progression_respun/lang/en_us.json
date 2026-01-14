@@ -9,10 +9,11 @@
   "tag.item.progression_respun.needs_under_armor": "Needs corresponding Under Armor to be equipped.",
   "tag.item.progression_respun.under_armor": "Can be worn as Under Armor.",
 
-  "util.progression_respun.with": "%s with %s",
+  "util.progression_respun.with": " with ",
   "util.progression_respun.plus": "+",
   "util.durability.underarmor": "Durability of Under Armor: %s / %s",
-
+  "tooltip.progression_respun.enchantments": "Enchantments:",
+  "tooltip.progression_respun.curses": "Curses:",
   "item.progression_respun.tooltip.broken": "Broken %s",
 
   "item.progression_respun.flint_bar": "Flint Bar",

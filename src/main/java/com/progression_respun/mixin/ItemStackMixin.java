@@ -7,10 +7,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.progression_respun.ProgressionRespun;
 import com.progression_respun.component.ModDataComponentTypes;
-import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.util.ArmorUtil;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FarmlandBlock;
@@ -30,6 +29,7 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.screen.ScreenTexts;
@@ -49,6 +49,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -58,6 +62,7 @@ import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
 import static com.progression_respun.data.ModItemTagProvider.*;
 import static com.progression_respun.util.PropertyUtil.FERTILIZED;
 
+@Debug(export = true)
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack {
     @Unique private static final Text BROKEN_TEXT = Text.translatable(Util.createTranslationKey(
@@ -73,6 +78,12 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @Shadow public abstract boolean isIn(TagKey<Item> tag);
 
     @Shadow public abstract Text getName();
+
+    @Shadow
+    protected abstract <T extends TooltipAppender> void appendTooltip(ComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type);
+
+    @Shadow
+    public abstract boolean hasEnchantments();
 
     @Unique
     private boolean isBroken() {
@@ -101,29 +112,29 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 //        }
 //    }
 
-    @ModifyReturnValue(method = "getName", at = @At("RETURN"))
-    private Text progressionrespun$modifyName(Text original) {
-        ItemStack stack = (ItemStack)(Object) this;
-        String with = "util.progression_respun.with";
-        if (stack.getItem() instanceof ArmorItem underArmorItem && stack.isIn(UNDER_ARMOR)) {
-            UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-            if (component != null && !component.isEmpty()) {
-                ItemStack armorItem = component.get(0);
-                if (isBroken()) return Text.translatable("item.progression_respun.tooltip.broken", Text.translatable(with, original, armorItem.getName())).formatted(Formatting.RED);
-                return Text.translatable(with, original, armorItem.getName());
-            }
-        }
-        if (stack.getItem() instanceof EnchantedBookItem) {
-            ItemEnchantmentsComponent storedEnchants = stack.get(DataComponentTypes.STORED_ENCHANTMENTS);
-            if (storedEnchants != null && !storedEnchants.isEmpty()) {
-                Object2IntMap.Entry<RegistryEntry<Enchantment>> enchantment = storedEnchants.getEnchantmentEntries().stream().findFirst().get();
-                Text enchantmentName = enchantment.getKey().value().description();
-                return Text.translatable(with, original, enchantmentName);
-            }
-        }
-        if (isBroken()) return Text.translatable("item.progression_respun.tooltip.broken", original).formatted(Formatting.RED);
-        return original;
-    }
+//    @ModifyReturnValue(method = "getName", at = @At("RETURN"))
+//    private Text progressionrespun$modifyName(Text original) {
+//        ItemStack stack = (ItemStack)(Object) this;
+//        String with = "util.progression_respun.with";
+//        if (stack.getItem() instanceof ArmorItem underArmorItem && stack.isIn(UNDER_ARMOR)) {
+//            UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+//            if (component != null && !component.isEmpty()) {
+//                ItemStack armorItem = component.get(0);
+//                if (isBroken()) return Text.translatable("item.progression_respun.tooltip.broken", Text.translatable(with, original, armorItem.getName())).formatted(Formatting.RED);
+//                return Text.translatable(with, original, armorItem.getName());
+//            }
+//        }
+//        if (stack.getItem() instanceof EnchantedBookItem) {
+//            ItemEnchantmentsComponent storedEnchants = stack.get(DataComponentTypes.STORED_ENCHANTMENTS);
+//            if (storedEnchants != null && !storedEnchants.isEmpty()) {
+//                Object2IntMap.Entry<RegistryEntry<Enchantment>> enchantment = storedEnchants.getEnchantmentEntries().stream().findFirst().get();
+//                Text enchantmentName = enchantment.getKey().value().description();
+//                return Text.translatable(with, original, enchantmentName);
+//            }
+//        }
+//        if (isBroken()) return Text.translatable("item.progression_respun.tooltip.broken", original).formatted(Formatting.RED);
+//        return original;
+//    }
 
     @WrapMethod(method = "appendAttributeModifiersTooltip")
     private void progressionrespun$appendArmorToUnderArmorAttributesTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player, Operation<Void> original) {
@@ -177,13 +188,21 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     }
 
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;appendTooltip(Lnet/minecraft/component/ComponentType;Lnet/minecraft/item/Item$TooltipContext;Ljava/util/function/Consumer;Lnet/minecraft/item/tooltip/TooltipType;)V"))
-    private <T> void progressionrespun$getTooltip2(ItemStack instance, ComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type, Operation<Void> original) {
+    private <T> void progressionrespun$getTooltip2(ItemStack instance, ComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type, Operation<Void> original, @Local List<Text> list) {
         ItemStack armorStack = getArmor(instance);
-        if (armorStack != ItemStack.EMPTY) {
-            original.call(armorStack, componentType, context, textConsumer, type);
-            return;
+
+        if (componentType != DataComponentTypes.ENCHANTMENTS) {
+            if (armorStack != ItemStack.EMPTY) {
+                original.call(armorStack, componentType, context, textConsumer, type);
+                return;
+            }
+            original.call(instance, componentType, context, textConsumer, type);
         }
-        original.call(instance, componentType, context, textConsumer, type);
+    }
+
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;appendTooltip(Lnet/minecraft/component/ComponentType;Lnet/minecraft/item/Item$TooltipContext;Ljava/util/function/Consumer;Lnet/minecraft/item/tooltip/TooltipType;)V", ordinal = 2))
+    private <T> void progressionrespun$getEnchantmentsTooltip(ItemStack instance, ComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type, Operation<Void> original, @Local List<Text> list) {
+        appendEnchantmentsTooltip((ItemStack) (Object) this, list);
     }
 
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;", ordinal = 0))
@@ -195,20 +214,12 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         return original.call(instance);
     }
 
-    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/tooltip/TooltipType;isAdvanced()Z", shift = At.Shift.BEFORE))
-    private void progressionrespun$getTooltip4(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> cir, @Local(ordinal = 0) List<Text> list) {
-        ItemStack stack = (ItemStack) (Object) this;
-        ItemStack armorStack = getArmor(stack);
-        if (armorStack != ItemStack.EMPTY && armorStack.isDamaged() && type.isAdvanced()) {
-            list.add(Text.translatable("item.durability", armorStack.getMaxDamage() - armorStack.getDamage(), armorStack.getMaxDamage()));
-        }
-    }
-
     @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2))
     private <E> boolean progressionrespun$getTooltip5(List<Text> instance, E e, Operation<Boolean> original) {
         ItemStack stack = (ItemStack) (Object) this;
         ItemStack armorStack = getArmor(stack);
         if (armorStack != ItemStack.EMPTY) {
+            instance.add(Text.translatable("item.durability", armorStack.getMaxDamage() - armorStack.getDamage(), armorStack.getMaxDamage()));
             original.call(instance, Text.translatable("util.durability.underarmor", stack.getMaxDamage() - stack.getDamage(), stack.getMaxDamage()));
             return false;
         }
@@ -399,7 +410,80 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
                     return false;
                 }
             }
+        } else {
+            return item.isIn(ConventionalItemTags.ENCHANTABLES);
         }
         return original;
+    }
+
+    @Unique
+    private void appendEnchantmentsTooltip(ItemStack instance, List<Text> list) {
+        ItemStack armorStack = getArmor(instance);
+
+        List<Text> curses = new ArrayList<>();
+        List<Text> enchantments = new ArrayList<>();
+        List<Text> enchantments1 = new ArrayList<>();
+
+
+        if (instance.hasEnchantments()) {
+            ItemEnchantmentsComponent component = instance.getEnchantments();
+
+            for (Entry<RegistryEntry<Enchantment>> entry : component.getEnchantmentEntries()) {
+                RegistryEntry<Enchantment> enchantment = entry.getKey();
+                int level = entry.getIntValue();
+                Text line = Enchantment.getName(enchantment, level);
+
+                if (enchantment.isIn(EnchantmentTags.CURSE)) {
+                    curses.add(line);
+                } else {
+                    enchantments.add(line);
+                }
+            }
+
+            enchantments = enchantments.stream()
+                    .map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.GOLD)))
+                    .toList();
+            curses = curses.stream()
+                    .map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.RED)))
+                    .toList();
+
+        } else if (!armorStack.isEmpty() && armorStack.hasEnchantments()) {
+            ItemEnchantmentsComponent component = armorStack.getEnchantments();
+
+            for (Entry<RegistryEntry<Enchantment>> entry : component.getEnchantmentEntries()) {
+                RegistryEntry<Enchantment> enchantment = entry.getKey();
+                int level = entry.getIntValue();
+                Text line = Enchantment.getName(enchantment, level);
+
+                if (enchantment.isIn(EnchantmentTags.CURSE)) {
+                    curses.add(line);
+                } else {
+                    enchantments1.add(line);
+                }
+            }
+
+            enchantments1 = enchantments1.stream()
+                    .map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.GOLD)))
+                    .toList();
+            curses = curses.stream()
+                    .map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.RED)))
+                    .toList();
+        }
+
+        if (!enchantments.isEmpty() && armorStack.isEmpty()) {
+            list.add(Text.translatable("tooltip.progression_respun.enchantments").formatted(Formatting.GRAY));
+            list.addAll(enchantments);
+        }
+        if (!enchantments1.isEmpty() && !armorStack.isEmpty()) {
+            list.add(Text.translatable("tooltip.progression_respun.enchantments").formatted(Formatting.GRAY));
+            list.addAll(enchantments1);
+        }
+        if (!curses.isEmpty()) {
+            list.add(Text.translatable("tooltip.progression_respun.curses").formatted(Formatting.GRAY));
+            HashSet<Text> set = new HashSet<>(curses);
+            curses = set.stream().toList();
+
+            list.addAll(curses);
+        }
     }
 }
