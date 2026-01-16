@@ -75,8 +75,8 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - ~~Worms as bait on Fishing Rods instead of Lure~~
     - ~~Fungus and Carrot as bait for riding Entities~~
     - ~~Texture override~~
-  - Tooltip rework for Enchantments
-    - sorted into Enchantments: and Curses: like Trims, Enchantments only show Armor Enchantments, Curses show Armor and Under Armor Curses
+  - ~~Tooltip rework for Enchantments~~
+    - ~~sorted into Enchantments: and Curses: like Trims, Enchantments only show Armor Enchantments, Curses show Armor and Under Armor Curses~~
 
 
 - Farming & Food Overhaul

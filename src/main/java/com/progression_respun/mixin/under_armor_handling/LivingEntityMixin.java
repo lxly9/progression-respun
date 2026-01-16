@@ -41,31 +41,31 @@ public abstract class LivingEntityMixin {
     @Shadow public abstract double getAttributeValue(RegistryEntry<EntityAttribute> attribute);
 
     @WrapOperation(method = "damageEquipment", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;)V"))
-    private void progressionrespun$damageUnderArmor(ItemStack item, int amount, LivingEntity entity, EquipmentSlot slot, Operation<Void> underArmor, @Local(argsOnly = true) DamageSource source) {
+    private void progressionrespun$damageUnderArmor(ItemStack item, int amount, LivingEntity entity, EquipmentSlot slot, Operation<Void> original, @Local(argsOnly = true) DamageSource source) {
         if (((Object) this) instanceof PlayerEntity player) {
             if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
                 if (!item.isEmpty() && item.getItem() instanceof ArmorItem) {
                     ItemStack armorStack = getArmor(item);
-                    if (armorStack != ItemStack.EMPTY) {
+                    original.call(armorStack, amount, entity, slot);
+                    if (!armorStack.isEmpty()) {
                         Random random = new Random();
-                        if (armorStack.takesDamageFrom(source)) {
+                        if (item.takesDamageFrom(source)) {
                             armorStack.damage(amount, player, slot);
                             if (random.nextDouble() < 0.25) {
-                                underArmor.call(item, amount, entity, slot);
+                                original.call(item, amount, entity, slot);
                             }
                         }
                     }
-                    underArmor.call(item, amount, entity, slot);
                 }
             }
+        } else {
+            original.call(item, amount, entity, slot);
         }
-        underArmor.call(item, amount, entity, slot);
     }
 
     @Inject(method = "getPreferredEquipmentSlot", at = @At("HEAD"), cancellable = true)
     private void progressionrespun$redirectArmorIfNoUnderArmor(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> ci) {
         if (stack.getItem() instanceof ArmorItem) {
-
             if ((Object) this instanceof PlayerEntity) {
                 if (!stack.isIn(UNDER_ARMOR) && !stack.isIn(BYPASSES_UNDER_ARMOR)) ci.setReturnValue(EquipmentSlot.MAINHAND);
                 if (stack.getDamage() >= stack.getMaxDamage()) ci.setReturnValue(EquipmentSlot.MAINHAND);

@@ -56,6 +56,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static com.progression_respun.ProgressionRespun.getArmor;
 import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
@@ -417,16 +418,16 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     }
 
     @Unique
-    private void appendEnchantmentsTooltip(ItemStack instance, List<Text> list) {
-        ItemStack armorStack = getArmor(instance);
+    private void appendEnchantmentsTooltip(ItemStack itemStack, List<Text> list) {
+        ItemStack armorStack = getArmor(itemStack);
 
         List<Text> curses = new ArrayList<>();
         List<Text> enchantments = new ArrayList<>();
         List<Text> enchantments1 = new ArrayList<>();
 
 
-        if (instance.hasEnchantments()) {
-            ItemEnchantmentsComponent component = instance.getEnchantments();
+        if (itemStack.hasEnchantments()) {
+            ItemEnchantmentsComponent component = itemStack.getEnchantments();
 
             for (Entry<RegistryEntry<Enchantment>> entry : component.getEnchantmentEntries()) {
                 RegistryEntry<Enchantment> enchantment = entry.getKey();
@@ -440,14 +441,9 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
                 }
             }
 
-            enchantments = enchantments.stream()
-                    .map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.GOLD)))
-                    .toList();
-            curses = curses.stream()
-                    .map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.RED)))
-                    .toList();
-
-        } else if (!armorStack.isEmpty() && armorStack.hasEnchantments()) {
+            enchantments = enchantments.stream().map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.GOLD))).collect(Collectors.toList());
+        }
+        if (!armorStack.isEmpty() && armorStack.hasEnchantments()) {
             ItemEnchantmentsComponent component = armorStack.getEnchantments();
 
             for (Entry<RegistryEntry<Enchantment>> entry : component.getEnchantmentEntries()) {
@@ -462,12 +458,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
                 }
             }
 
-            enchantments1 = enchantments1.stream()
-                    .map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.GOLD)))
-                    .toList();
-            curses = curses.stream()
-                    .map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.RED)))
-                    .toList();
+            enchantments1 = enchantments1.stream().map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.GOLD))).collect(Collectors.toList());
         }
 
         if (!enchantments.isEmpty() && armorStack.isEmpty()) {
@@ -479,6 +470,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
             list.addAll(enchantments1);
         }
         if (!curses.isEmpty()) {
+            curses = curses.stream().map(t -> Text.of(Text.literal(" " + t.getString()).formatted(Formatting.RED))).collect(Collectors.toList());
             list.add(Text.translatable("tooltip.progression_respun.curses").formatted(Formatting.GRAY));
             HashSet<Text> set = new HashSet<>(curses);
             curses = set.stream().toList();

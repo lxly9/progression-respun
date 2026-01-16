@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.progression_respun.ProgressionRespun.hasBinding;
 import static com.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 @Mixin(PlayerEntity.class)
@@ -64,7 +65,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @WrapOperation(method = "vanishCursedItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;hasAnyEnchantmentsWith(Lnet/minecraft/item/ItemStack;Lnet/minecraft/component/ComponentType;)Z"))
     private boolean progressionrespun$vanishUnderArmor(ItemStack stack, ComponentType<?> componentType, Operation<Boolean> original) {
         ItemStack armorStack = ProgressionRespun.getArmor(stack);
-        if (armorStack != ItemStack.EMPTY) return original.call(armorStack, componentType);
+        if (hasBinding(armorStack)) return original.call(armorStack, componentType);
+        if (hasBinding(stack)) return original.call(stack, componentType);
         return original.call(stack, componentType);
     }
 }

@@ -9,6 +9,7 @@ import com.progression_respun.recipe.GrindingRecipeBuilder;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
@@ -72,6 +73,11 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .input(Items.PAPER)
                 .input(ConventionalItemTags.NUGGETS)
                 .criterion(FabricRecipeProvider.hasItem(Items.PAPER), FabricRecipeProvider.conditionsFromItem(Items.NAME_TAG))
+                .offerTo(exporter);
+
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, Items.LEATHER)
+                .input(Items.ROTTEN_FLESH, 4)
+                .criterion(FabricRecipeProvider.hasItem(Items.ROTTEN_FLESH), FabricRecipeProvider.conditionsFromItem(Items.ROTTEN_FLESH))
                 .offerTo(exporter);
 
         //shaped
@@ -172,6 +178,20 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern(" #")
                 .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
                 .offerTo(exporter);
+
+//        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.ENCHANTING_TABLE)
+//                .input('B', Items.BOOK)
+//                .input('A', Items.AMETHYST_SHARD)
+//                .input('W', Blocks.RED_WOOL)
+//                .input('O', Blocks.OBSIDIAN)
+//                .pattern(" B ")
+//                .pattern("AWA")
+//                .pattern("OOO")
+//                .criterion(hasItem(Items.AMETHYST_SHARD), conditionsFromItem(Items.AMETHYST_SHARD))
+//                .criterion(hasItem(Items.BOOK), conditionsFromItem(Items.BOOK))
+//                .criterion(hasItem(Items.RED_WOOL), conditionsFromItem(Items.RED_WOOL))
+//                .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
+//                .offerTo(exporter);
 
         // Copper Tools
 
