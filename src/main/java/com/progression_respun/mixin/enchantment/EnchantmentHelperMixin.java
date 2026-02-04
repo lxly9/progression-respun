@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.progression_respun.ProgressionRespun;
+import com.progression_respun.data.ModEnchantmentsTagsProvider;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
@@ -20,13 +20,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.collection.Weighting;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
-import org.apache.commons.lang3.mutable.MutableFloat;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -67,25 +63,28 @@ public abstract class EnchantmentHelperMixin {
         return 0;
     }
 
-    @Inject(method = "generateEnchantments", at = @At("HEAD"), cancellable = true)
-    private static void progressionrespun$genOneEnchantment(Random random, ItemStack stack, int level, Stream<RegistryEntry<Enchantment>> possibleEnchantments, CallbackInfoReturnable<List<EnchantmentLevelEntry>> cir) {
+    @WrapMethod(method = "generateEnchantments")
+    private static List<EnchantmentLevelEntry> progressionrespun$genOneEnchantment(Random random, ItemStack stack, int level, Stream<RegistryEntry<Enchantment>> possibleEnchantments, Operation<List<EnchantmentLevelEntry>> original) {
+
+        List<RegistryEntry<Enchantment>> filteredEnchants = possibleEnchantments.filter(e -> !e.isIn(ModEnchantmentsTagsProvider.DISABLED_ENCHANTMENTS)).toList();
         if (stack.getItem() instanceof EnchantedBookItem) {
-            List<EnchantmentLevelEntry> list = Lists.<EnchantmentLevelEntry>newArrayList();
+            List<EnchantmentLevelEntry> list = Lists.newArrayList();
             Item item = stack.getItem();
             int i = item.getEnchantability();
             if (i <= 0) {
-                cir.setReturnValue(list);
+                return original.call(random, stack, level, filteredEnchants.stream());
             } else {
                 level += 1 + random.nextInt(i / 4 + 1) + random.nextInt(i / 4 + 1);
                 float f = (random.nextFloat() + random.nextFloat() - 1.0F) * 0.15F;
                 level = MathHelper.clamp(Math.round(level + level * f), 1, Integer.MAX_VALUE);
-                List<EnchantmentLevelEntry> list2 = getPossibleEntries(level, stack, possibleEnchantments);
+                List<EnchantmentLevelEntry> list2 = getPossibleEntries(level, stack, filteredEnchants.stream());
                 if (!list2.isEmpty()) {
                     Weighting.getRandom(random, list2).ifPresent(list::add);
                 }
-                cir.setReturnValue(list);
+                return list;
             }
         }
+        return original.call(random, stack, level, filteredEnchants.stream());
     }
 
     @WrapMethod(method = "getFishingTimeReduction")

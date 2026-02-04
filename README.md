@@ -27,7 +27,8 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 ## To Do
 
 - **!!** loot table manipulation for balancing
-- **!!** rewrite tooltip logic
+- ~~**!!** rewrite tooltip logic~~
+- ~~**!!** powdered snow~~
 
 
 - **?** Brewing stand can only brew one potion

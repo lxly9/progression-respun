@@ -1,8 +1,9 @@
 package com.progression_respun.util;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -13,9 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -25,13 +24,34 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Objects;
 
-import static com.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
 import static com.progression_respun.compat.CompatMods.FARMERSDELIGHT;
-import static com.progression_respun.data.ModItemTagProvider.CAN_BURN_COBWEBS;
 import static com.progression_respun.util.ArmorUtil.*;
-import static net.minecraft.data.DataProvider.LOGGER;
 
 public class PlayerUtil {
+
+    private static final Identifier SPEED_PENALTY = Identifier.of("progression_respun", "speed_penalty");
+
+    public static void registerMobAttributes(ServerWorld world, PlayerEntity player) {
+
+        EntityAttributeInstance speed = player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+
+        if (speed != null) {
+
+            double baseSpeed = speed.getBaseValue();
+            double modifier = 0;
+
+            ItemStack stack = player.getEquippedStack();
+            ItemStack armorstack = player.getEquippedStack();
+
+
+            EntityAttributeModifier speedModifier = new EntityAttributeModifier(
+                    SPEED_PENALTY,
+                    modifier,
+                    EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+            );
+            speed.addPersistentModifier(speedModifier);
+        }
+    }
 
     public static void oneHitToOneHp() {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((livingEntity, damageSource, v) -> {

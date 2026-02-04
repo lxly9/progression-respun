@@ -426,18 +426,25 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         List<Text> enchantments1 = new ArrayList<>();
 
 
-        if (itemStack.hasEnchantments()) {
-            ItemEnchantmentsComponent component = itemStack.getEnchantments();
+        if (itemStack.hasEnchantments() || itemStack.getItem() instanceof EnchantedBookItem) {
+            ItemEnchantmentsComponent component;
+            if (itemStack.getItem() instanceof EnchantedBookItem) {
+                component = itemStack.get(DataComponentTypes.STORED_ENCHANTMENTS);
+            } else {
+                component = itemStack.getEnchantments();
+            }
 
-            for (Entry<RegistryEntry<Enchantment>> entry : component.getEnchantmentEntries()) {
-                RegistryEntry<Enchantment> enchantment = entry.getKey();
-                int level = entry.getIntValue();
-                Text line = Enchantment.getName(enchantment, level);
+            if (component != null) {
+                for (Entry<RegistryEntry<Enchantment>> entry : component.getEnchantmentEntries()) {
+                    RegistryEntry<Enchantment> enchantment = entry.getKey();
+                    int level = entry.getIntValue();
+                    Text line = Enchantment.getName(enchantment, level);
 
-                if (enchantment.isIn(EnchantmentTags.CURSE)) {
-                    curses.add(line);
-                } else {
-                    enchantments.add(line);
+                    if (enchantment.isIn(EnchantmentTags.CURSE)) {
+                        curses.add(line);
+                    } else {
+                        enchantments.add(line);
+                    }
                 }
             }
 

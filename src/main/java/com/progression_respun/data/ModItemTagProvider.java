@@ -36,6 +36,9 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
     public static final TagKey<Item> ENTITY_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "entity_bait"));
     public static final TagKey<Item> MENDING_ENCHANTABLE = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "mending_enchantable"));
     public static final TagKey<Item> HORSE_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "horse_armor"));
+    public static final TagKey<Item> LIGHT_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "light_armor"));
+    public static final TagKey<Item> MEDIUM_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "medium_armor"));
+    public static final TagKey<Item> HEAVY_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "heavy_armor"));
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
@@ -142,6 +145,37 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                 .add(Items.GOLDEN_HORSE_ARMOR)
                 .add(Items.DIAMOND_HORSE_ARMOR)
                 .add(ModItems.NETHERITE_HORSE_ARMOR);
+
+        getOrCreateTagBuilder(LIGHT_ARMOR)
+                .add(Items.LEATHER_HELMET)
+                .add(Items.LEATHER_CHESTPLATE)
+                .add(Items.LEATHER_LEGGINGS)
+                .add(Items.LEATHER_BOOTS)
+                .add(Items.TURTLE_HELMET);
+
+        getOrCreateTagBuilder(MEDIUM_ARMOR)
+                .add(Items.CHAINMAIL_HELMET)
+                .add(Items.CHAINMAIL_CHESTPLATE)
+                .add(Items.CHAINMAIL_LEGGINGS)
+                .add(Items.CHAINMAIL_BOOTS)
+                .add(Items.IRON_HELMET)
+                .add(Items.IRON_CHESTPLATE)
+                .add(Items.IRON_LEGGINGS)
+                .add(Items.IRON_BOOTS);
+
+        getOrCreateTagBuilder(HEAVY_ARMOR)
+                .add(Items.GOLDEN_HELMET)
+                .add(Items.GOLDEN_CHESTPLATE)
+                .add(Items.GOLDEN_LEGGINGS)
+                .add(Items.GOLDEN_BOOTS)
+                .add(Items.DIAMOND_HELMET)
+                .add(Items.DIAMOND_CHESTPLATE)
+                .add(Items.DIAMOND_LEGGINGS)
+                .add(Items.DIAMOND_BOOTS)
+                .add(Items.NETHERITE_HELMET)
+                .add(Items.NETHERITE_CHESTPLATE)
+                .add(Items.NETHERITE_LEGGINGS)
+                .add(Items.NETHERITE_BOOTS);
 
         if (GALOSPHERE) {
             getOrCreateTagBuilder(ConventionalItemTags.RAW_MATERIALS)

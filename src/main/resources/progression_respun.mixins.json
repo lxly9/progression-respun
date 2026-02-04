@@ -33,7 +33,8 @@
     "under_armor_handling.ArmorMaterialMixin",
     "under_armor_handling.ArmorSlotMixin",
     "under_armor_handling.LivingEntityMixin",
-    "under_armor_handling.PlayerEntityMixin"
+    "under_armor_handling.PlayerEntityMixin",
+    "under_armor_handling.PowderSnowBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,7 +1,8 @@
-// 1.21.1	2026-01-16T22:45:21.7298944	Progression Respun/Tags for minecraft:item
+// 1.21.1	2026-01-17T20:33:05.0977375	Progression Respun/Tags for minecraft:item
 f85601f8a28d1e00ba980c7c21ea1559f72becb8 data\progression_respun\tags\item\under_armor.json
 43629a5d6e20188635650b4ccb60f6d91df5bb09 data\c\tags\item\raw_materials.json
 9cfa367c94b0e6c4d81a13864aa72396fb208979 data\progression_respun\tags\item\mending_enchantable.json
+60315e6dcf96f458ef36e9ae0a9524d00ab8665a data\progression_respun\tags\item\horse_armor.json
 a29043a6398aff9ab4ee0deee4bad63aeed62a28 data\progression_respun\tags\item\can_burn_cobwebs.json
 c64985a969d4c9140830d7f72c804e7595809666 data\progression_respun\tags\item\fishing_time_reduction_bait.json
 5a88232b439a0752ab7a03a1733e8c836138a884 data\progression_respun\tags\item\bypasses_under_armor.json
