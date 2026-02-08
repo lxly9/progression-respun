@@ -13,7 +13,9 @@ public class VanillaItems {
     public static Item COPPER_NUGGET;
 
     public static void initialize() {
-        COPPER_NUGGET = register(new Item(new Item.Settings()), COPPER_NUGGET_ID);
+        if (!isModLoaded("copperagebackport")){
+            COPPER_NUGGET = register(new Item(new Item.Settings()), COPPER_NUGGET_ID);
+        }
     }
 
     private static Item register(Item item, Identifier id) {

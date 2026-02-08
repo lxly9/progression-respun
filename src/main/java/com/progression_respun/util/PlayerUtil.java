@@ -29,30 +29,6 @@ import static com.progression_respun.util.ArmorUtil.*;
 
 public class PlayerUtil {
 
-    private static final Identifier SPEED_PENALTY = Identifier.of("progression_respun", "speed_penalty");
-
-    public static void registerMobAttributes(ServerWorld world, PlayerEntity player) {
-
-        EntityAttributeInstance speed = player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
-
-        if (speed != null) {
-
-            double baseSpeed = speed.getBaseValue();
-            double modifier = 0;
-
-            ItemStack stack = player.getEquippedStack();
-            ItemStack armorstack = player.getEquippedStack();
-
-
-            EntityAttributeModifier speedModifier = new EntityAttributeModifier(
-                    SPEED_PENALTY,
-                    modifier,
-                    EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-            );
-            speed.addPersistentModifier(speedModifier);
-        }
-    }
-
     public static void oneHitToOneHp() {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((livingEntity, damageSource, v) -> {
             String damageString = damageSource.getName();

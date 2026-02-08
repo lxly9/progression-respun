@@ -35,7 +35,7 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
     public static final TagKey<Item> LUCK_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "luck_bait"));
     public static final TagKey<Item> ENTITY_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "entity_bait"));
     public static final TagKey<Item> MENDING_ENCHANTABLE = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "mending_enchantable"));
-    public static final TagKey<Item> HORSE_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "horse_armor"));
+    public static final TagKey<Item> ANIMAL_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "animal_armor"));
     public static final TagKey<Item> LIGHT_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "light_armor"));
     public static final TagKey<Item> MEDIUM_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "medium_armor"));
     public static final TagKey<Item> HEAVY_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "heavy_armor"));
@@ -138,13 +138,14 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                 .forceAddTag(ItemTags.AXES)
                 .forceAddTag(ItemTags.HOES);
 
-        getOrCreateTagBuilder(HORSE_ARMOR)
+        getOrCreateTagBuilder(ANIMAL_ARMOR)
                 .add(Items.LEATHER_HORSE_ARMOR)
                 .add(ModItems.CHAINMAIL_HORSE_ARMOR)
                 .add(Items.IRON_HORSE_ARMOR)
                 .add(Items.GOLDEN_HORSE_ARMOR)
                 .add(Items.DIAMOND_HORSE_ARMOR)
-                .add(ModItems.NETHERITE_HORSE_ARMOR);
+                .add(ModItems.NETHERITE_HORSE_ARMOR)
+                .add(Items.WOLF_ARMOR);
 
         getOrCreateTagBuilder(LIGHT_ARMOR)
                 .add(Items.LEATHER_HELMET)

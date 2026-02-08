@@ -14,7 +14,7 @@ Progression Respun is a mod that alters the way Minecraft's progression works in
 - Unit repairs at anvils are free and anvils break slightly less often
 - Durability for vanilla tool materials has been buffed and armor values have been nerfed (they stack with under armor)
 - Smelting iron and gold tools results in ingots instead of nuggets
-- Netherite rework: made ancient debris more common with a chance of air exposure, slightly more expensive ingot recipe, repair tools using Netherite scrap
+- Netherite rework: made ancient debris more common with a chance of air exposure, slightly more expensive ingot recipe
 - Mobs will have more HP and deal more damage depending on how low they spawn in the world. They will despawn in a radius around the player when waking up (radius depends on the difficulty)
 - Potions can be used multiple times, there are no more Lingering Potions, and Tipped Arrows are crafted with normal Potions
 - Redstone Devices use Copper instead of Iron, making them Oxidizable
@@ -116,7 +116,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - Structure Overhaul
   - Updated and beautified Nether Fortress
     - No more Blaze spawners -> Trial Spawner-like behavior
-    - No more Wooden Chests -> replaced with special Fortress Chests that cannot be mined
+    - No more Wooden Chests -> replaced with special Fortress Chests that cannot be mined/slowly
     - Fortress Omen which spawns Wither Skeletons
   - Updated and expanded Dungeon Rooms
     - Trial Spawner-like but only grants rewards upon being lit up with light sources around it
@@ -132,6 +132,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 
 
 - End Platform spawns in Outer End
+- End Material on par with Netherite but different buffs
 - **?** Smithing templates only break upon use, can be repaired in anvil
 - All ice blocks melt in the Nether
 - Banners as capes

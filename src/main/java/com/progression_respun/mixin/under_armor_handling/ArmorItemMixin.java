@@ -3,15 +3,12 @@ package com.progression_respun.mixin.under_armor_handling;
 import com.progression_respun.component.ModDataComponentTypes;
 import com.progression_respun.component.type.UnderArmorContentsComponent;
 import com.progression_respun.util.SoundUtil;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
-import net.minecraft.component.Component;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -153,7 +150,7 @@ public abstract class ArmorItemMixin extends Item {
     @Override
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
         UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
-        if (component != null && !stack.isIn(HORSE_ARMOR)) {
+        if (component != null && !stack.isIn(ANIMAL_ARMOR)) {
             ItemStack armorStack = getArmor(stack);
             if (stack.isIn(UNDER_ARMOR)) {
                 if (armorStack == ItemStack.EMPTY) {

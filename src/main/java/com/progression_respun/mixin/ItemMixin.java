@@ -1,16 +1,16 @@
 package com.progression_respun.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.progression_respun.ProgressionRespun;
-import com.progression_respun.component.ModDataComponentTypes;
-import com.progression_respun.data.ModItemTagProvider;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.FoodComponent;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
+import static com.progression_respun.ProgressionRespun.MOD_ID;
 import static com.progression_respun.data.ModItemTagProvider.*;
 
 @Mixin(Item.class)
@@ -80,6 +81,46 @@ public class ItemMixin {
         if (stack.getItem() instanceof ArmorItem && !stack.isIn(UNDER_ARMOR)) {
             if (!(stack.getDamage() >= stack.getMaxDamage()) && !stack.isIn(BYPASSES_UNDER_ARMOR)) {
                 tooltip.add(Text.translatable("tag.item.progression_respun.needs_under_armor").formatted(Formatting.GRAY));
+            }
+        }
+    }
+
+    @Inject(method = "postProcessComponents", at = @At("HEAD"))
+    private void addAttributes(ItemStack stack, CallbackInfo ci) {
+        if (stack.getItem() instanceof ArmorItem armorItem && !stack.isIn(ANIMAL_ARMOR)) {
+            var component = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+            var changedComponent = component;
+            if (component != null) {
+                if (armorItem.getProtection() >= 6) {
+                    changedComponent = component.with(
+                            EntityAttributes.GENERIC_MOVEMENT_SPEED,
+                            new EntityAttributeModifier(
+                                    Identifier.of(MOD_ID, "heavy_armor_movement_impact"),
+                                    -0.008,
+                                    EntityAttributeModifier.Operation.ADD_VALUE),
+                            AttributeModifierSlot.ARMOR);
+                    stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, changedComponent);
+                }
+                if (armorItem.getProtection() >= 3 && armorItem.getProtection() < 6) {
+                    changedComponent = component.with(
+                            EntityAttributes.GENERIC_MOVEMENT_SPEED,
+                            new EntityAttributeModifier(
+                                    Identifier.of(MOD_ID, "medium_armor_movement_impact"),
+                                    -0.005,
+                                    EntityAttributeModifier.Operation.ADD_VALUE),
+                            AttributeModifierSlot.ARMOR);
+                    stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, changedComponent);
+                }
+                if (armorItem.getProtection() < 3) {
+                    changedComponent = component.with(
+                            EntityAttributes.GENERIC_MOVEMENT_SPEED,
+                            new EntityAttributeModifier(
+                                    Identifier.of(MOD_ID, "light_armor_movement_impact"),
+                                    -0.002,
+                                    EntityAttributeModifier.Operation.ADD_VALUE),
+                            AttributeModifierSlot.ARMOR);
+                    stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, changedComponent);
+                }
             }
         }
     }

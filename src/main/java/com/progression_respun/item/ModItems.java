@@ -7,6 +7,7 @@ import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
+import static com.progression_respun.ProgressionRespun.isModLoaded;
 import static com.progression_respun.compat.VanillaItems.COPPER_NUGGET;
 
 public class ModItems {
@@ -65,7 +66,9 @@ public class ModItems {
                     group.addAfter(Items.FLINT, FLINT_BAR);
                     group.addBefore(Items.GOLD_NUGGET, DIAMOND_SHARD);
                     group.addAfter(Items.GOLD_INGOT, POLISHED_DIAMOND);
-                    group.addBefore(Items.IRON_NUGGET, COPPER_NUGGET);
+                    if (!isModLoaded("copperagebackport")) {
+                        group.addBefore(Items.IRON_NUGGET, COPPER_NUGGET);
+                    }
                     group.addAfter(Items.RAW_COPPER, RAW_COPPER_BAR);
                     group.addAfter(Items.RAW_IRON, RAW_IRON_BAR);
                     group.addAfter(Items.RAW_GOLD, RAW_GOLD_BAR);

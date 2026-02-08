@@ -133,5 +133,7 @@ public class ArmorUtil {
 
         return value;
     }
+    public static void gay() {
+    }
 
 }
