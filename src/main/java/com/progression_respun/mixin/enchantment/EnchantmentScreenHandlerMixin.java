@@ -32,10 +32,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.progression_respun.ProgressionRespun.*;
@@ -62,9 +59,9 @@ public class EnchantmentScreenHandlerMixin {
     private float curseChance = 0;
 
     @WrapOperation(method = "onButtonClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Inventory;getStack(I)Lnet/minecraft/item/ItemStack;"))
-    private ItemStack progression_respun$enchantArmorInsteadOfUnderArmor(Inventory instance, int i, Operation<ItemStack> original) {
+    private ItemStack progressionrespun$enchantArmorInsteadOfUnderArmor(Inventory instance, int i, Operation<ItemStack> original) {
         ItemStack underArmorStack = original.call(instance, i);
-        if (underArmorStack.isIn(ModItemTagProvider.UNDER_ARMOR)) {
+        if (underArmorStack.isIn(UNDER_ARMOR)) {
             ItemStack armorStack = getArmor(underArmorStack);
             if (!getArmor(underArmorStack).isIn(UNDER_ARMOR)){
                 return armorStack;
@@ -75,11 +72,24 @@ public class EnchantmentScreenHandlerMixin {
         return original.call(instance, i);
     }
 
+    @Unique
+    private void progressionrespun$getMoonMulitpier(int moonPhase) {
+        switch ((int) curseChance) {
+            case 110000, 118000 -> curseChance = curseChance;
+            case 134000, 142000, 860000, 940000 -> curseChance = (float) (curseChance * 0.1);
+            case 158000, 166000, 620000, 700000 -> curseChance = (float) (curseChance * 0.15);
+            case 182000, 190000 -> curseChance = (float) (curseChance * 0.20);
+            case 140000, 220000 -> curseChance = (float) (curseChance * 0.3);
+            case 380000, 460000 -> curseChance = (float) (curseChance * 0.2);
+        }
+    }
+
     @Inject(method = "method_17411", at = @At(value = "HEAD"))
-    private void progression_respun$getEnchantments(ItemStack itemStack, World world, BlockPos tablePos, CallbackInfo ci) {
+    private void progressionrespun$getEnchantments(ItemStack itemStack, World world, BlockPos tablePos, CallbackInfo ci) {
         this.possibleEnchantments.clear();
         this.bookAmount = 0;
         this.curseChance = progressionrespun$getDifficulty(world.getDifficulty());
+
         for (BlockPos blockPos : POWER_PROVIDER_OFFSETS) {
             BlockPos realPos = tablePos.add(blockPos);
             BlockState state = world.getBlockState(realPos);
@@ -88,7 +98,6 @@ public class EnchantmentScreenHandlerMixin {
             }
             if (state.isIn(ModBlockTags.INCREASES_CURSE)) {
                 curseChance = curseChance + 0.1f;
-                LOGGER.info(String.valueOf(curseChance));
             }
             if (!(world.getBlockEntity(tablePos.add(blockPos)) instanceof ChiseledBookshelfBlockEntity bookshelf)) {
                 continue;
@@ -101,6 +110,7 @@ public class EnchantmentScreenHandlerMixin {
                 }
             }
         }
+        progressionrespun$getMoonMulitpier(world.getMoonPhase());
     }
 
     @WrapMethod(method = "onContentChanged")
@@ -194,7 +204,7 @@ public class EnchantmentScreenHandlerMixin {
         enchantmentLevelEntries.removeAll(result);
 
         while (result.size() < desiredCount && !enchantmentLevelEntries.isEmpty()) {
-            java.util.Collections.shuffle(enchantmentLevelEntries, new java.util.Random(this.random.nextLong()));
+            Collections.shuffle(enchantmentLevelEntries, new java.util.Random(this.random.nextLong()));
             EnchantmentLevelEntry entry = enchantmentLevelEntries.getFirst();
             result.add(entry);
             enchantmentLevelEntries.remove(entry);
@@ -205,14 +215,13 @@ public class EnchantmentScreenHandlerMixin {
             Optional<RegistryEntry<Enchantment>> curse = curseList.getRandomEntry(EnchantmentTags.CURSE, random);
             if (curse.isPresent()) {
                 EnchantmentLevelEntry curseEntry = new EnchantmentLevelEntry(curse.get(), 1);
-                LOGGER.info(curseEntry.toString());
                 if (curseEntry.enchantment.value().isAcceptableItem(stack)) {
                     result.remove(random.nextInt(result.size()));
                     result.add(curseEntry);
                     Optional<RegistryEntry<Enchantment>> curse1 = curseList.getRandomEntry(EnchantmentTags.CURSE, random);
                     if (curse1.isPresent()) {
                         EnchantmentLevelEntry curseEntry1 = new EnchantmentLevelEntry(curse.get(), 1);
-                        if (curseEntry1.enchantment.value().isAcceptableItem(stack) && curseEntry1 != curseEntry) {
+                        if (curseEntry1.enchantment.value().isAcceptableItem(stack) && curseEntry1 != curseEntry && random.nextFloat() < curseChance) {
                             result.add(curseEntry1);
                         }
                     }

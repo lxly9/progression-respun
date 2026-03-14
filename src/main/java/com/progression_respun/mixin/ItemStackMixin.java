@@ -412,7 +412,7 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
                 }
             }
         } else {
-            return item.isIn(ConventionalItemTags.ENCHANTABLES);
+            return item.isIn(ConventionalItemTags.ENCHANTABLES) && !item.hasEnchantments();
         }
         return original;
     }
