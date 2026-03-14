@@ -73,7 +73,7 @@ public class EnchantmentScreenHandlerMixin {
     }
 
     @Unique
-    private void progressionrespun$getMoonMulitpier(int moonPhase) {
+    private void progressionrespun$getMoonMultiplier(int moonPhase) {
         switch ((int) curseChance) {
             case 110000, 118000 -> curseChance = curseChance;
             case 134000, 142000, 860000, 940000 -> curseChance = (float) (curseChance * 0.1);
@@ -110,7 +110,7 @@ public class EnchantmentScreenHandlerMixin {
                 }
             }
         }
-        progressionrespun$getMoonMulitpier(world.getMoonPhase());
+        progressionrespun$getMoonMultiplier(world.getMoonPhase());
     }
 
     @WrapMethod(method = "onContentChanged")
