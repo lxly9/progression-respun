@@ -86,12 +86,12 @@ public class ItemMixin {
     }
 
     @Inject(method = "postProcessComponents", at = @At("HEAD"))
-    private void addAttributes(ItemStack stack, CallbackInfo ci) {
+    private void progressionrespun$addAttributes(ItemStack stack, CallbackInfo ci) {
         if (stack.getItem() instanceof ArmorItem armorItem && !stack.isIn(ANIMAL_ARMOR)) {
             var component = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
-            var changedComponent = component;
+            net.minecraft.component.type.AttributeModifiersComponent changedComponent;
             if (component != null) {
-                if (armorItem.getProtection() >= 6) {
+                if (stack.isIn(HEAVY_ARMOR)) {
                     changedComponent = component.with(
                             EntityAttributes.GENERIC_MOVEMENT_SPEED,
                             new EntityAttributeModifier(
@@ -101,7 +101,7 @@ public class ItemMixin {
                             AttributeModifierSlot.ARMOR);
                     stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, changedComponent);
                 }
-                if (armorItem.getProtection() >= 3 && armorItem.getProtection() < 6) {
+                if (stack.isIn(MEDIUM_ARMOR)) {
                     changedComponent = component.with(
                             EntityAttributes.GENERIC_MOVEMENT_SPEED,
                             new EntityAttributeModifier(
@@ -111,7 +111,7 @@ public class ItemMixin {
                             AttributeModifierSlot.ARMOR);
                     stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, changedComponent);
                 }
-                if (armorItem.getProtection() < 3) {
+                if (stack.isIn(LIGHT_ARMOR)) {
                     changedComponent = component.with(
                             EntityAttributes.GENERIC_MOVEMENT_SPEED,
                             new EntityAttributeModifier(

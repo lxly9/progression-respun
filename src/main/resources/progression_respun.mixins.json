@@ -15,6 +15,7 @@
     "PotionItemMixin",
     "PotionsMixin",
     "ServerPlayerEntityMixin",
+    "SmithingScreenHandlerMixin",
     "ToolMaterialsMixin",
     "compat.BronzeToolMaterialMixin",
     "enchantment.EnchantingTableBlockMixin",

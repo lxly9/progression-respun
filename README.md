@@ -142,6 +142,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - Off-state for torches if underwater -> Glow Ink Torch for Underwater?
 - More uses for one-use Items -> Rabbit's Hide, Nautilus Shell, etc. 
 - More Nekoma ideas (just not the slop ones)
+- More cave biomes that correspond to the biomes temperature above!
 
 ### Done
 - ~~**!!** Under Armor rendering~~
