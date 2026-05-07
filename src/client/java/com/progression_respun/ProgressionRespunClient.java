@@ -11,7 +11,6 @@ public class ProgressionRespunClient implements ClientModInitializer {
     public void onInitializeClient() {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CRUCIBLE_BLOCK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FLINT_PEBBLES, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WITHERED_CROP, RenderLayer.getCutout());
         ClientParticleUtil.registerParticle();
     }
 }

@@ -17,6 +17,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.concurrent.CompletableFuture;
 
+import static com.progression_respun.ProgressionRespun.MOD_ID;
 import static com.progression_respun.compat.CompatMods.ENDERSCAPE;
 import static com.progression_respun.compat.CompatMods.GALOSPHERE;
 
@@ -25,20 +26,20 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
         super(output, registriesFuture);
     }
 
-    public static final TagKey<Item> POLISHABLE_GEM = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "polishable_gems"));
-    public static final TagKey<Item> BYPASSES_UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "bypasses_under_armor"));
-    public static final TagKey<Item> UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "under_armor"));
-    public static final TagKey<Item> CAN_BURN_COBWEBS = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "can_burn_cobwebs"));
-    public static final TagKey<Item> CAN_FERTILIZE_FARMLAND = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "can_fertilize_farmland"));
-    public static final TagKey<Item> BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "bait"));
-    public static final TagKey<Item> TIME_REDUCTION_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "fishing_time_reduction_bait"));
-    public static final TagKey<Item> LUCK_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "luck_bait"));
-    public static final TagKey<Item> ENTITY_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "entity_bait"));
-    public static final TagKey<Item> MENDING_ENCHANTABLE = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "mending_enchantable"));
-    public static final TagKey<Item> ANIMAL_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "animal_armor"));
-    public static final TagKey<Item> LIGHT_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "light_armor"));
-    public static final TagKey<Item> MEDIUM_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "medium_armor"));
-    public static final TagKey<Item> HEAVY_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of("progression_respun", "heavy_armor"));
+    public static final TagKey<Item> POLISHABLE_GEM = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "polishable_gems"));
+    public static final TagKey<Item> BYPASSES_UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "bypasses_under_armor"));
+    public static final TagKey<Item> UNDER_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "under_armor"));
+    public static final TagKey<Item> CAN_BURN_COBWEBS = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "can_burn_cobwebs"));
+    public static final TagKey<Item> CAN_FERTILIZE_FARMLAND = TagKey.of(RegistryKeys.ITEM, Identifier.of("thumbandthicket" , "can_fertilize_farmland"));
+    public static final TagKey<Item> BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "bait"));
+    public static final TagKey<Item> TIME_REDUCTION_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "fishing_time_reduction_bait"));
+    public static final TagKey<Item> LUCK_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "luck_bait"));
+    public static final TagKey<Item> ENTITY_BAIT = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "entity_bait"));
+    public static final TagKey<Item> MENDING_ENCHANTABLE = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "mending_enchantable"));
+    public static final TagKey<Item> ANIMAL_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "animal_armor"));
+    public static final TagKey<Item> LIGHT_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "light_armor"));
+    public static final TagKey<Item> MEDIUM_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "medium_armor"));
+    public static final TagKey<Item> HEAVY_ARMOR = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID , "heavy_armor"));
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {

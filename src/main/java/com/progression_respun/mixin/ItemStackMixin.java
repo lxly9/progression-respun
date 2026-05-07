@@ -307,25 +307,6 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
         return original.call(context);
     }
 
-    @WrapMethod(method = "useOnBlock")
-    private ActionResult progressionrespun$fertilizeFarmland(ItemUsageContext context, Operation<ActionResult> original) {
-        ItemStack stack = (ItemStack) (Object) this;
-        World world = context.getWorld();
-        BlockPos pos = context.getBlockPos();
-        BlockState state = world.getBlockState(pos);
-        PlayerEntity player = context.getPlayer();
-
-        if (stack.isIn(CAN_FERTILIZE_FARMLAND) && state.getBlock() instanceof FarmlandBlock && !state.get(FERTILIZED)) {
-            if (!world.isClient && player != null) {
-                world.setBlockState(pos, state.with(FERTILIZED, true));
-                stack.decrementUnlessCreative(1, player);
-                player.playSound(SoundEvents.BLOCK_ROOTED_DIRT_HIT, 0.8f, 0.8f + world.getRandom().nextFloat() * 0.4f);
-            }
-            return ActionResult.SUCCESS;
-        }
-        return original.call(context);
-    }
-
     @Inject(method = "getMiningSpeedMultiplier", at = @At("HEAD"), cancellable = true)
     private void progressionrespun$getMiningSpeedMultiplierIfNotBroken(BlockState state, CallbackInfoReturnable<Float> cir) {
         if (isBroken()) {

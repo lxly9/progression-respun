@@ -74,7 +74,7 @@ public class EnchantmentScreenHandlerMixin {
 
     @Unique
     private void progressionrespun$getMoonMultiplier(int moonPhase) {
-        switch ((int) curseChance) {
+        switch (moonPhase) {
             case 110000, 118000 -> curseChance = curseChance;
             case 134000, 142000, 860000, 940000 -> curseChance = (float) (curseChance * 0.1);
             case 158000, 166000, 620000, 700000 -> curseChance = (float) (curseChance * 0.15);
