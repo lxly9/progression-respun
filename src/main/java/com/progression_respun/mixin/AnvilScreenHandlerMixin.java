@@ -107,11 +107,11 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         if (!armor && hasMending(itemStack2)) {
             if (itemStack2.getItem() instanceof ToolItem toolItem) {
                 material = toolItem.getMaterial();
-                nugget = getNugget(material.getRepairIngredient());
+                nugget = getNugget(ingredientToStack(material.getRepairIngredient()));
             }
             if (itemStack2.getItem() instanceof ArmorItem UnderArmorItem) {
                 armorMaterial = UnderArmorItem.getMaterial().value();
-                nugget = getNugget(armorMaterial.repairIngredient().get());
+                nugget = getNugget(ingredientToStack(armorMaterial.repairIngredient().get()));
             }
             if (itemStack3.isOf(nugget.getItem()) && nugget != ItemStack.EMPTY) {
                 int m;
@@ -134,7 +134,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         } else if (armor) {
             if (armorStack.getItem() instanceof ArmorItem armorItem) {
                 armorMaterial = armorItem.getMaterial().value();
-                armorNugget = getNugget(armorMaterial.repairIngredient().get());
+                armorNugget = getNugget(ingredientToStack(armorMaterial.repairIngredient().get()));
                 if (hasMending(armorStack) && itemStack3.isOf(armorNugget.getItem()) && armorNugget != ItemStack.EMPTY) {
                     int m;
 
@@ -200,30 +200,5 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
                 }
             }
         }
-    }
-
-    @Unique
-    private ItemStack getNugget(Ingredient ingredient) {
-        ItemStack stack = ingredientToStack(ingredient);
-
-        if (!stack.isEmpty()){
-            String[] ingot = stack.toString().split(":");
-            String material = ingot[1].replace("_ingot", "");
-            Item nugget = getItemByName(material + "_nugget");
-            Item shard = getItemByName(material + "_shard");
-            if (ingot[1].equals("netherite_ingot")) return Items.NETHERITE_SCRAP.getDefaultStack();
-            if (nugget != Items.AIR) return nugget.getDefaultStack();
-            if (shard != Items.AIR) return shard.getDefaultStack();
-
-            return ItemStack.EMPTY;
-        }
-        return ItemStack.EMPTY;
-    }
-
-    @Unique
-    private static ItemStack ingredientToStack(Ingredient ingredient) {
-        ItemStack[] stacks = ingredient.getMatchingStacks();
-        if (stacks.length == 0) return ItemStack.EMPTY;
-        return stacks[0].copy();
     }
 }

@@ -4,13 +4,11 @@ import com.progression_respun.block.ModBlocks;
 import com.progression_respun.block.entity.ModBlockEntities;
 import com.progression_respun.compat.CompatMods;
 import com.progression_respun.component.ModDataComponentTypes;
-import com.progression_respun.component.type.FishingBaitContentsComponent;
 import com.progression_respun.item.ModItems;
 import com.progression_respun.recipe.ModRecipes;
 import com.progression_respun.util.*;
 import com.progression_respun.worldgen.ModFeatures;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -19,6 +17,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.*;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -54,6 +53,7 @@ public class ProgressionRespun implements ModInitializer {
 		ModDataComponentTypes.registerModDataComponentTypes();
 		ArmorUtil.registerComponent();
         ComponentUtil.registerComponents();
+        LootTableUtil.replaceIngots();
 		registerResourcePacks();
 	}
 
@@ -131,6 +131,28 @@ public class ProgressionRespun implements ModInitializer {
         ItemEnchantmentsComponent enchants = stack.get(DataComponentTypes.ENCHANTMENTS);
         if (enchants != null) return enchants.getEnchantments().stream().anyMatch(entry -> entry.matchesKey(Enchantments.BINDING_CURSE));
         return false;
+    }
+
+    public static ItemStack getNugget(ItemStack stack) {
+
+        if (!stack.isEmpty()){
+            String[] ingot = stack.toString().split(":");
+            String material = ingot[1].replace("_ingot", "");
+            Item nugget = getItemByName(material + "_nugget");
+            Item shard = getItemByName(material + "_shard");
+            if (ingot[1].equals("netherite_ingot")) return Items.NETHERITE_SCRAP.getDefaultStack();
+            if (nugget != Items.AIR) return nugget.getDefaultStack();
+            if (shard != Items.AIR) return shard.getDefaultStack();
+
+            return ItemStack.EMPTY;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public static ItemStack ingredientToStack(Ingredient ingredient) {
+        ItemStack[] stacks = ingredient.getMatchingStacks();
+        if (stacks.length == 0) return ItemStack.EMPTY;
+        return stacks[0].copy();
     }
 
     public static final List<BlockPos> POWER_PROVIDER_OFFSETS = BlockPos.stream(-3, 0, -3, 3, 2, 3).map(BlockPos::toImmutable).toList();

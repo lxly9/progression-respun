@@ -143,6 +143,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - More uses for one-use Items -> Rabbit's Hide, Nautilus Shell, etc. 
 - More Nekoma ideas (just not the slop ones)
 - More cave biomes that correspond to the biomes temperature above!
+- Fletching Table Rework
 
 ### Done
 - ~~**!!** Under Armor rendering~~
