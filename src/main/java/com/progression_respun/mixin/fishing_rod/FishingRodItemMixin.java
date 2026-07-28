@@ -95,12 +95,22 @@ public class FishingRodItemMixin<T extends Entity & ItemSteerable> extends Item 
         ItemStack itemStack = user.getStackInHand(hand);
         ItemStack baitStack = getBait(itemStack);
         if (baitStack != ItemStack.EMPTY && baitStack.getItem() != ModItems.WORM) {
+            int damage = baitStack.getComponents().get(ModDataComponentTypes.DAMAGE).intValue();
+            int maxDamage = baitStack.getComponents().get(ModDataComponentTypes.MAX_DAMAGE).intValue();
             if (world.isClient) {
                 return TypedActionResult.pass(itemStack);
             } else {
                 Entity entity = user.getControllingVehicle();
                 if (user.hasVehicle() && entity instanceof ItemSteerable itemSteerable && itemSteerable.consumeOnAStickItem()) {
-                    baitStack.set(DataComponentTypes.DAMAGE, baitStack.getDamage() + 1);
+                    if (damage < maxDamage){
+                        baitStack.set(ModDataComponentTypes.DAMAGE, damage + 1);
+                        FishingBaitContentsComponent component = itemStack.get(ModDataComponentTypes.FISHING_BAIT);
+                        damage = baitStack.getComponents().get(ModDataComponentTypes.DAMAGE).intValue();
+                        if (!(component == null) && damage >= maxDamage) {
+                            FishingBaitContentsComponent.Builder builder = new FishingBaitContentsComponent.Builder(component);
+                            builder.removeFirst();
+                        }
+                    }
                     return TypedActionResult.success(itemStack);
                 } else {
                     user.incrementStat(Stats.USED.getOrCreateStat(this));
