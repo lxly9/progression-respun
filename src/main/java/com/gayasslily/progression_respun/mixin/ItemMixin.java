@@ -1,0 +1,127 @@
+package com.gayasslily.progression_respun.mixin;
+
+import com.gayasslily.progression_respun.entity.attribute.ModEntityAttributes;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.FoodComponent;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.item.*;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import org.slf4j.Logger;
+import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
+
+import static com.gayasslily.progression_respun.ProgressionRespun.MOD_ID;
+import static com.gayasslily.progression_respun.data.ModItemTagProvider.*;
+
+@Mixin(Item.class)
+public class ItemMixin {
+
+
+    @Shadow
+    @Final
+    @Mutable
+    private ComponentMap components;
+
+    @Shadow
+    @Final
+    private static Logger LOGGER;
+
+    @Unique
+    private int progressionrespun$getStackSizePerNutrition(int nutrition) {
+        return switch (nutrition) {
+            case 1,2,3 -> 64;
+            case 4 -> 32;
+            case 5,6 -> 16;
+            case 7,8,9,10,11,12,13,14 -> 8;
+            case 15,16,17,18,19,20 -> 4;
+            default -> 64;
+        };
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void progressionrespun$changeStackSize(Item.Settings settings, CallbackInfo ci) {
+        Item item = (Item) (Object) this;
+        int newStackSize = -1;
+        int newMaxDamage = -1;
+
+        if (item instanceof BedItem) newStackSize = 16;
+        if (item instanceof PotionItem) newMaxDamage = 3;
+
+        FoodComponent foodComponent = item.getComponents().get(DataComponentTypes.FOOD);
+        if (foodComponent != null) {
+            int nutrition = foodComponent.nutrition();
+            newStackSize = progressionrespun$getStackSizePerNutrition(nutrition);
+            if (nutrition > 2 && foodComponent.effects().size() > 1) {
+                newStackSize = 1;
+            }
+        }
+
+        if (newStackSize > 0) {
+            ComponentMap override = ComponentMap.builder().add(DataComponentTypes.MAX_STACK_SIZE, newStackSize).build();
+            components = ComponentMap.of(components, override);
+        }
+
+        if (newMaxDamage > 0) {
+            ComponentMap override = ComponentMap.builder().add(DataComponentTypes.MAX_DAMAGE, newMaxDamage).add(DataComponentTypes.DAMAGE, 0).build();
+            components = ComponentMap.of(components, override);
+        }
+    }
+
+    @Inject(method = "appendTooltip", at = @At("HEAD"))
+    private void progressionrespun$underArmorTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type, CallbackInfo ci) {
+        if (stack.getItem() instanceof ArmorItem && !stack.isIn(UNDER_ARMOR)) {
+            if (!(stack.getDamage() >= stack.getMaxDamage()) && !stack.isIn(BYPASSES_UNDER_ARMOR)) {
+                tooltip.add(Text.translatable("tag.item.progression_respun.needs_under_armor").formatted(Formatting.GRAY));
+            }
+        }
+    }
+
+    @Inject(method = "postProcessComponents", at = @At("HEAD"))
+    private void progressionrespun$addAttributes(ItemStack stack, CallbackInfo ci) {
+        if (stack.getItem() instanceof ArmorItem armorItem && !stack.isIn(ANIMAL_ARMOR)) {
+            var component = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+            net.minecraft.component.type.AttributeModifiersComponent changedComponent;
+            if (component != null) {
+                if (stack.isIn(HEAVY_ARMOR)) {
+                    changedComponent = component.with(
+                            ModEntityAttributes.GENERIC_WEIGHT,
+                            new EntityAttributeModifier(
+                                    Identifier.of(MOD_ID, "heavy_armor_movement_impact"),
+                                    2,
+                                    EntityAttributeModifier.Operation.ADD_VALUE),
+                            AttributeModifierSlot.ARMOR);
+                    stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, changedComponent);
+                }
+                if (stack.isIn(MEDIUM_ARMOR)) {
+                    changedComponent = component.with(
+                            ModEntityAttributes.GENERIC_WEIGHT,
+                            new EntityAttributeModifier(
+                                    Identifier.of(MOD_ID, "medium_armor_movement_impact"),
+                                    1.25,
+                                    EntityAttributeModifier.Operation.ADD_VALUE),
+                            AttributeModifierSlot.ARMOR);
+                    stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, changedComponent);
+                }
+                if (stack.isIn(LIGHT_ARMOR)) {
+                    changedComponent = component.with(
+                            ModEntityAttributes.GENERIC_WEIGHT,
+                            new EntityAttributeModifier(
+                                    Identifier.of(MOD_ID, "light_armor_movement_impact"),
+                                    0.5,
+                                    EntityAttributeModifier.Operation.ADD_VALUE),
+                            AttributeModifierSlot.ARMOR);
+                    stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, changedComponent);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,262 @@
+package com.gayasslily.progression_respun.data;
+
+import com.gayasslily.progression_respun.block.ModBlocks;
+import com.gayasslily.progression_respun.compat.VanillaItems;
+import com.gayasslily.progression_respun.item.ModItems;
+import com.gayasslily.progression_respun.recipe.CrucibleRecipeBuilder;
+import com.gayasslily.progression_respun.recipe.GrindingRecipeBuilder;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import net.minecraft.block.Blocks;
+import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.RegistryWrapper;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public class ModRecipeProvider extends FabricRecipeProvider {
+    public ModRecipeProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+        super(output, registriesFuture);
+    }
+
+    @Override
+    public void generate(RecipeExporter exporter) {
+
+        //Crucible
+        offerCrucibleRecipe(exporter, Items.RAW_COPPER, VanillaItems.COPPER_NUGGET, 0.2F);
+        offerCrucibleRecipe(exporter, Items.RAW_GOLD, Items.GOLD_NUGGET, 0.2F);
+        offerCrucibleRecipe(exporter, Items.RAW_IRON, Items.IRON_NUGGET, 0.2F);
+        offerCrucibleRecipe(exporter, ModItems.RAW_COPPER_BAR, Items.COPPER_INGOT, 0.5F);
+        offerCrucibleRecipe(exporter, ModItems.RAW_GOLD_BAR, Items.GOLD_INGOT, 0.5F);
+        offerCrucibleRecipe(exporter, ModItems.RAW_IRON_BAR, Items.IRON_INGOT, 0.5F);
+
+        //Grinding
+        offerGrindingRecipe(exporter, Items.DIAMOND, ModItems.POLISHED_DIAMOND, ModItems.DIAMOND_SHARD, 0.2F, 4, 0.3F);
+
+        //Brewing
+//        offerBrewingRecipe(exporter, Items.REDSTONE, Ingredient.ofStacks(Items.POTION.getDefaultStack()), Items.POTION, 0.2F);
+
+        // Bars
+        offerBarRecipe(exporter, Items.FLINT, ModItems.FLINT_BAR);
+        offerBarRecipe(exporter, Items.RAW_COPPER, ModItems.RAW_COPPER_BAR);
+        offerBarRecipe(exporter, Items.RAW_IRON, ModItems.RAW_IRON_BAR);
+        offerBarRecipe(exporter, Items.RAW_GOLD, ModItems.RAW_GOLD_BAR);
+
+        //smelting
+        offerBlasting(exporter, List.of(ModItems.RAW_COPPER_BAR), RecipeCategory.MISC, Items.COPPER_INGOT, 2.1f, 100, "copper_ingot");
+        offerBlasting(exporter, List.of(ModItems.RAW_IRON_BAR), RecipeCategory.MISC, Items.IRON_INGOT, 2.1f, 100, "iron_ingot");
+        offerBlasting(exporter, List.of(ModItems.RAW_GOLD_BAR), RecipeCategory.MISC, Items.GOLD_INGOT, 3.0f, 100, "gold_ingot");
+        offerBlasting(exporter, List.of(ModItems.COPPER_AXE, ModItems.COPPER_PICKAXE, ModItems.COPPER_SWORD), RecipeCategory.MISC, Items.COPPER_INGOT, 3.0f, 100, "copper_ingot");
+
+
+        //shapeless
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FIRESTARTER)
+                .input(Items.FLINT,2)
+                .criterion(FabricRecipeProvider.hasItem(Items.FLINT), FabricRecipeProvider.conditionsFromItem(ModItems.FIRESTARTER))
+                .offerTo(exporter);
+
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.TOOLS, Items.NAME_TAG)
+                .input(Items.PAPER)
+                .input(ConventionalItemTags.NUGGETS)
+                .criterion(FabricRecipeProvider.hasItem(Items.PAPER), FabricRecipeProvider.conditionsFromItem(Items.NAME_TAG))
+                .offerTo(exporter);
+
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, Items.LEATHER)
+                .input(Items.ROTTEN_FLESH, 4)
+                .criterion(FabricRecipeProvider.hasItem(Items.ROTTEN_FLESH), FabricRecipeProvider.conditionsFromItem(Items.ROTTEN_FLESH))
+                .offerTo(exporter);
+
+        //shaped
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModBlocks.CRUCIBLE_BLOCK)
+                .input('#', Items.STICK)
+                .input('X', Items.RAW_COPPER)
+                .pattern("X X")
+                .pattern("X X")
+                .pattern("#X#")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(ModBlocks.CRUCIBLE_BLOCK))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.BELL)
+                .input('#', Items.STICK)
+                .input('X', Items.GOLD_INGOT)
+                .pattern("#X#")
+                .pattern("X X")
+                .pattern("X X")
+                .criterion(hasItem(Items.GOLD_INGOT), conditionsFromItem(Items.GOLD_INGOT))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.CAMPFIRE)
+                .input('#', Items.STICK)
+                .input('X', Items.RAW_COPPER)
+                .pattern(" X ")
+                .pattern("X#X")
+                .criterion(hasItem(Blocks.CAMPFIRE), conditionsFromItem(Blocks.CAMPFIRE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TRANSPORTATION, Items.SADDLE)
+                .input('#', Items.LEATHER)
+                .input('X', Items.IRON_NUGGET)
+                .pattern("###")
+                .pattern(" X ")
+                .criterion(hasItem(Items.LEATHER), conditionsFromItem(Items.SADDLE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Items.COPPER_INGOT)
+                .input('X', VanillaItems.COPPER_NUGGET)
+                .pattern("XXX")
+                .pattern("XXX")
+                .pattern("XXX")
+                .criterion(hasItem(VanillaItems.COPPER_NUGGET), conditionsFromItem(VanillaItems.COPPER_NUGGET))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Items.DIAMOND)
+                .input('X', ModItems.DIAMOND_SHARD)
+                .pattern("XXX")
+                .pattern("XXX")
+                .pattern("XXX")
+                .criterion(hasItem(ModItems.DIAMOND_SHARD), conditionsFromItem(ModItems.DIAMOND_SHARD))
+                .offerTo(exporter);
+
+        // Flint Tools
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, ModItems.FLINT_SWORD)
+                .input('#', Items.STICK)
+                .input('X', ModItems.FLINT_BAR)
+                .pattern("X")
+                .pattern("X")
+                .pattern("#")
+                .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_SHOVEL)
+                .input('#', Items.STICK)
+                .input('X', ModItems.FLINT_BAR)
+                .pattern("X")
+                .pattern("#")
+                .pattern("#")
+                .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_PICKAXE)
+                .input('#', Items.STICK)
+                .input('X', ModItems.FLINT_BAR)
+                .pattern("XXX")
+                .pattern(" # ")
+                .pattern(" # ")
+                .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_AXE)
+                .input('#', Items.STICK)
+                .input('X', ModItems.FLINT_BAR)
+                .pattern("XX")
+                .pattern("X#")
+                .pattern(" #")
+                .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.FLINT_HOE)
+                .input('#', Items.STICK)
+                .input('X', ModItems.FLINT_BAR)
+                .pattern("XX")
+                .pattern(" #")
+                .pattern(" #")
+                .criterion(hasItem(ModItems.FLINT_BAR), conditionsFromItem(ModItems.FLINT_BAR))
+                .offerTo(exporter);
+
+//        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.ENCHANTING_TABLE)
+//                .input('B', Items.BOOK)
+//                .input('A', Items.AMETHYST_SHARD)
+//                .input('W', Blocks.RED_WOOL)
+//                .input('O', Blocks.OBSIDIAN)
+//                .pattern(" B ")
+//                .pattern("AWA")
+//                .pattern("OOO")
+//                .criterion(hasItem(Items.AMETHYST_SHARD), conditionsFromItem(Items.AMETHYST_SHARD))
+//                .criterion(hasItem(Items.BOOK), conditionsFromItem(Items.BOOK))
+//                .criterion(hasItem(Items.RED_WOOL), conditionsFromItem(Items.RED_WOOL))
+//                .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
+//                .offerTo(exporter);
+
+        // Copper Tools
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, ModItems.COPPER_SWORD)
+                .input('#', Items.STICK)
+                .input('X', Items.COPPER_INGOT)
+                .pattern("X")
+                .pattern("X")
+                .pattern("#")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.COPPER_SHOVEL)
+                .input('#', Items.STICK)
+                .input('X', Items.COPPER_INGOT)
+                .pattern("X")
+                .pattern("#")
+                .pattern("#")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.COPPER_PICKAXE)
+                .input('#', Items.STICK)
+                .input('X', Items.COPPER_INGOT)
+                .pattern("XXX")
+                .pattern(" # ")
+                .pattern(" # ")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.COPPER_AXE)
+                .input('#', Items.STICK)
+                .input('X', Items.COPPER_INGOT)
+                .pattern("XX")
+                .pattern("X#")
+                .pattern(" #")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.COPPER_HOE)
+                .input('#', Items.STICK)
+                .input('X', Items.COPPER_INGOT)
+                .pattern("XX")
+                .pattern(" #")
+                .pattern(" #")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
+                .offerTo(exporter);
+    }
+
+    private void offerBarRecipe(RecipeExporter exporter, Item material, Item bar) {
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, bar)
+                .input('X', material)
+                .pattern("XXX")
+                .pattern("XXX")
+                .criterion(hasItem(material), conditionsFromItem(material))
+                .offerTo(exporter);
+    }
+
+    private void offerCrucibleRecipe(RecipeExporter exporter, Item input, Item output, float experience) {
+        CrucibleRecipeBuilder.create(input.asItem(), output, experience, 1)
+                .criterion(hasItem(input), conditionsFromItem(input))
+                .offerTo(exporter);
+    }
+
+    private void offerGrindingRecipe(RecipeExporter exporter, Item input, Item output, Item shard, float experience, int shardMaxCount, float chance) {
+        GrindingRecipeBuilder.create(input.asItem(), output, shard, experience, shardMaxCount, chance)
+                .criterion(hasItem(input), conditionsFromItem(input))
+                .offerTo(exporter);
+    }
+
+//    private void offerBrewingRecipe(RecipeExporter exporter, Item input, Ingredient inputPotion, Item output, float experience) {
+//        BrewingRecipeBuilder.create(input, inputPotion, output.getDefaultStack(), experience)
+//                .criterion(hasItem(input), conditionsFromItem(input))
+//                .offerTo(exporter);
+//    }
+}

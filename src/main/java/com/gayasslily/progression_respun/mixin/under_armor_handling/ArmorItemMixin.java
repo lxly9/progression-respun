@@ -1,0 +1,181 @@
+package com.gayasslily.progression_respun.mixin.under_armor_handling;
+
+import com.gayasslily.progression_respun.component.ModDataComponentTypes;
+import com.gayasslily.progression_respun.component.type.UnderArmorContentsComponent;
+import com.gayasslily.progression_respun.util.SoundUtil;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.StackReference;
+import net.minecraft.item.*;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.*;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import static com.gayasslily.progression_respun.ProgressionRespun.getArmor;
+import static com.gayasslily.progression_respun.ProgressionRespun.hasBinding;
+import static com.gayasslily.progression_respun.data.ModItemTagProvider.*;
+
+@Mixin(ArmorItem.class)
+public abstract class ArmorItemMixin extends Item {
+
+    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ArmorItem;equipAndSwap(Lnet/minecraft/item/Item;Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/TypedActionResult;"), cancellable = true)
+    private void progressionrespun$equipAndSwap(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+        ItemStack stack = player.getStackInHand(hand);
+        if (stack.getItem() instanceof ArmorItem armorItem) {
+            EquipmentSlot slot = armorItem.getSlotType();
+            ItemStack underArmor = player.getEquippedStack(slot);
+            ItemStack underStack = getArmor(underArmor);
+            ItemStack armorStack = getArmor(stack);
+            if (stack.isIn(UNDER_ARMOR)) {
+                if (!underArmor.isEmpty()) {
+                    if (underStack == ItemStack.EMPTY) {
+                        if (armorStack == ItemStack.EMPTY) {
+                            UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                            if (stackComponent != null) {
+                                UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
+                                builder.add(stack);
+                                underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
+                                cir.setReturnValue(TypedActionResult.success(stack));
+                            }
+                        }
+                    }
+                }
+            } else if (!stack.isIn(BYPASSES_UNDER_ARMOR)) {
+                if (!underArmor.isEmpty()) {
+                    if (underStack == ItemStack.EMPTY) {
+                        UnderArmorContentsComponent stackComponent = underArmor.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+                        if (stackComponent != null) {
+                            UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(stackComponent);
+                            builder.add(stack);
+                            underArmor.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
+                            cir.setReturnValue(TypedActionResult.success(stack));
+                        }
+                    }
+                    cir.setReturnValue(TypedActionResult.fail(stack));
+                }
+                cir.setReturnValue(TypedActionResult.fail(stack));
+            }
+        }
+    }
+
+    public ArmorItemMixin(Settings settings) {
+        super(settings.component(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, new UnderArmorContentsComponent(new ArrayList<>())));
+    }
+
+    @Unique
+    private static float getAmountFilled(ItemStack stack) {
+        UnderArmorContentsComponent component = stack.getOrDefault(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, UnderArmorContentsComponent.DEFAULT);
+        return component.getOccupancy().floatValue();
+    }
+
+    @Override
+    public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
+        int i;
+        if (clickType != ClickType.RIGHT) return false;
+        if (UnderArmorContentsComponent.doesNotHaveArmorSlot(stack)) return false;
+
+        UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+        if (component == null) return false;
+
+        ItemStack itemStack = slot.getStack();
+        UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(component);
+
+        ArmorItem armorItem = (ArmorItem) stack.getItem();
+
+        if (itemStack.isEmpty()) {
+            ItemStack armorStack = getArmor(stack);
+            if ((hasBinding(armorStack) || hasBinding(stack)) && !player.isCreative()) return false;
+            SoundUtil.playRemoveArmorSound(player);
+            ItemStack itemStack2 = builder.removeFirst();
+            if (itemStack2 != null) {
+                ItemStack itemStack3 = slot.insertStack(itemStack2);
+                builder.add(itemStack3);
+            }
+        } else if (itemStack.getItem() instanceof ArmorItem otherArmor && !(armorItem.getSlotType() == otherArmor.getSlotType())) {
+            return false;
+        } else if (itemStack.getItem() instanceof ElytraItem) {
+            return false;
+        } else if (UnderArmorContentsComponent.isAllowedInUnderArmor(itemStack) && itemStack.getItem().canBeNested() && (i = builder.add(slot, player)) > 0) {
+            SoundUtil.playInsertArmorSound(player);
+        }
+        stack.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
+        return true;
+    }
+
+    @Override
+    public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
+
+        if (!slot.canTakePartial(player)) return false;
+        if (UnderArmorContentsComponent.doesNotHaveArmorSlot(stack)) return false;
+
+        UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+        if (component == null) return false;
+        UnderArmorContentsComponent.Builder builder = new UnderArmorContentsComponent.Builder(component);
+        if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
+            ItemStack itemStack = builder.removeFirst();
+            if (itemStack == null) return false;
+            if ((hasBinding(stack) || hasBinding(Objects.requireNonNull(itemStack))) && !player.isCreative()) return false;
+            SoundUtil.playRemoveArmorSound(player);
+            cursorStackReference.set(itemStack);
+        } else {
+            if (!(otherStack.getItem() instanceof ArmorItem otherArmor)) return false;
+            UnderArmorContentsComponent component1 = otherStack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+            ArmorItem armorItem = (ArmorItem) stack.getItem();
+            EquipmentSlot armorSlot = armorItem.getSlotType();
+            EquipmentSlot otherSlot = otherArmor.getSlotType();
+            if (!UnderArmorContentsComponent.isAllowedInUnderArmor(otherStack) || !(armorSlot == otherSlot) || clickType != ClickType.LEFT) return false;
+            if (component1 != null && (!component.isEmpty() || !component1.isEmpty())) return false;
+            int i = builder.add(otherStack);
+            if (i > 0) {
+                SoundUtil.playInsertArmorSound(player);
+            }
+        }
+        stack.set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, builder.build());
+        return true;
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
+        UnderArmorContentsComponent component = stack.get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+        if (component != null && !stack.isIn(ANIMAL_ARMOR)) {
+            ItemStack armorStack = getArmor(stack);
+            if (stack.isIn(UNDER_ARMOR)) {
+                if (armorStack == ItemStack.EMPTY) {
+                    tooltip.add(Text.translatable("tag.item.progression_respun.under_armor").formatted(Formatting.GRAY));
+                    tooltip.add(Text.translatable("tag.item.progression_respun.equip_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+                } else if (!hasBinding(armorStack) && !hasBinding(stack)) {
+                    tooltip.add(Text.translatable("tag.item.progression_respun.unequip_under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+                }
+            } else if (!stack.isIn(UNDER_ARMOR) && !(stack.isIn(BYPASSES_UNDER_ARMOR))) {
+                tooltip.add(Text.translatable("tag.item.progression_respun.needs_under_armor").formatted(Formatting.GRAY));
+                tooltip.add(Text.translatable("tag.item.progression_respun.equip_under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
+            }
+            if (armorStack != ItemStack.EMPTY) {
+                MutableText name = tooltip.getFirst().copy().append(Text.translatable("util.progression_respun.with").formatted(Formatting.RESET)).append(armorStack.getName());
+                tooltip.removeFirst();
+                tooltip.addFirst(name);
+            }
+        }
+    }
+
+    @Override
+    public void onItemEntityDestroyed(ItemEntity entity) {
+        UnderArmorContentsComponent component = entity.getStack().get(ModDataComponentTypes.UNDER_ARMOR_CONTENTS);
+        if (component == null) return;
+        entity.getStack().set(ModDataComponentTypes.UNDER_ARMOR_CONTENTS, UnderArmorContentsComponent.DEFAULT);
+        ItemUsage.spawnItemContents(entity, component.iterateCopy());
+    }
+}

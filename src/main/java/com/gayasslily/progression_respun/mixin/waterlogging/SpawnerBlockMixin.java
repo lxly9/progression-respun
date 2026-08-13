@@ -1,0 +1,48 @@
+package com.gayasslily.progression_respun.mixin.waterlogging;
+
+import com.gayasslily.progression_respun.mixin.BlockAccessor;
+import net.minecraft.block.*;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.state.StateManager;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static net.minecraft.state.property.Properties.WATERLOGGED;
+
+@Mixin(SpawnerBlock.class)
+public class SpawnerBlockMixin extends Block implements Waterloggable {
+    public SpawnerBlockMixin(Settings settings) {
+        super(settings);
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        super.appendProperties(builder);
+        builder.add(WATERLOGGED);
+    }
+
+    @Override
+    protected FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+    }
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void progressionrespun$appendSnippedProperty(Settings settings, CallbackInfo ci) {
+        Block spawnerBlock = SpawnerBlock.class.cast(this);
+        BlockState defaultBlockState = spawnerBlock.getDefaultState();
+        ((BlockAccessor) spawnerBlock).invokeSetDefaultState(defaultBlockState.with(WATERLOGGED, false));
+    }
+
+    @Override
+    public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
+        if (ctx.getWorld() != null) {
+            return this.getDefaultState().with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER);
+        }
+        else return null;
+    }
+}
