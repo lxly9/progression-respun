@@ -1,5 +1,8 @@
 package com.gayasslily.progression_respun.util;
 
+import com.gayasslily.progression_respun.block.OxidizableCrafterBlock;
+import com.gayasslily.progression_respun.block.OxidizableDispenserBlock;
+import com.gayasslily.progression_respun.block.OxidizableDropperBlock;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.OxidizableBlocksRegistry;
 import net.minecraft.block.Block;
@@ -18,9 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import static com.gayasslily.progression_respun.ProgressionRespun.MOD_ID;
+
 public class OxidizableUtil {
 
-    public static void registerOxidizableFamily(Block baseBlock, String baseName, Block.Settings settings, String namespace, BiFunction<Oxidizable.OxidationLevel, Block.Settings, Block> factory) {
+    public static void registerOxidizableFamily(Block baseBlock, String baseName, BiFunction<Oxidizable.OxidationLevel, Block.Settings, Block> factory) {
         Map<Oxidizable.OxidationLevel, Block> unwaxedStates = new EnumMap<>(Oxidizable.OxidationLevel.class);
         Map<Oxidizable.OxidationLevel, Block> waxedStates   = new EnumMap<>(Oxidizable.OxidationLevel.class);
 
@@ -32,14 +37,10 @@ public class OxidizableUtil {
                 default -> throw new IllegalStateException("Unexpected oxidation level: " + level);
             };
 
-            Block block = Registry.register(
-                    Registries.BLOCK,
-                    Identifier.of(namespace, name),
-                    factory.apply(level, Block.Settings.copy(baseBlock))
-            );
+            Block block = Registry.register(Registries.BLOCK, Identifier.of(MOD_ID, name), factory.apply(level, Block.Settings.copy(baseBlock)));
             unwaxedStates.put(level, block);
 
-            registerBlockItem(block, namespace, name, baseBlock);
+            registerBlockItem(block, name, baseBlock);
             addEntities(block);
         }
 
@@ -51,14 +52,10 @@ public class OxidizableUtil {
                 case OXIDIZED  -> "waxed_oxidized_" + baseName;
             };
 
-            Block block = Registry.register(
-                    Registries.BLOCK,
-                    Identifier.of(namespace, name),
-                    new Block(Block.Settings.copy(baseBlock))
-            );
+            Block block = Registry.register(Registries.BLOCK, Identifier.of(MOD_ID, name), new Block(Block.Settings.copy(baseBlock)));
             waxedStates.put(level, block);
 
-            registerBlockItem(block, namespace, name, baseBlock);
+            registerBlockItem(block, name, baseBlock);
             addEntities(block);
         }
 
@@ -67,18 +64,15 @@ public class OxidizableUtil {
         OxidizableBlocksRegistry.registerOxidizableBlockPair(unwaxedStates.get(Oxidizable.OxidationLevel.WEATHERED), unwaxedStates.get(Oxidizable.OxidationLevel.OXIDIZED));
 
         for (Oxidizable.OxidationLevel level : Oxidizable.OxidationLevel.values()) {
-            Block unwaxed = (level == Oxidizable.OxidationLevel.UNAFFECTED)
-                    ? baseBlock
-                    : unwaxedStates.get(level);
-
+            Block unwaxed = (level == Oxidizable.OxidationLevel.UNAFFECTED) ? baseBlock : unwaxedStates.get(level);
             Block waxed = waxedStates.get(level);
 
             OxidizableBlocksRegistry.registerWaxableBlockPair(unwaxed, waxed);
         }
     }
 
-    private static void registerBlockItem(Block block, String namespace, String name, Block baseBlock) {
-        Identifier id = Identifier.of(namespace, name);
+    private static void registerBlockItem(Block block, String name, Block baseBlock) {
+        Identifier id = Identifier.of(MOD_ID, name);
         Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()));
 
         Identifier blockId = Registries.BLOCK.getId(baseBlock);
@@ -102,8 +96,8 @@ public class OxidizableUtil {
     }
 
     public static void addEntities(Block block) {
-        if (block.toString().contains("dispenser")) BlockEntityType.DISPENSER.addSupportedBlock(block);
-        if (block.toString().contains("dropper")) BlockEntityType.DROPPER.addSupportedBlock(block);
-        if (block.toString().contains("crafter")) BlockEntityType.CRAFTER.addSupportedBlock(block);
+        if (block instanceof OxidizableDispenserBlock) BlockEntityType.DISPENSER.addSupportedBlock(block);
+        if (block instanceof OxidizableDropperBlock) BlockEntityType.DROPPER.addSupportedBlock(block);
+        if (block instanceof OxidizableCrafterBlock) BlockEntityType.CRAFTER.addSupportedBlock(block);
     }
 }

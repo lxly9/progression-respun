@@ -13,6 +13,7 @@ public class ProgressionRespunDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(ModBlockTagProvider::new);
 		pack.addProvider(ModItemTagProvider::new);
 		pack.addProvider(ModEnchantmentsTagsProvider::new);
+		pack.addProvider(ModPotionsTagsProvider::new);
 		pack.addProvider(ModModelProvider::new);
 		pack.addProvider(ModRecipeProvider::new);
 	}

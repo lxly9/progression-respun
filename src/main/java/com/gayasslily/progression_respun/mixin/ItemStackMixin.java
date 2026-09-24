@@ -1,5 +1,6 @@
 package com.gayasslily.progression_respun.mixin;
 
+import com.gayasslily.progression_respun.data.ModPotionsTagsProvider;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -16,6 +17,7 @@ import net.minecraft.component.*;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -134,6 +136,14 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
 //        if (isBroken()) return Text.translatable("item.progression_respun.tooltip.broken", original).formatted(Formatting.RED);
 //        return original;
 //    }
+
+    @Inject(method = "isItemEnabled", at = @At("HEAD"), cancellable = true)
+    private void progressionrespun$disablePotions(FeatureSet enabledFeatures, CallbackInfoReturnable<Boolean> cir) {
+        ItemStack stack = (ItemStack) (Object) this;
+        PotionContentsComponent potionContentsComponent = stack.getComponents().get(net.minecraft.component.DataComponentTypes.POTION_CONTENTS);
+
+        if (potionContentsComponent != null) for (net.minecraft.entity.effect.StatusEffectInstance effect : potionContentsComponent.getEffects()) if (effect.getEffectType().isIn(ModPotionsTagsProvider.DISABLED_POTIONS)) cir.setReturnValue(false);
+    }
 
     @WrapMethod(method = "appendAttributeModifiersTooltip")
     private void progressionrespun$appendArmorToUnderArmorAttributesTooltip(Consumer<Text> textConsumer, @Nullable PlayerEntity player, Operation<Void> original) {

@@ -138,8 +138,8 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 - Banners as capes
   - applied at smithing table or put into chestplate?
 - Horses begin slow, then sprint
-- fix Blocks being placed unwaterlogged -> Doors, etc.
-  - Off-state for torches if underwater -> Glow Ink Torch for Underwater?
+- ~~fix Blocks being placed unwaterlogged -> Doors, etc.~~
+  - ~~Off-state for torches if underwater~~ -> Glow Ink Torch for Underwater?
 - More uses for one-use Items -> Rabbit's Hide, Nautilus Shell, etc. 
 - More Nekoma ideas (just not the slop ones)
 - ~~More cave biomes that correspond to the biomes temperature above!~~ moved to TaT

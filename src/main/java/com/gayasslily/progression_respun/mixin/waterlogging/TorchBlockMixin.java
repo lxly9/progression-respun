@@ -24,14 +24,13 @@ public class TorchBlockMixin extends Block implements Waterloggable {
 
     public TorchBlockMixin(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(WATERLOGGED, false).with(LIT, true));
+        this.setDefaultState(this.stateManager.getDefaultState().with(WATERLOGGED, false));
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
         builder.add(WATERLOGGED);
-        builder.add(LIT);
     }
 
     @Override
@@ -42,13 +41,13 @@ public class TorchBlockMixin extends Block implements Waterloggable {
     @Override
     public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
         if (ctx.getWorld() != null) {
-            return this.getDefaultState().with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER).with(LIT, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() != Fluids.WATER);
+            return this.getDefaultState().with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER);
         }
         else return null;
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void progressionrespun$appendSnippedProperty(SimpleParticleType simpleParticleType, Settings settings, CallbackInfo ci) {
+    private void progressionrespun$appendWaterloggedProperty(SimpleParticleType simpleParticleType, Settings settings, CallbackInfo ci) {
         Block torchBlock = TorchBlock.class.cast(this);
         BlockState defaultBlockState = torchBlock.getDefaultState();
         ((BlockAccessor) torchBlock).invokeSetDefaultState(defaultBlockState.with(WATERLOGGED, false));
@@ -56,6 +55,6 @@ public class TorchBlockMixin extends Block implements Waterloggable {
 
     @Inject(method = "randomDisplayTick", at = @At("HEAD"), cancellable = true)
     private void progressionrespun$gay(BlockState state, World world, BlockPos pos, Random random, CallbackInfo ci) {
-        if (!state.get(LIT)) ci.cancel();
+        if (state.get(WATERLOGGED)) ci.cancel();
     }
 }

@@ -16,6 +16,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.Oxidizable;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantments;
@@ -33,6 +34,7 @@ import java.util.List;
 
 import static com.gayasslily.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 import static net.minecraft.state.property.Properties.LIT;
+import static net.minecraft.state.property.Properties.WATERLOGGED;
 
 
 public class ProgressionRespun implements ModInitializer {
@@ -167,10 +169,19 @@ public class ProgressionRespun implements ModInitializer {
 
     @Unique
     public static int getLuminance(BlockState state) {
-        return state.get(LIT) ? 14 : 0;
+        return !state.get(WATERLOGGED) ? 14 : 0;
     }
     @Unique
     public static int getSoulLuminance(BlockState state) {
-        return state.get(LIT) ? 10 : 0;
+        return !state.get(WATERLOGGED) ? 10 : 0;
+    }
+
+    public static int getDelayForOxidization(Oxidizable.OxidationLevel oxidationLevel) {
+        return switch (oxidationLevel) {
+            case UNAFFECTED -> 4;
+            case EXPOSED -> 20;
+            case WEATHERED -> 60;
+            case OXIDIZED -> 100;
+        };
     }
 }

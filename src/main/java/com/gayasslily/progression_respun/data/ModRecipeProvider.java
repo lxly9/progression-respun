@@ -124,6 +124,26 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(ModItems.DIAMOND_SHARD), conditionsFromItem(ModItems.DIAMOND_SHARD))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Items.BLAST_FURNACE)
+                .input('I', Items.IRON_INGOT)
+                .input('X', Items.IRON_NUGGET)
+                .input('C', Items.CAMPFIRE)
+                .pattern("III")
+                .pattern("X X")
+                .pattern("XCX")
+                .criterion(hasItem(Items.CAMPFIRE), conditionsFromItem(Items.CAMPFIRE))
+                .offerTo(exporter);
+
+//        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Items.SMOKER)
+//                .input('I', Items.IRON_INGOT)
+//                .input('X', Items.IRON_NUGGET)
+//                .input('C', Items.CAMPFIRE)
+//                .pattern("III")
+//                .pattern("X X")
+//                .pattern("XCX")
+//                .criterion(hasItem(Items.CAMPFIRE), conditionsFromItem(Items.CAMPFIRE))
+//                .offerTo(exporter);
+
         // Flint Tools
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, ModItems.FLINT_SWORD)

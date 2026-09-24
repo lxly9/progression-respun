@@ -1,7 +1,5 @@
 package com.gayasslily.progression_respun.data;
 
-import com.gayasslily.progression_respun.compat.EnderscapeItems;
-import com.gayasslily.progression_respun.compat.GalosphereItems;
 import com.gayasslily.progression_respun.compat.VanillaItems;
 import com.gayasslily.progression_respun.item.ModItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -18,8 +16,6 @@ import net.minecraft.util.Identifier;
 import java.util.concurrent.CompletableFuture;
 
 import static com.gayasslily.progression_respun.ProgressionRespun.MOD_ID;
-import static com.gayasslily.progression_respun.compat.CompatMods.ENDERSCAPE;
-import static com.gayasslily.progression_respun.compat.CompatMods.GALOSPHERE;
 
 public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
     public ModItemTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
@@ -178,19 +174,5 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                 .add(Items.NETHERITE_CHESTPLATE)
                 .add(Items.NETHERITE_LEGGINGS)
                 .add(Items.NETHERITE_BOOTS);
-
-        if (GALOSPHERE) {
-            getOrCreateTagBuilder(ConventionalItemTags.RAW_MATERIALS)
-                    .add(
-                            GalosphereItems.RAW_SILVER_BAR
-                    );
-        }
-
-        if (ENDERSCAPE) {
-            getOrCreateTagBuilder(ConventionalItemTags.RAW_MATERIALS)
-                    .add(
-                            EnderscapeItems.RAW_SHADOLINE_BAR
-                    );
-        }
     }
 }

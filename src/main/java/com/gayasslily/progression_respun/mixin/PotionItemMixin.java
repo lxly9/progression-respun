@@ -1,5 +1,6 @@
 package com.gayasslily.progression_respun.mixin;
 
+import com.gayasslily.progression_respun.data.ModPotionsTagsProvider;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.advancement.criterion.Criteria;
@@ -7,10 +8,14 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import net.minecraft.world.World;
@@ -18,7 +23,11 @@ import net.minecraft.world.event.GameEvent;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(PotionItem.class)
-public class PotionItemMixin {
+public class PotionItemMixin extends Item {
+
+    public PotionItemMixin(Settings settings) {
+        super(settings);
+    }
 
     @WrapMethod(method = "finishUsing")
     private ItemStack progressionrespun$finishUsing(ItemStack stack, World world, LivingEntity user, Operation<ItemStack> original) {

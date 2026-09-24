@@ -28,7 +28,6 @@ public class WallTorchBlockMixin extends Block implements Waterloggable {
     @Inject(method = "appendProperties", at = @At("RETURN"))
     private void appendProperties(StateManager.Builder<Block, BlockState> builder, CallbackInfo ci) {
         builder.add(WATERLOGGED);
-        builder.add(LIT);
     }
 
     @Override
@@ -36,20 +35,13 @@ public class WallTorchBlockMixin extends Block implements Waterloggable {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
 
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void progressionrespun$appendSnippedProperty(SimpleParticleType simpleParticleType, Settings settings, CallbackInfo ci) {
-        Block torchBlock = WallTorchBlock.class.cast(this);
-        BlockState defaultBlockState = torchBlock.getDefaultState();
-        ((BlockAccessor) torchBlock).invokeSetDefaultState(defaultBlockState.with(WATERLOGGED, false).with(LIT, true));
-    }
-
     @ModifyReturnValue(method = "getPlacementState", at = @At("RETURN"))
     private BlockState progressionrespun$modifyPlacementState(BlockState original, ItemPlacementContext ctx) {
-        return original != null ? original.with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER).with(LIT, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() != Fluids.WATER) : null;
+        return original != null ? original.with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER) : null;
     }
 
     @Inject(method = "randomDisplayTick", at = @At("HEAD"), cancellable = true)
     private void progressionrespun$gay(BlockState state, World world, BlockPos pos, Random random, CallbackInfo ci) {
-        if (!state.get(LIT)) ci.cancel();
+        if (state.get(WATERLOGGED)) ci.cancel();
     }
 }

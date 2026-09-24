@@ -1,14 +1,13 @@
 package com.gayasslily.progression_respun.block;
 
+import com.gayasslily.progression_respun.ProgressionRespun;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DropperBlock;
-import net.minecraft.block.Oxidizable;
+import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.World;
 
 public class OxidizableDropperBlock extends DropperBlock implements Oxidizable {
     public static final MapCodec<OxidizableDropperBlock> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(OxidationLevel.CODEC.fieldOf("weathering_state").forGetter(OxidizableDropperBlock::getDegradationLevel), createSettingsCodec()).apply(instance, OxidizableDropperBlock::new));
@@ -29,5 +28,17 @@ public class OxidizableDropperBlock extends DropperBlock implements Oxidizable {
 
     public Oxidizable.OxidationLevel getDegradationLevel() {
         return this.oxidationLevel;
+    }
+
+    @Override
+    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        boolean bl = world.isReceivingRedstonePower(pos) || world.isReceivingRedstonePower(pos.up());
+        boolean bl2 = state.get(TRIGGERED);
+        if (bl && !bl2) {
+            world.scheduleBlockTick(pos, this, ProgressionRespun.getDelayForOxidization(getDegradationLevel()));
+            world.setBlockState(pos, state.with(TRIGGERED, true), Block.NOTIFY_LISTENERS);
+        } else if (!bl && bl2) {
+            world.setBlockState(pos, state.with(TRIGGERED, false), Block.NOTIFY_LISTENERS);
+        }
     }
 }
