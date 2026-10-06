@@ -14,15 +14,19 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.*;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -31,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.gayasslily.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 import static net.minecraft.state.property.Properties.LIT;
@@ -99,6 +104,14 @@ public class ProgressionRespun implements ModInitializer {
 		);
 	}
 
+    public static Block getBlockByName(String name) {
+        for (Block block : Registries.BLOCK) {
+            Identifier id = Registries.BLOCK.getId(block);
+            if (id.getPath().equals(name)) return block;
+        }
+        return Blocks.AIR;
+    }
+
 	public static Item getItemByName(String name) {
 		for (Item item : Registries.ITEM) {
 			Identifier id = Registries.ITEM.getId(item);
@@ -137,9 +150,9 @@ public class ProgressionRespun implements ModInitializer {
         return false;
     }
 
-    public static boolean hasBinding(ItemStack stack) {
+    public static boolean hasEnchant(ItemStack stack, RegistryKey<Enchantment> enchantment) {
         ItemEnchantmentsComponent enchants = stack.get(DataComponentTypes.ENCHANTMENTS);
-        if (enchants != null) return enchants.getEnchantments().stream().anyMatch(entry -> entry.matchesKey(Enchantments.BINDING_CURSE));
+        if (enchants != null) return enchants.getEnchantments().stream().anyMatch(entry -> entry.matchesKey(enchantment));
         return false;
     }
 
@@ -183,5 +196,37 @@ public class ProgressionRespun implements ModInitializer {
             case WEATHERED -> 60;
             case OXIDIZED -> 100;
         };
+    }
+
+    public static double progressionrespun$getMultiplierForWeight(LivingEntity entity, double base) {
+        double weight = entity.getAttributeValue(ModEntityAttributes.GENERIC_WEIGHT);
+        return base;
+    }
+
+    public static Block progressionrespun$getOxidizedPiston(Block original, Block piston) {
+        if (piston instanceof Oxidizable oxidizable && original instanceof Oxidizable) {
+            int degradation = oxidizable.getDegradationLevel().ordinal();
+            String blockIdString = Registries.BLOCK.getId(original).getPath();
+            switch (degradation) {
+                case 1 -> original = getBlockByName("exposed_" + blockIdString);
+                case 2 -> original = getBlockByName("weathered_" + blockIdString);
+                case 3 -> original = getBlockByName("oxidized_" + blockIdString);
+            }
+        }
+        return original;
+    }
+
+    public static Block progressionrespun$getWaxedOxidizedPiston(Block original, Block piston) {
+        Optional<BlockState> optional = Optional.ofNullable(HoneycombItem.WAXED_TO_UNWAXED_BLOCKS.get().get(piston)).map(Block::getDefaultState);
+        if (optional.isPresent()) {
+            if (optional.get().getBlock() instanceof Oxidizable oxidizable){
+                Block newOriginal = progressionrespun$getOxidizedPiston(original, optional.get().getBlock());
+                String fullPath = Registries.BLOCK.getId(newOriginal).getPath();
+                Block unwaxedVariant = getBlockByName(fullPath);
+                Block waxedVariant = HoneycombItem.UNWAXED_TO_WAXED_BLOCKS.get().get(unwaxedVariant);
+                return waxedVariant != null ? waxedVariant : original;
+            }
+        }
+        return original;
     }
 }

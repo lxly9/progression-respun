@@ -33,7 +33,6 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
 
 - **?** Brewing stand can only brew one potion
 - **?** Armadillo chestplate with roll-up functionality (idea u/Sea_Honey_2747)
-- **?** Custom oxidization behavior for Redstone blocks made of Copper
 - **?** Temperature system
   - akin to freezing mechanic, no need for drinking, cooling off, etc.
   - water in cold biome freezes you
@@ -92,6 +91,11 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
       - **!!** Correct mount boosting
       - **!!** Texture Overrides
   - ~~Dynamic Stack sizes based on Saturation values~~
+  - Food will heal amount of hearts based on saturation value when eaten
+    - no more hunger bar → replaced with stamina bar (instead of xp bar)
+    - time to eat scales with saturation value/heart value
+      - heals while eaten
+      - when eating is interrupted, food will preserve progress and can only heal the rest of the preserved hearts
 
 
 - Mob Overhaul
@@ -102,7 +106,7 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - Nautilus Block to transport Mobs
 
 
-- Combat Overhaul
+- Combat & Tool Overhaul
   - Per-weapon crit chance
   - Combat snapshot changes
   - ~~Netherite~~ and ~~Chainmail~~ Horse Armor
@@ -111,19 +115,21 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - amount of worn Armor slows down sprinting
   - no damage to your own pets
   - Heavy Lance (inspired by Shyvv's Trickier Trials)
+  - Tools will do "damage" to blocks scaling with tier
+    - hardness of blocks determines how much damage has to be done to them to break
 
 
 - Structure Overhaul
   - Updated and beautified Nether Fortress
-    - No more Blaze spawners -> Trial Spawner-like behavior
-    - No more Wooden Chests -> replaced with special Fortress Chests that cannot be mined/slowly
+    - No more Blaze spawners → Trial Spawner-like behavior
+    - No more Wooden Chests → replaced with special Fortress Chests that cannot be mined/slowly
     - Fortress Omen which spawns Wither Skeletons
   - Updated and expanded Dungeon Rooms
     - Trial Spawner-like but only grants rewards upon being lit up with light sources around it
     - Multiple rooms
     - Chests are locked and need to be opened using a Dungeon Key 
-      - Chests stay open as long as items are inside and the Spawner is lit up -> can only generate new Loot when the Dungeon is cleared again
-      - Ominous Variant and Dungeon Omen -> obfuscates spawner??
+      - Chests stay open as long as items are inside and the Spawner is lit up → can only generate new Loot when the Dungeon is cleared again
+      - Ominous Variant and Dungeon Omen → obfuscates spawner??
   - Updated Woodland Mansion
     - Unlike other Structure Mods no Trial Spawners
     - Mansion Keys are needed to open locked door to treasury
@@ -131,6 +137,16 @@ This mod is intended to be used alongside Traveler's Diary, Thumb and Thicket, F
   - Witch Hut beautified
 
 
+- Custom oxidization behavior for oxidizable Redstone components made of Copper
+  - Pistons → the older, the fewer blocks it can push **[Degradable X, Function ?]**
+  - Observers → the older, the slower it responds **[Degradable X, Function?]**
+  - Dispenser & Dropper → the older, the slower to shoot **[Degradable X, Function ?]**
+  - Heavy Weighted Pressure Plate → the older, the more weight is needed **[Degradable ?, Function ?]**
+  - Crafter → the older, the longer it takes to craft **[Degradable X, Function ?]**
+  - Copper Button → the older, the longer the signal **[Degradable ?, Function ?]**
+  - Repeater → ? **[Degradable ?, Function ?]**
+  - Comparator → ? **[Degradable ?, Function ?]**
+  - Tripwire Hook → ? **[Degradable ?, Function ?]**
 - End Platform spawns in Outer End
 - End Material on par with Netherite but different buffs
 - **?** Smithing templates only break upon use, can be repaired in anvil

@@ -1,5 +1,6 @@
 package com.gayasslily.progression_respun.mixin.under_armor_handling;
 
+import com.gayasslily.progression_respun.entity.attribute.ModEntityAttributes;
 import com.google.common.collect.Maps;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -175,19 +176,26 @@ public abstract class LivingEntityMixin {
         original.call(damageSource, causedByPlayer);
     }
 
-    @WrapMethod(method = "applyFluidMovingSpeed")
-    private Vec3d progressionrespun$weightedFluidMovementSpeed(double gravity, boolean falling, Vec3d motion, Operation<Vec3d> original) {
-
-        return motion;
-    }
-
-    @WrapMethod(method = "knockDownwards")
-    private void progressionrespun$weightedKnockDownwards(Operation<Void> original) {
-        original.call();
-    }
-
-    @WrapMethod(method = "swimUpward")
-    private void progressionrespun$weightedSwimUpwards(TagKey<Fluid> fluid, Operation<Void> original) {
-        original.call(fluid);
-    }
+//    @WrapMethod(method = "applyFluidMovingSpeed")
+//    private Vec3d progressionrespun$weightedFluidMovementSpeed(double gravity, boolean falling, Vec3d motion, Operation<Vec3d> original) {
+//        LivingEntity entity = (LivingEntity) (Object) this;
+//        double weight = entity.getAttributeValue(ModEntityAttributes.GENERIC_WEIGHT);
+//        return motion;
+//    }
+//
+//    @WrapMethod(method = "knockDownwards")
+//    private void progressionrespun$weightedKnockDownwards(Operation<Void> original) {
+//        original.call();
+//    }
+//
+//    @WrapMethod(method = "swimUpward")
+//    private void progressionrespun$weightedSwimUpwards(TagKey<Fluid> fluid, Operation<Void> original) {
+//        original.call(fluid);
+//    }
+//
+//    @WrapMethod(method = "getBaseMovementSpeedMultiplier")
+//    private float progression$respun$weightedMovementSpeed(Operation<Float> original) {
+//
+//        return 0;
+//    }
 }

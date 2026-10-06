@@ -30,6 +30,7 @@
     "fishing_rod.StriderEntityMixin",
     "oxidizable.CrafterBlockMixin",
     "oxidizable.ObserverBlockMixin",
+    "oxidizable.PistonBlockEntityMixin",
     "under_armor_handling.ArmorItemMixin",
     "under_armor_handling.ArmorMaterialMixin",
     "under_armor_handling.ArmorSlotMixin",

@@ -3,6 +3,7 @@ package com.gayasslily.progression_respun.mixin.under_armor_handling;
 import com.gayasslily.progression_respun.component.ModDataComponentTypes;
 import com.gayasslily.progression_respun.component.type.UnderArmorContentsComponent;
 import com.gayasslily.progression_respun.util.SoundUtil;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,8 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.gayasslily.progression_respun.ProgressionRespun.getArmor;
-import static com.gayasslily.progression_respun.ProgressionRespun.hasBinding;
+import static com.gayasslily.progression_respun.ProgressionRespun.*;
 import static com.gayasslily.progression_respun.data.ModItemTagProvider.*;
 
 @Mixin(ArmorItem.class)
@@ -97,7 +97,7 @@ public abstract class ArmorItemMixin extends Item {
 
         if (itemStack.isEmpty()) {
             ItemStack armorStack = getArmor(stack);
-            if ((hasBinding(armorStack) || hasBinding(stack)) && !player.isCreative()) return false;
+            if ((hasEnchant(armorStack, Enchantments.BINDING_CURSE) || hasEnchant(stack, Enchantments.BINDING_CURSE)) && !player.isCreative()) return false;
             SoundUtil.playRemoveArmorSound(player);
             ItemStack itemStack2 = builder.removeFirst();
             if (itemStack2 != null) {
@@ -127,7 +127,7 @@ public abstract class ArmorItemMixin extends Item {
         if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
             ItemStack itemStack = builder.removeFirst();
             if (itemStack == null) return false;
-            if ((hasBinding(stack) || hasBinding(Objects.requireNonNull(itemStack))) && !player.isCreative()) return false;
+            if ((hasEnchant(stack, Enchantments.BINDING_CURSE) || hasEnchant(Objects.requireNonNull(itemStack), Enchantments.BINDING_CURSE)) && !player.isCreative()) return false;
             SoundUtil.playRemoveArmorSound(player);
             cursorStackReference.set(itemStack);
         } else {
@@ -156,7 +156,7 @@ public abstract class ArmorItemMixin extends Item {
                 if (armorStack == ItemStack.EMPTY) {
                     tooltip.add(Text.translatable("tag.item.progression_respun.under_armor").formatted(Formatting.GRAY));
                     tooltip.add(Text.translatable("tag.item.progression_respun.equip_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
-                } else if (!hasBinding(armorStack) && !hasBinding(stack)) {
+                } else if (!hasEnchant(armorStack, Enchantments.BINDING_CURSE) && !hasEnchant(stack, Enchantments.BINDING_CURSE)) {
                     tooltip.add(Text.translatable("tag.item.progression_respun.unequip_under_armor").formatted(Formatting.ITALIC).formatted(Formatting.DARK_GRAY));
                 }
             } else if (!stack.isIn(UNDER_ARMOR) && !(stack.isIn(BYPASSES_UNDER_ARMOR))) {

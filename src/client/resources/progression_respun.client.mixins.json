@@ -5,9 +5,12 @@
   "client": [
     "client.DrawContextMixin",
     "client.ItemRendererMixin",
-    "client.UnderArmorFeatureRendererMixin"
+    "client.UnderArmorFeatureRendererMixin",
+    "client.PistonBlockEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+  ]
 }

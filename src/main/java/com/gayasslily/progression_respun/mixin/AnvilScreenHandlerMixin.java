@@ -5,6 +5,7 @@ import com.gayasslily.progression_respun.component.ModDataComponentTypes;
 import com.gayasslily.progression_respun.component.type.UnderArmorContentsComponent;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
@@ -103,7 +104,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
             }
         }
 
-        if (!armor && hasMending(itemStack2)) {
+        if (!armor && hasEnchant(itemStack2, Enchantments.MENDING)) {
             if (itemStack2.getItem() instanceof ToolItem toolItem) {
                 material = toolItem.getMaterial();
                 nugget = getNugget(ingredientToStack(material.getRepairIngredient()));
@@ -134,7 +135,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
             if (armorStack.getItem() instanceof ArmorItem armorItem) {
                 armorMaterial = armorItem.getMaterial().value();
                 armorNugget = getNugget(ingredientToStack(armorMaterial.repairIngredient().get()));
-                if (hasMending(armorStack) && itemStack3.isOf(armorNugget.getItem()) && armorNugget != ItemStack.EMPTY) {
+                if (hasEnchant(armorStack, Enchantments.MENDING) && itemStack3.isOf(armorNugget.getItem()) && armorNugget != ItemStack.EMPTY) {
                     int m;
 
                     for (m = 0; j > 0 && m < itemStack3.getCount(); m++) {

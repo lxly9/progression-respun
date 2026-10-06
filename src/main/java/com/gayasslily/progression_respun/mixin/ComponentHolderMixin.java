@@ -5,7 +5,11 @@ import net.minecraft.component.ComponentMap;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,6 +22,9 @@ import static com.gayasslily.progression_respun.item.ComponentHolderState.*;
 public interface ComponentHolderMixin {
     @Shadow ComponentMap getComponents();
 
+    @Shadow
+    @Nullable <T> T get(ComponentType<? extends T> type);
+
     @SuppressWarnings({"ConstantValue", "unchecked"})
     @Inject(method = "get", at = @At("HEAD"), cancellable = true)
     default <T> void progressionrespun$getForItemStack(ComponentType<? extends T> type, CallbackInfoReturnable<T> cir) {
@@ -26,7 +33,13 @@ public interface ComponentHolderMixin {
         boolean isEnchantments = type == DataComponentTypes.ENCHANTMENTS;
         if ((getBlockedBrokenComponents().contains(type) || isEnchantments) && isItemStackBroken(itemStack)) {
             if (isEnchantments && getComponents().contains(DataComponentTypes.ENCHANTMENTS)) {
-                cir.setReturnValue((T) ItemEnchantmentsComponent.DEFAULT);
+                ItemEnchantmentsComponent component = (ItemEnchantmentsComponent) cir.getReturnValue();
+                ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
+                if (component != null) {
+                    if (component.getEnchantments().stream().anyMatch(entry -> entry.matchesKey(Enchantments.VANISHING_CURSE))) builder.add((RegistryEntry<Enchantment>) Enchantments.VANISHING_CURSE, 1);
+                }
+                ItemEnchantmentsComponent component1 = builder.build();
+                cir.setReturnValue((T) component1);
             }
             cir.setReturnValue(null);
         }

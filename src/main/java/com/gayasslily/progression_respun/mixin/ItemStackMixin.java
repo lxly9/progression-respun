@@ -19,6 +19,7 @@ import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -60,6 +61,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.gayasslily.progression_respun.ProgressionRespun.getArmor;
+import static com.gayasslily.progression_respun.ProgressionRespun.hasEnchant;
 import static com.gayasslily.progression_respun.block.ModBlockTags.BURNABLE_COBWEBS;
 import static com.gayasslily.progression_respun.data.ModItemTagProvider.*;
 
@@ -94,12 +96,14 @@ public abstract class ItemStackMixin implements ComponentHolder, FabricItemStack
     @Inject(method = "damage(ILnet/minecraft/server/world/ServerWorld;Lnet/minecraft/server/network/ServerPlayerEntity;Ljava/util/function/Consumer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", shift = At.Shift.BEFORE), cancellable = true)
     private void progressionrespun$damageRestrictDecrement(int amount, ServerWorld world, @Nullable ServerPlayerEntity player, Consumer<Item> breakCallback, CallbackInfo ci, @Local(ordinal = 1) int i) {
         Item item = getItem();
-        boolean noDestroy = item instanceof ToolItem || item instanceof ArmorItem || item instanceof ShieldItem || item instanceof PotionItem;
-
-        if (!noDestroy) {
+        boolean noDestroy = (item instanceof ToolItem || item instanceof ArmorItem || item instanceof ShieldItem || item instanceof PotionItem);
+        boolean vanishing = false; //TODO get this working
+        ItemEnchantmentsComponent enchants = get(DataComponentTypes.ENCHANTMENTS);
+        if (enchants != null) vanishing = enchants.getEnchantments().stream().anyMatch(entry -> entry.matchesKey(Enchantments.VANISHING_CURSE));
+        if (!noDestroy || vanishing) {
             decrement(amount);
         }
-        if (!noDestroy || i - amount < this.getMaxDamage()) {
+        if (!noDestroy || vanishing || i - amount < this.getMaxDamage()) {
             breakCallback.accept(item);
         }
         ci.cancel();

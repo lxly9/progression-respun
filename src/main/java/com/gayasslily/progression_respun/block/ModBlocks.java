@@ -37,9 +37,13 @@ public class ModBlocks {
     }
 
     public static void initialize() {
-        OxidizableUtil.registerOxidizableFamily(Blocks.DROPPER, "dropper", OxidizableDropperBlock::new);
-        OxidizableUtil.registerOxidizableFamily(Blocks.DISPENSER, "dispenser", OxidizableDispenserBlock::new);
-        OxidizableUtil.registerOxidizableFamily(Blocks.OBSERVER, "observer", OxidizableObserverBlock::new);
-        OxidizableUtil.registerOxidizableFamily(Blocks.CRAFTER, "crafter", OxidizableCrafterBlock::new);
+        OxidizableUtil.registerOxidizableFamily(Blocks.DROPPER, "dropper", OxidizableDropperBlock::new, true);
+        OxidizableUtil.registerOxidizableFamily(Blocks.DISPENSER, "dispenser", OxidizableDispenserBlock::new, true);
+        OxidizableUtil.registerOxidizableFamily(Blocks.OBSERVER, "observer", OxidizableObserverBlock::new, true);
+        OxidizableUtil.registerOxidizableFamily(Blocks.CRAFTER, "crafter", OxidizableCrafterBlock::new, true);
+        OxidizableUtil.registerOxidizablePistonFamily(Blocks.PISTON, "piston", OxidizablePistonBlock::new, true);
+        OxidizableUtil.registerOxidizablePistonFamily(Blocks.STICKY_PISTON, "sticky_piston", OxidizablePistonBlock::new, true);
+        OxidizableUtil.registerOxidizableFamily(Blocks.PISTON_HEAD, "piston_head", OxidizablePistonHeadBlock::new, false);
+        OxidizableUtil.registerOxidizableFamily(Blocks.MOVING_PISTON, "moving_piston", OxidizablePistonExtensionBlock::new, false);
     }
 }

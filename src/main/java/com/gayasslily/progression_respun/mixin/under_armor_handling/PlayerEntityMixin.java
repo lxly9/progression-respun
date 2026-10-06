@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.gayasslily.progression_respun.ProgressionRespun;
 import net.minecraft.component.ComponentType;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -25,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.gayasslily.progression_respun.ProgressionRespun.hasBinding;
+import static com.gayasslily.progression_respun.ProgressionRespun.hasEnchant;
 import static com.gayasslily.progression_respun.data.ModItemTagProvider.UNDER_ARMOR;
 
 @Mixin(PlayerEntity.class)
@@ -65,8 +66,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @WrapOperation(method = "vanishCursedItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;hasAnyEnchantmentsWith(Lnet/minecraft/item/ItemStack;Lnet/minecraft/component/ComponentType;)Z"))
     private boolean progressionrespun$vanishUnderArmor(ItemStack stack, ComponentType<?> componentType, Operation<Boolean> original) {
         ItemStack armorStack = ProgressionRespun.getArmor(stack);
-        if (hasBinding(armorStack)) return original.call(armorStack, componentType);
-        if (hasBinding(stack)) return original.call(stack, componentType);
+        if (hasEnchant(armorStack, Enchantments.BINDING_CURSE)) return original.call(armorStack, componentType);
+        if (hasEnchant(stack, Enchantments.BINDING_CURSE)) return original.call(stack, componentType);
         return original.call(stack, componentType);
     }
 }
